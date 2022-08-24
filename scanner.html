@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!-- use 'python3 -m http.server 80' to test -->
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>DKR Research - Home</title>
+
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="scanner.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="main.js"></script>
+        <script src="scanner.js"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header">
+        </div>
+
+        <div id="contents" style="visibility: hidden; margin-top:25px;">
+
+            <div id='scanner_table' class='scanner_table'>
+                <h1>Scanner</h1>
+    
+                <div class="scanner_table_header">
+                    <span class="scanner_table_col_1">Symbol</span>
+                    <span class="scanner_table_col_2">Expiration</span>
+                    <span class="scanner_table_col_3">Earnings</span>
+                    <span class="scanner_table_col_4">Target</span>
+                    <span class="scanner_table_col_5">Bid</span>
+                    <span class="scanner_table_col_6">Ask</span>
+                    <span class="scanner_table_col_7">% of loss</span>
+                </div>
+            </div>
+        </div>
+        <script>
+            loadScannerData()
+        </script>
+    </body>
+</html>

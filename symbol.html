@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>DKR Research - Home</title>
+
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="symbol.css">
+        <script src="main.js"></script>
+        <script src="symbol.js"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header"></div>
+
+        <div id="contents" style="visibility: hidden; margin-top:25px;">
+        <div style="width:100%">
+            <h1><span id="symbol"></span><span id="Name"></span></h1>
+            <h4 class="small"><span id="Industry"></span></h4>
+            <h4 class="small"><span id="Description"></span></h4>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left;">
+                <div class="table_row"><span class="table_col1">Last Price ($) :</span>
+                    <span  class="table_col2" id="last_price"></span></div>
+                <div class="table_row"><span class="table_col1">Next Earnings Date :</span>
+                    <span  class="table_col2" id="next_earnings_date"></span></div>
+                <div class="table_row"><span class="table_col1">Max Earnings Effect (%):</span>
+                    <span  class="table_col2" id="max_earnings_effect">0.00</span></div>            
+            </div>                    
+            <div style="width:50%; float:right;">
+                <div class="table_row"><span class="table_col1">ExDividendDate :</span>
+                    <span  class="table_col2" id="ExDividendDate"></span></div>
+                <div class="table_row"><span class="table_col1">DividendPerShare ($):</span>
+                    <span  class="table_col2" id="DividendPerShare"></span></div>
+            </div>
+        </div>
+
+        <div id='far_put_table' class='put_table'>
+            <h1>Put Table</h1>
+            <h4 class="small">Expiration <span id="far_exp_date"></span> in <span id="far_dte">dte Fix Me</span> Days</h4>
+            <h4 class="small" style="visibility:hidden; color:crimson;" id="far_sub_earnings_data">Substitute Earnings Data</span></h4>
+
+            <div class="put_table_header">
+                <span class="put_table_col_1">Strike ($)</span>
+                <span class="put_table_col_2">Discount (%)</span>
+                <span class="put_table_col_3">Target ($)</span>
+                <span class="put_table_col_4">Bid ($)</span>
+                <span class="put_table_col_5">Ask ($)</span>
+                <span class="put_table_col_6">$ of Loss</span>
+                <span class="put_table_col_7">% of Loss</span>
+                <span class="put_table_col_8">Imp Volatility</span>
+            </div>
+        </div>
+
+        </div>
+        <script>
+            loadSymbolData()
+        </script>
+    </body>
+</html>
