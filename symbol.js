@@ -2,8 +2,12 @@
 async function loadSymbolData() {
     let jsonInfo = await fetchSymbolInfo();
 
-    document.querySelector('#symbol').innerHTML = jsonInfo.Item.symbol;
-    document.querySelector('#Name').innerHTML = " : " + jsonInfo.Item.info.overview.Name;
+    symbol = jsonInfo.Item.symbol
+    document.querySelector('#symbol').innerHTML = symbol;
+ 
+    symbol_name = jsonInfo.Item.info.overview.Name
+    link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
+    document.querySelector('#Name').innerHTML = " : " + link;
     document.querySelector('#Industry').innerHTML = jsonInfo.Item.info.overview.Industry;
     document.querySelector('#Description').innerHTML = jsonInfo.Item.info.overview.Description;
     document.querySelector('#next_earnings_date').innerHTML = jsonInfo.Item.info.next_earnings_date;
