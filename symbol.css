@@ -72,7 +72,8 @@
     float:left;
     width:20%;
     margin:0px;
-  }
+    color: rgb(0, 141, 129);
+}
   .put_table_col_6 {
     float:right;
     width:15%;

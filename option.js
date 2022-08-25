@@ -63,6 +63,7 @@ async function loadOptionData() {
     document.querySelector('#ivega').innerHTML = value.toFixed(4)   
 
 
+    document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
 }
 

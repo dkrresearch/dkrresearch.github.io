@@ -10,26 +10,33 @@ async function loadScannerData() {
     for (var key in table) {
         symbol = table[key]['symbol']
 
-        line = '<div class="scanner_table_row">'
-        line = line + '<span class="scanner_table_col_1"><a href="/symbol.html?symbol='+symbol+'">'+symbol+'</a></span>'
-        line = line + '<span class="scanner_table_col_2">' + table[key]['expiration_date'] + '</span>'
-        line = line + '<span class="scanner_table_col_3">' + table[key]['next_earnings_date'] + '</span>'
-        
-        value = parseFloat(table[key]['target_price'])
-        line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '</span>'
 
-        value = parseFloat(table[key]['quote']['bid'])
-        line = line + '<span class="scanner_table_col_5">' + value.toFixed(2) + '</span>'
-        value = parseFloat(table[key]['quote']['ask'])
-        line = line + '<span class="scanner_table_col_6">' + value.toFixed(2) + '</span>'
+
+        line = '<div class="scanner_table_row">'
+
+        option_symbol = table[key]['quote_symbol'];
+        strike_price = table[key]['strike_price'].toFixed(2);
+        expiration_date = table[key]['expiration_date']
+        link = '<a href="/symbol.html?symbol='+symbol+'">'+symbol+'</a>';
+        line = line + '<span class="scanner_table_col_1">' + link + '<br/>Expires :'+expiration_date+'</span>'
+
+        line = line + '<span class="scanner_table_col_2">$' + table[key]['target_price'].toFixed(2) + '</span>'
+
+        ask = parseFloat(table[key]['quote']['ask'])
+        bid = parseFloat(table[key]['quote']['bid'])
+        line = line + '<span class="scanner_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
         value = table[key]['chance_of_loss'] * 100.0
-        line = line + '<span class="scanner_table_col_7">' + value.toFixed(2) + '</span>'
+        line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
+
+        line = line + '<span class="scanner_table_col_5">' + table[key]['next_earnings_date'] + '</span>'
+        line = line + '</div>'
 
         ele = htmlToElement(line)
         divTable.appendChild(ele);
     }
 
+    document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
 }
 
