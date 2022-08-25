@@ -8,7 +8,8 @@ async function loadBodyElements() {
     const search = document.getElementById('symbolSearch');
     search.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            symbolSearch(search.value);
+            symbol = search.value;
+            symbolSearch(symbol.trim());
         }
     });
 }

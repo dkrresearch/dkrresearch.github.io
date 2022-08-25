@@ -1,6 +1,9 @@
 body {
     background-color: white;
     font-family: helvetica, arial, sans-serif;
+    width:700px; 
+    margin-left: auto !important; 
+    margin-right: auto !important;
   }
   
   h1 {
@@ -9,6 +12,21 @@ body {
     margin-bottom: 0px;
     font-size: 16px;
     font-weight: 750;
+  }
+  h2 {
+    color: rgb(128, 128, 128);
+    margin-left: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 14px;
+    font-weight: 250;
+  }
+  h3 {
+    color: rgb(0, 141, 129);
+    margin-left: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 15px;
   }
 
   h4 {

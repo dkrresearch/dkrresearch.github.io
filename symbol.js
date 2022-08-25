@@ -35,34 +35,39 @@ async function loadSymbolData() {
         document.querySelector('#far_sub_earnings_data').style.visibility = "visible";
 
     for(var key in table.reverse()) {
-        console.log(key)
         console.log(table[key])
 
         if (table[key]['quote'] == null)
             continue
-        if ((parseFloat(table[key]['quote']['bid']) <= 0.02) && 
-            (parseFloat(table[key]['quote']['ask']) <= 0.02) &&
-            (parseFloat(table[key]['price_of_loss']) <= 0.00))
-            break
+        if (parseFloat(table[key]['chance_of_loss']) > 0.021)  
+            continue
         if (parseFloat(table[key]['quote']['ask']) <= 0.02)
             continue
 
         line = '<div class="put_table_row">'
-        line = line + '<span class="put_table_col_1">' + table[key]['strike_price'].toFixed(2) + '</span>'
-        value = table[key]['discount'] * 100.0
-        line = line + '<span class="put_table_col_2">' + value.toFixed(2) + '</span>'
-        line = line + '<span class="put_table_col_3">' + table[key]['target_price'].toFixed(2) + '</span>'
-        value = parseFloat(table[key]['quote']['bid'])
-        line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '</span>'
-        value = parseFloat(table[key]['quote']['ask'])
-        line = line + '<span class="put_table_col_5">' + value.toFixed(2) + '</span>'
-        line = line + '<span class="put_table_col_6">' + table[key]['price_of_loss'].toFixed(2) + '</span>'
+
+        option_symbol = table[key]['quote_symbol'];
+        strike_price = table[key]['strike_price'].toFixed(2);
+        discount = table[key]['discount'] * 100.0
+        link = "<a href='/option.html?symbol="+symbol+"&option_symbol="+option_symbol+"&e=far'>"+strike_price+"</a>";
+        line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
+
+        line = line + '<span class="put_table_col_2">$' + table[key]['target_price'].toFixed(2) + '</span>'
+
+        ask = parseFloat(table[key]['quote']['ask'])
+        bid = parseFloat(table[key]['quote']['bid'])
+        line = line + '<span class="put_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
+
+        value = (table[key]['price_of_loss'] * 100.0)
+        line = line + '<span class="put_table_col_4">$' + value.toFixed(2) + '</span>'
 
         value = table[key]['chance_of_loss'] * 100.0
-        line = line + '<span class="put_table_col_7">' + value.toFixed(2) + '</span>'
+        line = line + '<span class="put_table_col_5">' + value.toFixed(2) + '%</span>'
+
         value = parseFloat(table[key]['quote']['imp_volatility'])
-        line = line + '<span class="put_table_col_8">' + value.toFixed(4) + '</span>'
+        line = line + '<span class="put_table_col_6">' + value.toFixed(4) + '</span>'
         line = line + '</div>'
+
         ele = htmlToElement(line)
         divTable.appendChild(ele);
     }
