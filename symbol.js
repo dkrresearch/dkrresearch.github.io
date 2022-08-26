@@ -49,7 +49,7 @@ async function loadSymbolData() {
         option_symbol = table[key]['quote_symbol'];
         strike_price = table[key]['strike_price'].toFixed(2);
         discount = table[key]['discount'] * 100.0
-        link = "<a href='/option.html?symbol="+symbol+"&option_symbol="+option_symbol+"&e=far'>"+strike_price+"</a>";
+        link = "<a href='/option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
         line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
 
         line = line + '<span class="put_table_col_2">$' + table[key]['target_price'].toFixed(2) + '</span>'

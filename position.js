@@ -29,7 +29,7 @@ async function loadOptionData() {
 
     value = jsonOptionTableInfo.chance_of_loss * 100.0
     document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
-    document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  
+    document.querySelector('#price_of_loss').innerHTML = (100.00 * jsonOptionTableInfo.price_of_loss).toFixed(2)  
     document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(2)  
 
 

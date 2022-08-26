@@ -17,7 +17,7 @@ async function loadScannerData() {
         option_symbol = table[key]['quote_symbol'];
         strike_price = table[key]['strike_price'].toFixed(2);
         expiration_date = table[key]['expiration_date']
-        link = '<a href="/symbol.html?symbol='+symbol+'">'+symbol+'</a>';
+        link = '<a href="/symbol.html?symbol='+symbol+'" style="font-weight:750;">'+symbol+'</a> - ' + strike_price;
         line = line + '<span class="scanner_table_col_1">' + link + '<br/>Expires :'+expiration_date+'</span>'
 
         line = line + '<span class="scanner_table_col_2">$' + table[key]['target_price'].toFixed(2) + '</span>'
@@ -26,7 +26,7 @@ async function loadScannerData() {
         bid = parseFloat(table[key]['quote']['bid'])
         line = line + '<span class="scanner_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-        value = table[key]['chance_of_loss'] * 100.0
+        value = table[key]['chance_of_loss']
         line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
 
         line = line + '<span class="scanner_table_col_5">' + table[key]['next_earnings_date'] + '</span>'
