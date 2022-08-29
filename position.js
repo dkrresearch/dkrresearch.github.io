@@ -1,102 +1,94 @@
 
-async function loadOptionData() {
-    let value
-    let jsonInfo = await fetchSymbolInfo();
-    let jsonOptionInfo = await fetchOptionTable();
-    jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
-    symbol = jsonOptionTableInfo.symbol
-    link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
-    document.querySelector('#symbol').innerHTML = link;
-    
-    document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
-    document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
-    document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
+var jsonInfo;
+var jsonOptionInfo;
+var jsonOptionTableInfo;
+var jsonPositionInfo;
 
-    symbol_name = jsonInfo.Item.info.overview.Name
-    link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
-    document.querySelector('#name').innerHTML = link;
+async function loadPositionData() {
+    let value;
 
-    document.querySelector('#next_earnings_date').innerHTML = jsonInfo.Item.info.next_earnings_date;
-    document.querySelector('#ExDividendDate').innerHTML = jsonInfo.Item.info.overview.ExDividendDate;
-    document.querySelector('#DividendPerShare').innerHTML = jsonInfo.Item.info.overview.DividendPerShare;
-    document.querySelector('#description').innerHTML = jsonInfo.Item.info.overview.Description;
-    
-    value = (10000.0 * jsonOptionInfo.Item.info.max_earnings_delta).toFixed();
-    value = value / 100.0
-    document.querySelector('#max_earnings_effect').innerHTML = value    
-    document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
-
-    value = jsonOptionTableInfo.chance_of_loss * 100.0
-    document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
-    document.querySelector('#price_of_loss').innerHTML = (100.00 * jsonOptionTableInfo.price_of_loss).toFixed(2)  
-    document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(2)  
-
+    await loadOptionData();
 
     let last_price = jsonOptionInfo.Item.info.last_price
     let strike_price = jsonOptionTableInfo.strike_price
     value = (1.0 - (strike_price / last_price)) * 100.0
-    document.querySelector('#discount').innerHTML = value.toFixed(2)   
+    document.querySelector('#details_discount').innerHTML = value.toFixed(2) + '%'  
 
-    value = parseFloat(jsonOptionTableInfo.quote.bid)
-    document.querySelector('#bid').innerHTML = value.toFixed(2)  
-    value = parseFloat(jsonOptionTableInfo.quote.ask)
-    document.querySelector('#ask').innerHTML = value.toFixed(2)  
-    value = parseFloat(jsonOptionTableInfo.quote.vl)
-    document.querySelector('#vl').innerHTML = value.toFixed(0)  
-    value = parseFloat(jsonOptionTableInfo.quote.openinterest)
-    document.querySelector('#openinterest').innerHTML = value.toFixed(0)     
+    value = jsonOptionTableInfo.chance_of_loss * 100.0
+    document.querySelector('#details_roa').innerHTML = value.toFixed(2)  + '%'   
+    document.querySelector('#details_poa').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  
+
+    let symbol =  jsonOptionTableInfo.symbol
+    jsonPositionInfo = await fetchPosition(symbol)
+    console.log(jsonPositionInfo)
+
+
     
-    value = parseFloat(jsonOptionTableInfo.quote.idelta)
-    document.querySelector('#idelta').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.igamma)
-    document.querySelector('#igamma').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.imp_volatility)
-    document.querySelector('#imp_volatility').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.itheta)
-    document.querySelector('#itheta').innerHTML = value.toFixed(4)   
-    value = parseFloat(jsonOptionTableInfo.quote.ivega)
-    document.querySelector('#ivega').innerHTML = value.toFixed(4)   
+    document.querySelector('#details_contracts').innerHTML = jsonPositionInfo['info']['contracts'].toFixed(0)  
+    document.querySelector('#details_open_price').innerHTML = jsonPositionInfo['info']['open_price'].toFixed(2)
 
-    document.querySelector('#wait').remove();
-    document.querySelector('#contents').style.visibility = "visible";
-}
 
-function findOptionInfo(jsonOptionTable) {
-    let my_url = new URL(window.location.href);
-    let option_symbol = my_url.searchParams.get("option_symbol").toUpperCase();
+    value = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
+    document.querySelector('#details_margin').innerHTML = '$' + value.toFixed(2)  + 'K'  
+    value = jsonPositionInfo['info']['open_price']
+    document.querySelector('#details_open_price').innerHTML = value.toFixed(2)  
 
-//  Find this option in the option table
-    let option_table = jsonOptionTable.Item.info.option_table_near
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
+    let margin = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
+    let dte = jsonOptionTableInfo['dte']
+    let bs_remaining = dte * 0.075 * margin
+    document.querySelector('#details_bs_remaining').innerHTML = '$' + bs_remaining.toFixed(2)  
+
+    if ('opened_dte' in jsonPositionInfo['info']) {
+        let opened_dte = jsonOptionTableInfo['opened_dte']
+        let bs_paid = (opened_dte - dte) * 0.075 * margin
+        document.querySelector('#details_bs_paid').innerHTML = bs_paid.toFixed(2)  
     }
 
-    option_table = jsonOptionTable.Item.info.option_table_far
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
-    return null
+    let pop = bs_remaining / (100.0 * jsonPositionInfo['info']['contracts'])
+    document.querySelector('#details_pop').innerHTML = pop.toFixed(2)  
+
+    let bid = parseFloat(jsonOptionTableInfo.quote.bid)
+    let ask = parseFloat(jsonOptionTableInfo.quote.ask)
+    let mark = ((ask - bid) / 2.0) + bid
+    
+    document.querySelector('#myRange').min = bid  
+    document.querySelector('#myRange').max = ask  
+    document.querySelector('#myRange').value = mark  
+
+    onClosePriceChange();
 }
 
-async function fetchSymbolInfo() {
+
+function onClosePriceChange() {
+    var slider = document.getElementById("myRange");
+
+    document.getElementById("details_close_price_label").innerHTML = slider.value;
+    document.getElementById("details_close_price").value = slider.value;
+
+    let open = jsonPositionInfo['info']['open_price']
+    let mark = slider.value 
+    let profit = (open - mark) * jsonPositionInfo['info']['contracts'] * 100.0
+    document.getElementById("details_profit").innerHTML = "$" + profit.toFixed(2);
+}
+
+
+async function fetchPosition(symbol) {
+    let jsonPositions = await fetchPositionTable()
+    let table = jsonPositions.Items;
+
+    for (var key in table) {
+        if (table[key]['info']['symbol'] == symbol) 
+            return table[key]
+    }
+
+    return null       
+}
+
+async function fetchPositionTable() {
     let my_url = new URL(window.location.href);
     let symbol = my_url.searchParams.get("symbol").toUpperCase();
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items/' + symbol
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function fetchOptionTable() {
-    let my_url = new URL(window.location.href);
-    let symbol = my_url.searchParams.get("symbol").toUpperCase();
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/options/' + symbol
+    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions/opened'
     console.log(info_url)
     try {
         let res = await fetch(info_url);

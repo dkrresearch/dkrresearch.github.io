@@ -1,11 +1,14 @@
 
+
 async function loadOptionData() {
     let value
-    let jsonInfo = await fetchSymbolInfo();
-    let jsonOptionInfo = await fetchOptionTable();
+    let link
+
+    jsonInfo = await fetchSymbolInfo();
+    jsonOptionInfo = await fetchOptionTable();
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
-    symbol = jsonOptionTableInfo.symbol
+    let symbol = jsonOptionTableInfo.symbol
     link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     
@@ -13,7 +16,7 @@ async function loadOptionData() {
     document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
     document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
 
-    symbol_name = jsonInfo.Item.info.overview.Name
+    let symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#name').innerHTML = link;
 

@@ -1,4 +1,9 @@
 
+  .option {
+    float:left;
+    width:60%;
+  }
+  
   .option_table_row {
     color: #666;
     font-size: 13px;
