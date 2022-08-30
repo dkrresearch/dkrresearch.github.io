@@ -70,6 +70,11 @@ function onClosePriceChange() {
     let mark = slider.value 
     let profit = (open - mark) * jsonPositionInfo['info']['contracts'] * 100.0
     document.getElementById("details_profit").innerHTML = "$" + profit.toFixed(2);
+
+    let max_value = jsonPositionInfo['info']['contracts'] * 100.0 * open
+    document.getElementById("details_max_value").innerHTML = "$" + max_value.toFixed(2);
+
+    details_value
 }
 
 
