@@ -58,7 +58,7 @@ async function loadSymbolData() {
         bid = parseFloat(table[key]['quote']['bid'])
         line = line + '<span class="put_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-        value = (table[key]['price_of_loss'] * 100.0)
+        value = table[key]['price_of_loss']
         line = line + '<span class="put_table_col_4">$' + value.toFixed(2) + '</span>'
 
         value = table[key]['chance_of_loss'] * 100.0
