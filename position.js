@@ -73,8 +73,67 @@ function onClosePriceChange() {
 
     let max_value = jsonPositionInfo['info']['contracts'] * 100.0 * open
     document.getElementById("details_max_value").innerHTML = "$" + max_value.toFixed(2);
+}
 
-    details_value
+async function onClosePosition() {
+    
+    document.getElementById("close_button").style.backgroundColor = "#888";
+    document.getElementById("close_button").disabled = true;
+    document.getElementById("close_button").innerHTML = "Closing Position ...";
+
+    let info = jsonPositionInfo['info']
+    info['open_dte'] = 21;
+    info['commisions'] = 0.0
+
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    let close_date = yyyy+"-"+mm+"-"+dd;
+
+    info['close_price'] = parseFloat( document.getElementById("details_close_price").value )
+    info['close_date'] =  close_date
+    info['close_dte'] =  jsonOptionTableInfo['dte']
+    info['close_pol'] =  jsonOptionTableInfo['price_of_loss']
+
+    info['assigned'] =  false
+    if (  document.getElementById("details_close_price").checked == true )
+        info['assigned'] =  true
+    info['sold_price'] = -1
+
+    info['commisions'] += parseFloat( document.getElementById("details_commision_price").value )
+    info['profit'] = ((info['open_price'] - info['close_price'] ) * info['contracts'] * 100.0) - info['commisions']
+    info['bs_premium'] = (info['open_dte']  - info['close_dte']) * (info['strike_price'] * info['contracts']) * 0.0075
+
+    payload = {}
+    payload['id'] = jsonPositionInfo["id"]
+    payload['info'] = info
+    payload['opened'] = false
+    
+    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions'
+    await putPosition(aws_url,payload)
+
+    document.getElementById("close_button").style.backgroundColor = "#888";
+    document.getElementById("close_button").disabled = true;
+    document.getElementById("close_button").innerHTML = "Closed";
+}
+
+async function putPosition(url,data) {
+    // Awaiting fetch which contains method,
+    // headers and content-type and body
+    console.log(url)
+    console.log(data)
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+           
+    // Awaiting response.json()
+    const resData = await response.json();
+    return resData;
 }
 
 

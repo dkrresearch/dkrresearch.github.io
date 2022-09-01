@@ -1,4 +1,8 @@
 
+async function loadPageData() {
+    await loadOptionData();
+    loadOpenPosition();
+}
 
 async function loadOptionData() {
     let value
@@ -107,4 +111,25 @@ async function fetchOptionTable() {
     } catch (error) {
         console.log(error);
     }
+}
+
+function loadOpenPosition() {
+    bid = parseFloat(jsonOptionTableInfo.quote.bid)
+    document.getElementById("details_open_price").value = (bid + 0.01).toFixed(2)
+    onMarginChange()
+}
+
+function onMarginChange() {
+    var slider = document.getElementById("myRange");
+
+    document.getElementById("details_margin_label").innerHTML = "$" + slider.value + "K";
+
+    let shares = (slider.value * 1000.0) / jsonOptionTableInfo.strike_price
+    let contracts = shares / 100
+    document.getElementById("details_contracts").innerHTML = contracts.toFixed(0);
+
+    let commision = parseFloat( document.getElementById("details_commision_price").value )
+    let open_price = parseFloat( document.getElementById("details_open_price").value )
+    let details_total_proceeds = (shares * open_price) -  commision
+    document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
 }

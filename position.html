@@ -79,8 +79,14 @@
            
             <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Close Price :</span>
                 <input type="text" id="details_close_price" class="input_label"></input></div> 
-                
-            <button class="input_button">Close Position</button>
+
+            <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;"><span style="height:20px;" class="details_table_col1">Commision :</span>
+                <input type="text" id="details_commision_price" class="input_label" value="0.00"></input></div>
+
+            <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;"><span style="height:20px;" class="details_table_col1">Assigned :</span>
+                <span style="float:right; text-align:right;"><input type="checkbox" id="details_assigned" class="input_label" ></input></span></div>
+                    
+            <button class="input_button" id="close_button" onclick="onClosePosition()">Close Position</button>
 
         </div>
 
