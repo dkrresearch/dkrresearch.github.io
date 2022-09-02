@@ -34,14 +34,15 @@
             <div class="details_table_row" style="border-bottom:None;"><span class="details_table_col1">Assignment Margin</span></div>   
             <div class="price_slider">
                 <input type="range" min="50" max="250" value="100" class="slider" id="myRange"
-                        step="25" oninput="onMarginChange()">
+                        step="25" oninput="onSliderChange()">
             </div>
             <div class="details_table_row"><span class="details_table_col1">Assignment Margin :</span>
                 <span  class="details_table_col2" id="details_margin_label">$150K</span></div>   
 
-            <div class="details_table_row"><span class="details_table_col1">Contracts :</span>
-                <span  class="details_table_col2" id="details_contracts">0</span></div>  
-                
+
+            <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Contracts :</span>
+                <input type="text" id="details_contracts" class="input_label" value="0.00"  oninput="onMarginChange()"></input></div> 
+    
             <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Open Price :</span>
                 <input type="text" id="details_open_price" class="input_label" value="0.00"  oninput="onMarginChange()"></input></div> 
 
@@ -51,7 +52,7 @@
             <div class="details_table_row" style="margin-bottom:25px;"><span class="details_table_col1">Total Proceeds :</span>
                 <span  class="details_table_col2" id="details_total_proceeds">0</span></div> 
 
-            <button class="input_button" id="close_button" onclick="onOpenPosition()">Open Position</button>
+            <button class="input_button" id="open_button" onclick="onOpenPosition()">Open Position</button>
         </div>
 
 
