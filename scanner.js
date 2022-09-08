@@ -26,7 +26,7 @@ async function loadScannerData() {
         bid = parseFloat(table[key]['quote']['bid'])
         line = line + '<span class="scanner_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-        value = table[key]['chance_of_loss']
+        value = 100.0 * table[key]['chance_of_loss']
         line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
 
         line = line + '<span class="scanner_table_col_5">' + table[key]['next_earnings_date'] + '</span>'
