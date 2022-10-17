@@ -138,7 +138,7 @@ async function putPosition(url,data) {
 
 
 async function fetchPosition(symbol) {
-    let jsonPositions = await fetchPositionTable()
+    let jsonPositions = await fetchPositionsInfo()
     let table = jsonPositions.Items;
 
     for (var key in table) {
@@ -147,17 +147,4 @@ async function fetchPosition(symbol) {
     }
 
     return null       
-}
-
-async function fetchPositionTable() {
-    let my_url = new URL(window.location.href);
-    let symbol = my_url.searchParams.get("symbol").toUpperCase();
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions/opened'
-    console.log(info_url)
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
 }

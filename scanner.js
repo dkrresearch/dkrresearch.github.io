@@ -3,14 +3,15 @@ async function loadScannerData() {
     let jsonInfo = await fetchScannerInfo();
     console.log(jsonInfo.Items[0].info)
  
+    let last_update = jsonInfo.Items[0].info.last_update
+    document.querySelector('#last_update').innerHTML = unixToReadable(last_update)
+
 //  Build scanner tables
     let divTable = document.getElementById("scanner_table");
     table = jsonInfo.Items[0].info.results
 
     for (var key in table) {
         symbol = table[key]['symbol']
-
-
 
         line = '<div class="scanner_table_row">'
 

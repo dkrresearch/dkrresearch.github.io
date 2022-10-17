@@ -5,6 +5,8 @@ async function loadSymbolData() {
     symbol = jsonInfo.Item.symbol
     document.querySelector('#symbol').innerHTML = symbol;
  
+    console.log(jsonInfo.Item)
+
     symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#Name').innerHTML = " : " + link;
@@ -14,12 +16,23 @@ async function loadSymbolData() {
     document.querySelector('#ExDividendDate').innerHTML = jsonInfo.Item.info.overview.ExDividendDate;
     document.querySelector('#DividendPerShare').innerHTML = jsonInfo.Item.info.overview.DividendPerShare;
 
-    let jsonOptionTable = await fetchOptionTable();
+    let jsonOptionTable = await fetchOptionTable(symbol);
+    console.log(jsonOptionTable)
 
     value = (10000.0 * jsonOptionTable.Item.info.max_earnings_delta).toFixed();
     value = value / 100.0
     document.querySelector('#max_earnings_effect').innerHTML = value    
-    document.querySelector('#last_price').innerHTML = jsonOptionTable.Item.info.last_price.toFixed(2)    
+
+    last_price = jsonOptionTable.Item.info.last_price
+    last_g =  jsonOptionTable.Item.info.last_g * 100.0
+
+    document.querySelector('#last_price').innerHTML = "$" + last_price.toFixed(2) + "<span style='margin-left:15px;'>" + last_g.toFixed(2) + "%</span>"
+    if (last_g < 0.0) 
+        document.querySelector('#last_price').style.color = "red"
+    
+    last_update = jsonOptionTable.Item.info.last_update
+    document.querySelector('#last_update').innerHTML = unixToReadable(last_update)
+
 
 //  Build option tables
     let divTable = document.getElementById("near_put_table");
@@ -48,7 +61,7 @@ async function loadSymbolData() {
         for(var key in table.reverse()) {
             if (table[key]['quote'] == null)
                 continue
-            if (parseFloat(table[key]['chance_of_loss']) > 0.021)  
+            if (parseFloat(table[key]['chance_of_loss']) > 0.035)  
                 continue
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
@@ -68,7 +81,7 @@ async function loadSymbolData() {
             line = line + '<span class="put_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
             value = table[key]['price_of_loss']
-            line = line + '<span class="put_table_col_4">$' + value.toFixed(2) + '</span>'
+            line = line + '<span class="put_table_col_4">$' + value.toFixed(4) + '</span>'
 
             value = table[key]['chance_of_loss'] * 100.0
             line = line + '<span class="put_table_col_5">' + value.toFixed(2) + '%</span>'
@@ -90,19 +103,6 @@ async function fetchSymbolInfo() {
     let my_url = new URL(window.location.href);
     let symbol = my_url.searchParams.get("symbol").toUpperCase();
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items/' + symbol
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function fetchOptionTable() {
-    let my_url = new URL(window.location.href);
-    let symbol = my_url.searchParams.get("symbol").toUpperCase();
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/options/' + symbol
-    console.log(info_url)
     try {
         let res = await fetch(info_url);
         return await res.json();

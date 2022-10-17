@@ -9,11 +9,8 @@ async function loadOptionData() {
     let link
 
     jsonInfo = await fetchSymbolInfo();
-    jsonOptionInfo = await fetchOptionTable();
+    jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
-
-    console.log(jsonInfo)
-    console.log(jsonOptionTableInfo)
 
     let symbol = jsonOptionTableInfo.symbol
     link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
@@ -39,8 +36,8 @@ async function loadOptionData() {
 
     value = jsonOptionTableInfo.chance_of_loss * 100.0
     document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
-    document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  
-    document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(2)  
+    document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
+    document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(4)  
 
 
     let last_price = jsonOptionInfo.Item.info.last_price
@@ -95,19 +92,6 @@ async function fetchSymbolInfo() {
     let my_url = new URL(window.location.href);
     let symbol = my_url.searchParams.get("symbol").toUpperCase();
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items/' + symbol
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function fetchOptionTable() {
-    let my_url = new URL(window.location.href);
-    let symbol = my_url.searchParams.get("symbol").toUpperCase();
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/options/' + symbol
-    console.log(info_url)
     try {
         let res = await fetch(info_url);
         return await res.json();

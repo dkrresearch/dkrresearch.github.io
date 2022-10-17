@@ -2,7 +2,7 @@
 async function loadPositionsData() {
     let strike_margin = 0.0
     let jsonInfo = await fetchPositionsInfo();
-    table = jsonInfo.Items;
+    let table = jsonInfo.Items;
 
     let divTable = document.getElementById("open_positions_table");
     for (var key in table) {
@@ -41,46 +41,6 @@ async function loadPositionsData() {
     document.querySelector('#strike_margin').innerHTML = "$" + strike_margin.toFixed(0)
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
-}
-
-async function fetchPositionsInfo() {
-    let my_url = new URL(window.location.href);
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions/opened'
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function fetchOptionTable(symbol) {
-    let my_url = new URL(window.location.href);
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/options/' + symbol
-    console.log(info_url)
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
-function findOptionInfo(jsonOptionTable,option_symbol) {
-//  Find this option in the option table
-    let option_table = jsonOptionTable.Item.info.option_table_near
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
-
-    option_table = jsonOptionTable.Item.info.option_table_far
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
-    return null
 }
 
 function get_template() {
