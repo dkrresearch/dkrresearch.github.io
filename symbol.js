@@ -1,12 +1,16 @@
 
 async function loadSymbolData() {
     let jsonInfo = await fetchSymbolInfo();
+    if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Item") == false)) {
+        let my_url = new URL(window.location.href);
+        let symbol = my_url.searchParams.get("symbol").toUpperCase();        
+        return loadError(symbol + " - Symbol Not Found")
+    }
+    console.log(jsonInfo)
 
     symbol = jsonInfo.Item.symbol
     document.querySelector('#symbol').innerHTML = symbol;
  
-    console.log(jsonInfo.Item)
-
     symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#Name').innerHTML = " : " + link;
@@ -103,10 +107,15 @@ async function fetchSymbolInfo() {
     let my_url = new URL(window.location.href);
     let symbol = my_url.searchParams.get("symbol").toUpperCase();
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items/' + symbol
+    console.log(info_url)
+
+    document.querySelector('#wait_status').innerHTML = "... Downloading "+symbol+" Data ...";
+
     try {
         let res = await fetch(info_url);
         return await res.json();
     } catch (error) {
         console.log(error);
+        return null
     }
 }

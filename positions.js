@@ -1,7 +1,13 @@
 
 async function loadPositionsData() {
     let strike_margin = 0.0
+
+    document.querySelector('#wait_status').innerHTML = "... Downloading Open Positions ...";
     let jsonInfo = await fetchPositionsInfo();
+    if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Items") == false)) {      
+        return loadError("Unable to load Positions Table")
+    }
+
     let table = jsonInfo.Items;
 
     let divTable = document.getElementById("open_positions_table");

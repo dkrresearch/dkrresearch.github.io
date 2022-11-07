@@ -22,10 +22,11 @@
         </div>
 
         <div id="wait">
-            <img src="wait.gif" alt="Loading..."></img>
-            <h1 style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">Please Wait...</h1>
+            <img id="wait_gif" src="wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
         </div>
-        
+
         <div id="contents" style="visibility: hidden; margin-top:25px;">
 
             <div id='scanner_table' class='scanner_table'>
@@ -39,11 +40,12 @@
                     <span class="scanner_table_col_5">Earnings Date</span>
                 </div>
             </div>
+
+            <div style="width:66%; margin-top:50px; margin-bottom:50px; float:left;">
+                <h4>Last updated : <span id='last_update'>----</span></h4>
+            </div>       
         </div>
-        <div style="width:66%; margin-top:50px; margin-bottom:50px; float:left;">
-            <h4>Last updated : <span id='last_update'>----</span></h4>
-        </div>
-        
+
         <script>
             loadScannerData()
         </script>

@@ -1,8 +1,15 @@
 
 async function loadScannerData() {
+    document.querySelector('#wait_status').innerHTML = "... Downloading Scanner Table ...";
+
     let jsonInfo = await fetchScannerInfo();
+    if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Items") == false)) {      
+        return loadError("Unable to load Scanner Table")
+    }
+    
     console.log(jsonInfo.Items[0].info)
  
+
     let last_update = jsonInfo.Items[0].info.last_update
     document.querySelector('#last_update').innerHTML = unixToReadable(last_update)
 

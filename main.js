@@ -42,6 +42,13 @@ function unixToReadable(unix_timestamp) {
     return dt
 }
 
+function loadError(errMesg) {
+    document.querySelector('#err_status').innerHTML = errMesg;
+    document.querySelector('#err_status').style.display = "block";
+    document.querySelector('#wait_status').remove();
+    document.querySelector('#wait_gif').remove();
+    return
+}
 
 async function fetchHistoryInfo() {
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions/closed'
@@ -68,6 +75,9 @@ async function fetchPositionsInfo() {
 async function fetchOptionTable(symbol) {
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/options/' + symbol
     console.log(info_url)
+
+    document.querySelector('#wait_status').innerHTML = "... Downloading "+symbol+" Option Data ...";
+
     try {
         let res = await fetch(info_url);
         return await res.json();

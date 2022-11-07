@@ -24,7 +24,6 @@ async function loadPositionData() {
     console.log(jsonPositionInfo)
 
 
-    
     document.querySelector('#details_contracts').innerHTML = jsonPositionInfo['info']['contracts'].toFixed(0)  
     document.querySelector('#details_open_price').innerHTML = jsonPositionInfo['info']['open_price'].toFixed(2)
 
