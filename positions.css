@@ -1,4 +1,32 @@
 
+    .widget_box {
+        float:left;
+        width:24%;
+        padding:20px;
+        margin:5px;
+        background-color: rgb(255, 255, 255);
+        border-right: 1px solid rgb(231, 229, 229);
+    }
+
+    .widget_label {
+        color: rgb(0, 160, 147);
+        margin-left:0px;
+    }
+
+    .widget_text {
+        font-size:9pt; 
+        margin-left:0px; 
+        color: gray;
+    }
+
+    .widget_value {
+        margin-top:50px;
+        color: rgb(0, 160, 147);
+        /* color: rgb(145, 35, 35);  */
+        font-size:24pt; 
+        float:right
+    }
+
   .coa_box {
     float:left;
     width:80px;
@@ -29,7 +57,7 @@
 
   .positions_table {
     float:left;
-    width:80%;
+    width:90%;
   }
  
   .positions_table_row {

@@ -38,6 +38,15 @@ async function loadOptionData() {
     document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
     document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
     document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(4)  
+    
+    console.log(jsonOptionTableInfo.var)
+    console.log(jsonOptionTableInfo.strike_price)
+
+    value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
+    document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
+
+    
+
 
 
     let last_price = jsonOptionInfo.Item.info.last_price
@@ -123,7 +132,11 @@ function onMarginChange() {
     let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )
     let details_total_proceeds = (shares * open_price) -  commision
+
     document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
+
+    value = (jsonOptionTableInfo.var * contracts) / 1000.0
+    document.getElementById("details_value_at_risk").innerHTML = "$" + value.toFixed(0) + "K";
 }
 
 function uuidv4() {

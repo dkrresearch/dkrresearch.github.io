@@ -5,6 +5,8 @@ var jsonOptionInfo;
 var jsonOptionTableInfo;
 var jsonPositionInfo;
 
+var prem_per_day_per_1K = 0.050
+
 async function loadPositionData() {
     let value;
 
@@ -23,10 +25,8 @@ async function loadPositionData() {
     jsonPositionInfo = await fetchPosition(symbol)
     console.log(jsonPositionInfo)
 
-
     document.querySelector('#details_contracts').innerHTML = jsonPositionInfo['info']['contracts'].toFixed(0)  
     document.querySelector('#details_open_price').innerHTML = jsonPositionInfo['info']['open_price'].toFixed(2)
-
 
     value = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
     document.querySelector('#details_margin').innerHTML = '$' + value.toFixed(2)  + 'K'  
@@ -35,13 +35,16 @@ async function loadPositionData() {
 
     let margin = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
     let dte = jsonOptionTableInfo['dte']
-    let bs_remaining = dte * 0.075 * margin
+    let bs_remaining = dte * margin * prem_per_day_per_1K
     document.querySelector('#details_bs_remaining').innerHTML = '$' + bs_remaining.toFixed(2)  
 
-    if ('opened_dte' in jsonPositionInfo['info']) {
-        let opened_dte = jsonOptionTableInfo['opened_dte']
-        let bs_paid = (opened_dte - dte) * 0.075 * margin
-        document.querySelector('#details_bs_paid').innerHTML = bs_paid.toFixed(2)  
+    value_at_risk = jsonOptionTableInfo['var'] * jsonPositionInfo['info']['contracts']
+    document.querySelector('#details_var').innerHTML = '$' + (value_at_risk / 1000.0).toFixed(1) +'K' 
+    
+    if ('open_dte' in jsonPositionInfo['info']) {
+        let opened_dte = jsonPositionInfo['info']['open_dte']
+        let bs_paid = (opened_dte - dte) * margin * prem_per_day_per_1K
+        document.querySelector('#details_bs_paid').innerHTML = '$' + bs_paid.toFixed(2)  
     }
 
     let pop = bs_remaining / (100.0 * jsonPositionInfo['info']['contracts'])
@@ -102,7 +105,12 @@ async function onClosePosition() {
 
     info['commisions'] += parseFloat( document.getElementById("details_commision_price").value )
     info['profit'] = ((info['open_price'] - info['close_price'] ) * info['contracts'] * 100.0) - info['commisions']
-    info['bs_premium'] = (info['open_dte']  - info['close_dte']) * (info['strike_price'] * info['contracts']) * 0.0075
+    
+    days_open = (info['open_dte']  - info['close_dte'])
+    strike_value_1K = (info['strike_price'] * info['contracts'] * 100.0) / 1000.0
+
+    //info['bs_premium'] = (info['open_dte']  - info['close_dte']) * (info['strike_price'] * info['contracts']) * 0.0075
+    info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     payload = {}
     payload['id'] = jsonPositionInfo["id"]

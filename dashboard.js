@@ -35,6 +35,7 @@ async function loadDashboardData() {
     let divTable = document.getElementById("open_positions_table");
     let current_value = 0.0
     let total_roa = 1.0
+    let total_var = 0.0
     jsonInfo = await fetchPositionsInfo();
     table = jsonInfo.Items
     for (var key in table) {
@@ -50,9 +51,10 @@ async function loadDashboardData() {
         let cv = contracts * 100.0 * (open_price -  ask)
         current_value += cv
 
-        console.log(jsonOptionTableInfo['chance_of_loss'])
         total_roa = total_roa * (1.0 - jsonOptionTableInfo['chance_of_loss'])
-        console.log(total_roa)
+
+        value_at_risk = jsonOptionTableInfo['var'] * contracts
+        total_var += value_at_risk
 
         template = get_template()
         template = template.replace("{$symbol}",position_info['symbol'])
@@ -65,6 +67,15 @@ async function loadDashboardData() {
         value = (100.0 * jsonOptionTableInfo['discount'])
         template = template.replace("{$discount}",value.toFixed(0))
 
+        if (value_at_risk <= 0){
+            template = template.replace("{$var}",0)
+        } else if (value_at_risk < 1000) {
+            template = template.replace("{$var}","$" + value_at_risk.toFixed(0))
+        } else {
+            value = value_at_risk / 1000.0
+            template = template.replace("{$var}","$" + value.toFixed(0) + "K")
+        }
+
         ele = htmlToElement(template);
         divTable.appendChild(ele);    
     }
@@ -72,6 +83,8 @@ async function loadDashboardData() {
     value = (1.0 - total_roa) * 100.0
     document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
 
+    console.log(total_var)
+    document.querySelector('#total_var').innerHTML = "$" + (total_var / 1000.0).toFixed(0) + "K"
 
     if (current_value < 0) {
         document.querySelector('#current_value').style.color = "rgb(145, 35, 35)"
@@ -96,6 +109,10 @@ function get_template() {
             <div class="coa_box">\
                 <div class="coa_header">ROA</div>\
                 <h1 class="coa">{$coa}%</h1>\
+            </div>\
+            <div class="coa_box">\
+                <div class="coa_header">VaR</div>\
+                <h1 class="coa">{$var}</h1>\
             </div>\
             <div class="coa_box">\
                 <div class="coa_header">Discount</div>\

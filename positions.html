@@ -28,18 +28,26 @@
         </div>
         
         <div id="contents" style="visibility: hidden; margin-top:25px; margin-bottom:25px;">
-            <div class='positions_table' style="margin-bottom:20px; border-bottom:1px solid lightgray;">
-                <span style='float:left; width:25%; margin-bottom:20px; '>
-                    <h1>Current Balances</h1>
-                </span>
-                <span style='float:left; width:25%; margin-bottom:20px; '>
-                    <h1 id='strike_margin' style="color:rgb(0, 160, 147);">----</h1>
-                    <h2>Strike Margin</h2>
-                </span>
+            <div style="padding:10px; width:100%;">
+                <div class="widget_box">
+                    <h1 class="widget_label">Total Risk Of Assignment</h1>
+                    <span class="widget_text">The risk of one or more contracts being assigned.</span>
+                    <h1 id='total_roa' class='widget_value'>----</h1>
+                </div>
+                <div class="widget_box">
+                    <h1 class="widget_label">Value at Risk</h1>
+                    <span class="widget_text">The total value at risk from all the opened positions.</span>
+                    <h1 id='total_var' class='widget_value'>----</h1>
+                </div>
+                <div class="widget_box">
+                    <h1 class="widget_label">Current Value</h1>
+                    <span class="widget_text">The current profit/loss of the opened positions.</span>
+                    <h1 id='current_value' class='widget_value'>----</h1>
+                </div>
             </div>
 
             <div id='open_positions_table' class='positions_table'>
-                <h1>Opened Positons</h1>
+                <h1 style='color: rgb(0, 160, 147);'>Opened Positons</h1>
                 <hr>
 
             </div>

@@ -37,9 +37,13 @@
                 <input type="range" min="50" max="250" value="100" class="slider" id="myRange"
                         step="25" oninput="onSliderChange()">
             </div>
-            <div class="details_table_row"><span class="details_table_col1">Assignment Margin :</span>
-                <span  class="details_table_col2" id="details_margin_label">$150K</span></div>   
 
+            <div class="details_table_row" style="border-bottom:none">
+                                            <span class="details_table_col1">Value at Risk :</span>
+                <span  class="details_table_col2" id="details_value_at_risk">----</span></div>   
+            <div class="details_table_row"><span class="details_table_col1">Assignment Margin :</span>
+                <span  class="details_table_col2" id="details_margin_label">----</span></div>   
+                        
 
             <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Contracts :</span>
                 <input type="text" id="details_contracts" class="input_label" value="0.00"  oninput="onMarginChange()"></input></div> 
@@ -75,6 +79,10 @@
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
                         <span id="chance_of_loss">----</span><span>%</span></div></h2>
                 
+                <h2><span style="width: 60%; float:left;">Value at Risk : </span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span>$</span><span id="var_per_100K">----</span></div></h2>
+
                 <h2><span style="width: 60%; float:left;">Price of Loss :</span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
                         <span>$</span><span id="price_of_loss">----</span></div></h2>

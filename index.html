@@ -12,12 +12,82 @@
         <title>DKR Research - Home</title>
 
         <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="dashboard.css">
         <script src="main.js"></script>
+        <script src="dashboard.js"></script>
     </head>
     
     
     <body onload="loadBodyElements()">
         <div id="header">
         </div>
+
+        <div id="wait">
+            <img id="wait_gif" src="wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
+        </div>
+        
+        <div id="contents" style="visibility: hidden; min-height:500px; margin-top:25px; margin-bottom:25px;">
+            <div id="dashboard" style="min-height:1000px; width:100%; background-color: aliceblue; margin:0px; margin-top:-25px">
+                <div style="padding:10px; width:100%;">
+                    <div class="widget_box">
+                        <h1 class="widget_label">Current Value</h1>
+                        <span class="widget_text">The current profit/loss of the opened positions.</span>
+                        <h1 id='current_value' class='widget_value'>$-4,000</h1>
+                    </div>
+                    <div class="widget_box">
+                        <h1 class="widget_label">Reserves</h1>
+                        <span class="widget_text">Reserves to cover Black-Swan events.</span>
+                        <h1 id='bs_reserves' class='widget_value'>$4,000</h1>
+                    </div>
+                    <div class="widget_box">
+                        <h1 class="widget_label">Profit</h1>
+                        <span class="widget_text">The year-to-date profits.</span>
+                        <h1 id='total_profit' class='widget_value'>$4,000</h1>
+                    </div>
+                </div>
+
+                <div style="padding:10px; width:100%;">
+                    <div class="widget_box" style="width:89%">
+                        <div style="width:40%; float:left"> 
+                            <h1 class="widget_label">Total Risk Of Assignment</h1>
+                            <span class="widget_text">The risk of one or more contracts being assigned.</span>
+                        </div>
+                        <div style="width:40%; float:right">
+                            <h1 id='total_roa' class='widget_value' style="margin-top:5px;">99.99%</h1>
+                        </div>
+                    </div>                
+                </div>
+                
+                <div style="padding:10px; width:100%;">
+                    <div class="widget_box" style="width:89%">
+                        <div style="width:40%; float:left"> 
+                            <h1 class="widget_label">Total Value at Risk</h1>
+                            <span class="widget_text">The total value at risk from all the opened positions.</span>
+                        </div>
+                        <div style="width:40%; float:right">
+                            <h1 id='total_var' class='widget_value' style="margin-top:5px;">----</h1>
+                        </div>
+                    </div>                
+                </div>
+
+
+                <div style="padding:10px; width:100%;">
+                    <div class="widget_box" style="width:89%">
+                        <h1 class="widget_label">Opened Positions</h1>
+                        <span class="widget_text">All opened positions.</span>
+                        <hr/>
+
+                        <div id='open_positions_table' class='positions_table'>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            loadDashboardData()
+        </script>
     </body>
 </html>

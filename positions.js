@@ -1,6 +1,9 @@
 
 async function loadPositionsData() {
     let strike_margin = 0.0
+    let total_var = 0.0
+    let current_value = 0.0
+    let total_roa = 1.0
 
     document.querySelector('#wait_status').innerHTML = "... Downloading Open Positions ...";
     let jsonInfo = await fetchPositionsInfo();
@@ -38,13 +41,43 @@ async function loadPositionsData() {
             template = template.replace("{$e}","far")
         }
 
+        total_roa = total_roa * (1.0 - jsonOptionTableInfo['chance_of_loss'])
+
+        value_at_risk = jsonOptionTableInfo['var'] * position_info['contracts']
+        total_var += value_at_risk
+
+        let ask = jsonOptionTableInfo['quote']['ask'] - 0.01
+        let contracts = position_info['contracts']
+        let open_price = position_info['open_price']
+        let cv = contracts * 100.0 * (open_price -  ask)
+        current_value += cv
+
+        if (value_at_risk <= 0){
+            template = template.replace("{$var}",0)
+        } else if (value_at_risk < 1000) {
+            template = template.replace("{$var}","$" + value_at_risk.toFixed(0))
+        } else {
+            value = value_at_risk / 1000.0
+            template = template.replace("{$var}","$" + value.toFixed(0) + "K")
+        }
+
         strike_margin += position_info['contracts'] * 100.0 * position_info['strike_price']
 
         ele = htmlToElement(template);
         divTable.appendChild(ele);
     }
+    
+    
+    value = (1.0 - total_roa) * 100.0
+    document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
+    document.querySelector('#total_var').innerHTML = "$" + (total_var / 1000).toFixed(0) +"K"
 
-    document.querySelector('#strike_margin').innerHTML = "$" + strike_margin.toFixed(0)
+    if (current_value < 0) {
+        document.querySelector('#current_value').style.color = "rgb(145, 35, 35)"
+    }
+    document.querySelector('#current_value').innerHTML = "$" + current_value.toFixed(0)
+
+//    document.querySelector('#strike_margin').innerHTML = "$" + strike_margin.toFixed(0)
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
 }
@@ -67,6 +100,10 @@ function get_template() {
             <div class="coa_box">\
                 <div class="coa_header">ROA</div>\
                 <h1 class="coa">{$coa}%</h1>\
+            </div>\
+            <div class="coa_box">\
+                <div class="coa_header">VaR</div>\
+                <h1 class="coa">{$var}</h1>\
             </div>\
             <div class="coa_box">\
                 <div class="coa_header">Discount</div>\
