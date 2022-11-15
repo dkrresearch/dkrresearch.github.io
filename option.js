@@ -129,10 +129,12 @@ function onSliderChange() {
 function onMarginChange() {
     let contracts = parseFloat( document.getElementById("details_contracts").value )
     let shares = contracts * 100
-    let commision = parseFloat( document.getElementById("details_commision_price").value )
+    let commision = 0.65 * contracts
+//    let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )
     let details_total_proceeds = (shares * open_price) -  commision
 
+    document.getElementById("details_commision_price").value = commision.toFixed(2);
     document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
 
     value = (jsonOptionTableInfo.var * contracts) / 1000.0
