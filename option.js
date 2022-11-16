@@ -38,9 +38,6 @@ async function loadOptionData() {
     document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
     document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
     document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(4)  
-    
-    console.log(jsonOptionTableInfo.var)
-    console.log(jsonOptionTableInfo.strike_price)
 
     value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
     document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
@@ -115,6 +112,20 @@ function loadOpenPosition() {
     onSliderChange()
 }
 
+function onContractsChange() {
+    console.log('onContractsChange')
+
+    let contracts = parseInt( document.getElementById("details_contracts").value )
+    
+    let margin_value = parseInt( contracts * 100.0 * jsonOptionTableInfo.strike_price / 1000.0)
+    document.getElementById("details_margin_label").innerHTML = "$" + margin_value + "K";
+    
+    let commision = 0.65 * contracts
+    document.getElementById("details_commision_price").value = commision.toFixed(2);
+
+    return onMarginChange()
+}
+
 function onSliderChange() {
     var slider = document.getElementById("myRange");
 
@@ -123,18 +134,20 @@ function onSliderChange() {
     let shares = (slider.value * 1000.0) / jsonOptionTableInfo.strike_price
     let contracts = shares / 100
     document.getElementById("details_contracts").value = contracts.toFixed(0);
+
+    let commision = 0.65 * contracts
+    document.getElementById("details_commision_price").value = commision.toFixed(2);
+
     onMarginChange();
 }
 
 function onMarginChange() {
     let contracts = parseFloat( document.getElementById("details_contracts").value )
     let shares = contracts * 100
-    let commision = 0.65 * contracts
-//    let commision = parseFloat( document.getElementById("details_commision_price").value )
+    let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )
     let details_total_proceeds = (shares * open_price) -  commision
 
-    document.getElementById("details_commision_price").value = commision.toFixed(2);
     document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
 
     value = (jsonOptionTableInfo.var * contracts) / 1000.0
@@ -189,8 +202,6 @@ async function onOpenPosition() {
     payload['info'] = info
     payload['opened'] = true
     
-    console.log(payload)
-
     let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions'
     await putPosition(aws_url,payload)
 
