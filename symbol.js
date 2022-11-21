@@ -65,7 +65,7 @@ async function loadSymbolData() {
         for(var key in table.reverse()) {
             if (table[key]['quote'] == null)
                 continue
-            if (parseFloat(table[key]['chance_of_loss']) > 0.035)  
+            if (parseFloat(table[key]['chance_of_loss']) > 0.05)  
                 continue
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
