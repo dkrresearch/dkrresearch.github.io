@@ -69,6 +69,15 @@ async function loadSymbolData() {
                 continue
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
+            if (parseFloat(table[key]['total_premimums']) <= 0.0)
+                continue
+
+            console.log(table[key])
+            if (table[key].hasOwnProperty('prem_over_var') == false)
+                continue
+            if (table[key].hasOwnProperty('price_over_risk') == false)
+                continue
+                
 
             line = '<div class="put_table_row">'
 
@@ -78,20 +87,27 @@ async function loadSymbolData() {
             link = "<a href='/option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
             line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
 
-            line = line + '<span class="put_table_col_2">$' + table[key]['target_price'].toFixed(2) + '</span>'
-
+// bid x ask
             ask = parseFloat(table[key]['quote']['ask'])
             bid = parseFloat(table[key]['quote']['bid'])
-            line = line + '<span class="put_table_col_3">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
+            line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-            value = table[key]['price_of_loss']
-            line = line + '<span class="put_table_col_4">$' + value.toFixed(4) + '</span>'
+// Premimum
+            value = parseFloat(table[key]['total_premimums'])
+            line = line + '<span class="put_table_col_3">$' + value.toFixed(0) + '</span>'
 
-            value = table[key]['chance_of_loss'] * 100.0
-            line = line + '<span class="put_table_col_5">' + value.toFixed(2) + '%</span>'
+// Risk of Assignment
+            value = 100.0 * parseFloat(table[key]['chance_of_loss'])
+            line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
-            value = parseFloat(table[key]['quote']['imp_volatility'])
-            line = line + '<span class="put_table_col_6">' + value.toFixed(4) + '</span>'
+// Prem over Value at Risk
+            value = parseFloat(table[key]['prem_over_var']) * 1000.0
+            line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
+
+// Price over Risk
+            value = table[key]['price_over_risk']
+            line = line + '<span class="put_table_col_6">' + value.toFixed(1) + '</span>'
+
             line = line + '</div>'
 
             ele = htmlToElement(line)

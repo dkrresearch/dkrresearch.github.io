@@ -37,13 +37,24 @@ async function loadOptionData() {
     value = jsonOptionTableInfo.chance_of_loss * 100.0
     document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
     document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
-    document.querySelector('#target_price').innerHTML = jsonOptionTableInfo.target_price.toFixed(4)  
 
     value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
     document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
 
-    
+    if (jsonOptionTableInfo.hasOwnProperty('prem_over_var') == true) {
+        value = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
+        document.querySelector('#prem_over_var').innerHTML = value.toFixed(1)
+    } else {
+        document.querySelector('#prem_over_var').innerHTML = ''
+    }
 
+    if (jsonOptionTableInfo.hasOwnProperty('price_over_risk') == true) {
+        value = jsonOptionTableInfo.price_over_risk
+        document.querySelector('#price_over_risk').innerHTML = value.toFixed(1)
+    } else {
+        document.querySelector('#price_over_risk').innerHTML = ''
+    }
+    
 
 
     let last_price = jsonOptionInfo.Item.info.last_price
