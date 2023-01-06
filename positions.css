@@ -57,8 +57,9 @@
 
   .positions_table {
     float:left;
-    width:90%;
-  }
+    width:88.6%;
+    margin-left:20px;
+}
  
   .positions_table_row {
     float:left;

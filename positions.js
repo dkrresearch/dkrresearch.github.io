@@ -4,6 +4,7 @@ async function loadPositionsData() {
     let total_var = 0.0
     let current_value = 0.0
     let total_roa = 1.0
+    let total_prem = 0.0
 
     document.querySelector('#wait_status').innerHTML = "... Downloading Open Positions ...";
     let jsonInfo = await fetchPositionsInfo();
@@ -49,6 +50,7 @@ async function loadPositionsData() {
         let ask = jsonOptionTableInfo['quote']['ask'] - 0.01
         let contracts = position_info['contracts']
         let open_price = position_info['open_price']
+        total_prem += contracts * 100.0 * open_price
         let cv = contracts * 100.0 * (open_price -  ask)
         current_value += cv
 
@@ -71,6 +73,9 @@ async function loadPositionsData() {
     value = (1.0 - total_roa) * 100.0
     document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
     document.querySelector('#total_var').innerHTML = "$" + (total_var / 1000).toFixed(0) +"K"
+    document.querySelector('#total_prem').innerHTML = "$" + (total_prem).toFixed(0)
+
+    
 
     if (current_value < 0) {
         document.querySelector('#current_value').style.color = "rgb(145, 35, 35)"
