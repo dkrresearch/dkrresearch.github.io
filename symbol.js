@@ -152,7 +152,7 @@ async function onSave() {
     let payload = {};
     payload['symbol'] = jsonInfo.Item.symbol;
     payload['info'] = jsonInfo.Item.info;
-    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items/'
+    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items'
     await putSymbolInfo(aws_url,payload)
 
 
