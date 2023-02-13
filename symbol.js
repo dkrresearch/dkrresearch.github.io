@@ -1,6 +1,7 @@
+var jsonInfo = null;
 
 async function loadSymbolData() {
-    let jsonInfo = await fetchSymbolInfo();
+    jsonInfo = await fetchSymbolInfo();
     if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Item") == false)) {
         let my_url = new URL(window.location.href);
         let symbol = my_url.searchParams.get("symbol").toUpperCase();        
@@ -17,6 +18,7 @@ async function loadSymbolData() {
     document.querySelector('#Industry').innerHTML = jsonInfo.Item.info.overview.Industry;
     document.querySelector('#Description').innerHTML = jsonInfo.Item.info.overview.Description;
     document.querySelector('#next_earnings_date').innerHTML = jsonInfo.Item.info.next_earnings_date;
+    document.querySelector('#details_earnings_date').value = jsonInfo.Item.info.next_earnings_date;
     document.querySelector('#ExDividendDate').innerHTML = jsonInfo.Item.info.overview.ExDividendDate;
     document.querySelector('#DividendPerShare').innerHTML = jsonInfo.Item.info.overview.DividendPerShare;
 
@@ -134,4 +136,44 @@ async function fetchSymbolInfo() {
         console.log(error);
         return null
     }
+}
+
+function editEarningsDate() {
+    document.querySelector('#edit_symbol').style.visibility = "visible";
+    return false;
+}
+
+async function onSave() {
+    edited_date = document.querySelector('#details_earnings_date').value
+    document.querySelector('#next_earnings_date').innerHTML = edited_date.trim()
+    jsonInfo.Item.info.next_earnings_date = edited_date.trim()
+
+
+    let payload = {};
+    payload['symbol'] = jsonInfo.Item.symbol;
+    payload['info'] = jsonInfo.Item.info;
+    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/items/'
+    await putSymbolInfo(aws_url,payload)
+
+
+    document.querySelector('#edit_symbol').style.visibility = "hidden";
+    return false;
+}
+
+async function putSymbolInfo(url,data) {
+    // Awaiting fetch which contains method,
+    // headers and content-type and body
+    console.log(url)
+    console.log(data)
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+           
+    // Awaiting response.json()
+    const resData = await response.json();
+    return resData;
 }

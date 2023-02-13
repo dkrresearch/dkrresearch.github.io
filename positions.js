@@ -47,7 +47,11 @@ async function loadPositionsData() {
         value_at_risk = jsonOptionTableInfo['var'] * position_info['contracts']
         total_var += value_at_risk
 
-        let ask = jsonOptionTableInfo['quote']['ask'] - 0.01
+        let quote = jsonOptionTableInfo['quote']
+        let ask = 0.0
+        if (quote != null) 
+            ask = quote['ask'] - 1
+            
         let contracts = position_info['contracts']
         let open_price = position_info['open_price']
         total_prem += contracts * 100.0 * open_price

@@ -208,7 +208,7 @@ async function onOpenPosition() {
     info['profit'] = 0
     info['bs_premium'] = 0
 
-    payload = {}
+    let payload = {}
     payload['id'] = uuidv4();
     payload['info'] = info
     payload['opened'] = true
