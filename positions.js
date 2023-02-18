@@ -50,12 +50,13 @@ async function loadPositionsData() {
         let quote = jsonOptionTableInfo['quote']
         let ask = 0.0
         if (quote != null) 
-            ask = quote['ask'] - 1
+            ask = quote['ask'] - 0.01
             
         let contracts = position_info['contracts']
         let open_price = position_info['open_price']
         total_prem += contracts * 100.0 * open_price
         let cv = contracts * 100.0 * (open_price -  ask)
+        console.log(cv + " = " + position_info['symbol'] + " : (" + open_price + " - " + ask + ") * " + contracts)
         current_value += cv
 
         if (value_at_risk <= 0){
@@ -92,7 +93,7 @@ async function loadPositionsData() {
 }
 
 function get_template() {
-    block = '\
+    let block = '\
     <div class="positions_table_row">\
         <div class="positions_table_col_1">\
             <h1><a href="/position.html?symbol={$symbol_}&option_symbol={$option_symbol}&e={$e}">\

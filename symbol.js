@@ -10,6 +10,7 @@ async function loadSymbolData() {
     console.log(jsonInfo)
 
     symbol = jsonInfo.Item.symbol
+    document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
  
     symbol_name = jsonInfo.Item.info.overview.Name

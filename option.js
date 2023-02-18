@@ -13,6 +13,10 @@ async function loadOptionData() {
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
     let symbol = jsonOptionTableInfo.symbol
+    let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
+    document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
+
+
     link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     

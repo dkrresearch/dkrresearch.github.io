@@ -25,6 +25,9 @@ async function loadPositionData() {
     jsonPositionInfo = await fetchPosition(symbol)
     console.log(jsonPositionInfo)
 
+    let option_label = jsonPositionInfo['info']['strike_price'].toFixed(2) + " Put"
+    document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
+
     document.querySelector('#details_contracts').innerHTML = jsonPositionInfo['info']['contracts'].toFixed(0)  
     document.querySelector('#details_open_price').innerHTML = jsonPositionInfo['info']['open_price'].toFixed(2)
 
