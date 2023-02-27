@@ -3,6 +3,7 @@ async function loadLogData() {
     document.querySelector('#wait_status').innerHTML = "... Downloading Logs Table ...";
 
     expirations = await fetchLogs()
+    expirations.Items.sort((a,b) => a.expiration - b.expiration);
 
     let len = expirations.Items.length
     for (let i = 0; i<2; i++) {
