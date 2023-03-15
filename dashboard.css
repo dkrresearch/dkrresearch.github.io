@@ -13,6 +13,8 @@
     }
 
     .widget_text {
+        display:block;
+        height: 50px;
         font-size:9pt; 
         margin-left:0px; 
         color: gray;
