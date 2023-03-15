@@ -24,7 +24,8 @@ async function loadPositionData() {
     let symbol =  jsonOptionTableInfo.symbol
     jsonPositionInfo = await fetchPosition(symbol)
     console.log(jsonPositionInfo)
-
+    console.log(jsonOptionTableInfo)
+    
     let option_label = jsonPositionInfo['info']['strike_price'].toFixed(2) + " Put"
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
 
@@ -81,14 +82,11 @@ function onClosePriceChange() {
 }
 
 async function onClosePosition() {
-    
     document.getElementById("close_button").style.backgroundColor = "#888";
     document.getElementById("close_button").disabled = true;
     document.getElementById("close_button").innerHTML = "Closing Position ...";
 
     let info = jsonPositionInfo['info']
-    info['open_dte'] = 21;
-    info['commisions'] = 0.0
 
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, '0');
@@ -115,46 +113,28 @@ async function onClosePosition() {
     //info['bs_premium'] = (info['open_dte']  - info['close_dte']) * (info['strike_price'] * info['contracts']) * 0.0075
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
+    let jsonStatus = await fetchStatus(2023);
+    jsonStatus['cnt_positions'] += 1
+    jsonStatus['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
+    if (info['profit'] < 0) 
+        jsonStatus['carried_losses'] += info['profit']
+    
+    jsonStatus['bs_premium'] += info['bs_premium']
+    jsonStatus['profit'] += info['profit']
+
+    let payload = {}
+    payload['id'] = 2023
+    payload['status'] = jsonStatus
+    console.log(payload)
+    await putStatus(payload);
+    
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
-    
-    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions'
-    await putPosition(aws_url,payload)
+    await putPosition(payload)
 
     document.getElementById("close_button").style.backgroundColor = "#888";
     document.getElementById("close_button").disabled = true;
     document.getElementById("close_button").innerHTML = "Closed";
-}
-
-async function putPosition(url,data) {
-    // Awaiting fetch which contains method,
-    // headers and content-type and body
-    console.log(url)
-    console.log(data)
-    const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-           
-    // Awaiting response.json()
-    const resData = await response.json();
-    return resData;
-}
-
-
-async function fetchPosition(symbol) {
-    let jsonPositions = await fetchPositionsInfo()
-    let table = jsonPositions.Items;
-
-    for (var key in table) {
-        if (table[key]['info']['symbol'] == symbol) 
-            return table[key]
-    }
-
-    return null       
 }

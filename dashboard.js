@@ -1,34 +1,23 @@
 
 async function loadDashboardData() {
-    let bs_reserves = 0.0
-    let num_assignments = 0
-    let total_profit = 0.0
-    let total_cnt = 0
-    let jsonInfo = await fetchHistoryInfo();
-    let table = jsonInfo.Items;
-    
-    for (var key in table) {
-        uuid = table[key]['id']
-        position_info = table[key]['info']
+    let jsonStatus = await fetchStatus(2023);
 
-        total_cnt += 1
+    let total_profit = jsonStatus['profit']
+    let bs_reserves = jsonStatus['bs_premium']
+    let carried_losses = jsonStatus['carried_losses']
 
-        profit = position_info['profit']
-        total_profit += profit
-
-        let assigned = ''
-        if (position_info['assigned'] == true) {
-            num_assignments += 1
-            assigned = 'Assigned'
-        }
-
-        bs_reserves += position_info["bs_premium"]
-    }
-
+    let total_cnt = jsonStatus['cnt_positions']
+    let num_assignments = jsonStatus['cnt_assignments']
     let assignment_rate = (100.0 * num_assignments) / total_cnt
 
     document.querySelector('#total_profit').innerHTML = "$" + total_profit.toFixed(0)
-//   document.querySelector('#assignment_rate').innerHTML = assignment_rate.toFixed(2) + "%"
+    if (total_profit < 0) 
+        document.querySelector('#total_profit').style.color = "rgb(145, 35, 35)"
+
+    document.querySelector('#carried_losses').innerHTML = "$" + carried_losses.toFixed(0)
+    if (carried_losses < 0) 
+        document.querySelector('#carried_losses').style.color = "rgb(145, 35, 35)"
+
     document.querySelector('#bs_reserves').innerHTML = "$" + bs_reserves.toFixed(0)
 
 
@@ -46,7 +35,10 @@ async function loadDashboardData() {
 
         let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
         let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
-        let ask = jsonOptionTableInfo['quote']['ask'] - 0.01
+
+        let ask = open_price
+        if (jsonOptionTableInfo['quote'] != null)
+            ask = jsonOptionTableInfo['quote']['ask'] - 0.01
         
         let cv = contracts * 100.0 * (open_price -  ask)
         current_value += cv

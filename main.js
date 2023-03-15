@@ -50,12 +50,40 @@ function loadError(errMesg) {
     return
 }
 
-async function fetchHistoryInfo() {
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions/closed'
+async function putStatus(payload) {
+    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/status'
+
+    // Awaiting fetch which contains method,
+    // headers and content-type and body
+    console.log(aws_url)
+    console.log(payload)
+    const response = await fetch(aws_url, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+           
+    // Awaiting response.json()
+    const resData = await response.json();
+    return resData;
+}
+
+async function fetchStatus(year) {
+    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/status'
     console.log(info_url)
     try {
         let res = await fetch(info_url);
-        return await res.json();
+        let jsonStatus =  await res.json();
+
+        for (idx=0; idx< jsonStatus['Items'].length; idx++) {
+            let id = jsonStatus.Items[idx]['id'];
+            if (id == year) 
+                return jsonStatus.Items[idx]['status']
+        }
+
+        return null
     } catch (error) {
         console.log(error);
     }
@@ -71,6 +99,40 @@ async function fetchPositionsInfo() {
         console.log(error);
     }
 }
+
+
+async function putPosition(data) {
+    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions'
+    console.log(aws_url)
+
+    // Awaiting fetch which contains method,
+    // headers and content-type and body
+    const response = await fetch(aws_url, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+           
+    // Awaiting response.json()
+    const resData = await response.json();
+    return resData;
+}
+
+
+async function fetchPosition(symbol) {
+    let jsonPositions = await fetchPositionsInfo()
+    let table = jsonPositions.Items;
+
+    for (var key in table) {
+        if (table[key]['info']['symbol'] == symbol) 
+            return table[key]
+    }
+
+    return null       
+}
+
 
 async function fetchOptionTable(symbol) {
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/options/' + symbol

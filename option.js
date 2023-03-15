@@ -216,29 +216,9 @@ async function onOpenPosition() {
     payload['id'] = uuidv4();
     payload['info'] = info
     payload['opened'] = true
-    
-    let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/positions'
-    await putPosition(aws_url,payload)
+    await putPosition(payload)
 
     document.getElementById("open_button").style.backgroundColor = "#888";
     document.getElementById("open_button").disabled = true;
     document.getElementById("open_button").innerHTML = "Opened";
-}
-
-async function putPosition(url,data) {
-    // Awaiting fetch which contains method,
-    // headers and content-type and body
-    console.log(url)
-    console.log(data)
-    const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-           
-    // Awaiting response.json()
-    const resData = await response.json();
-    return resData;
 }

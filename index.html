@@ -32,21 +32,34 @@
             <div id="dashboard" style="min-height:1000px; width:100%; background-color: aliceblue; margin:0px; margin-top:-25px">
                 <div style="padding:10px; width:100%;">
                     <div class="widget_box">
-                        <h1 class="widget_label">Current Value</h1>
-                        <span class="widget_text">The current profit/loss of the opened positions.</span>
-                        <h1 id='current_value' class='widget_value'>$-4,000</h1>
+                        <h1 class="widget_label">Carried Risk</h1>
+                        <span class="widget_text">The cumulative amount of estimated risk assumed minus realized losses.</span>
+                        <h1 id='carried_losses' class='widget_value'>---</h1>
                     </div>
                     <div class="widget_box">
                         <h1 class="widget_label">Reserves</h1>
                         <span class="widget_text">Reserves to cover Black-Swan events.</span>
-                        <h1 id='bs_reserves' class='widget_value'>$4,000</h1>
+                        <h1 id='bs_reserves' class='widget_value'>----</h1>
                     </div>
                     <div class="widget_box">
                         <h1 class="widget_label">Profit</h1>
                         <span class="widget_text">The year-to-date profits.</span>
-                        <h1 id='total_profit' class='widget_value'>$4,000</h1>
+                        <h1 id='total_profit' class='widget_value'>----</h1>
                     </div>
                 </div>
+
+                <div style="padding:10px; width:100%;">
+                    <div class="widget_box" style="width:89%">
+                        <div style="width:40%; float:left"> 
+                            <h1 class="widget_label">Current Value</h1>
+                            <span class="widget_text">The current profit/loss from all the opened positions.</span>
+                        </div>
+                        <div style="width:40%; float:right">
+                            <h1 id='current_value' class='widget_value' style="margin-top:5px;">----</h1>
+                        </div>
+                    </div>                
+                </div>
+
 
                 <div style="padding:10px; width:100%;">
                     <div class="widget_box" style="width:89%">
@@ -55,7 +68,7 @@
                             <span class="widget_text">The risk of one or more contracts being assigned.</span>
                         </div>
                         <div style="width:40%; float:right">
-                            <h1 id='total_roa' class='widget_value' style="margin-top:5px;">99.99%</h1>
+                            <h1 id='total_roa' class='widget_value' style="margin-top:5px;">----</h1>
                         </div>
                     </div>                
                 </div>
