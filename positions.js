@@ -19,7 +19,7 @@ async function loadPositionsData() {
         uuid = table[key]['id']
         position_info = table[key]['info']
 
-        template = get_template()
+        let template = get_template()
         template = template.replace("{$symbol}",position_info['symbol'])
         template = template.replace("{$symbol_}",position_info['symbol'])
         template = template.replace("{$option_symbol}",position_info['quote_symbol'])
