@@ -2,7 +2,10 @@
     .widget_box {
         float:left;
         width:26%;
-        padding:20px;
+        padding-top:10px;
+        padding-bottom:20px;
+        padding-left:20px;
+        padding-right:20px;
         margin:5px;
         background-color: rgb(255, 255, 255);
     }
@@ -14,7 +17,14 @@
 
     .widget_text {
         display:block;
-        height: 50px;
+        font-size:9pt; 
+        margin-left:0px; 
+        color: gray;
+    }
+
+    .widget_box_text {
+        display:block;
+        height:20pt;
         font-size:9pt; 
         margin-left:0px; 
         color: gray;
@@ -28,7 +38,14 @@
         float:right
     }
 
-    
+    .div_parent {
+        float:left; 
+        padding-left:10px; 
+        padding-right:10px; 
+        padding-bottom:5px; 
+        width:100%;
+    }
+
   .coa_box {
     float:left;
     width:80px;
