@@ -30,6 +30,9 @@ async function loadDashboardData() {
     for (var key in table) {
         let uuid = table[key]['id']
         let position_info = table[key]['info']
+        if  (position_info['assigned'] == true)
+            continue
+
         let contracts = position_info['contracts']
         let open_price = position_info['open_price']
 
@@ -56,8 +59,13 @@ async function loadDashboardData() {
         template = template.replace("{$strike}",position_info['strike_price'])
         value = (100.0 * jsonOptionTableInfo['chance_of_loss'])
         template = template.replace("{$coa}",value.toFixed(2))
+
         value = (100.0 * jsonOptionTableInfo['discount'])
         template = template.replace("{$discount}",value.toFixed(0))
+        if ( value < 0) 
+            template = template.replace("{$red}","color:rgb(145, 35, 35)")
+        else
+            template = template.replace("{$red}",'')
 
         if (value_at_risk <= 0){
             template = template.replace("{$var}",0)
@@ -108,7 +116,7 @@ function get_template() {
             </div>\
             <div class="coa_box">\
                 <div class="coa_header">Discount</div>\
-                <h1 class="coa">{$discount}%</h1>\
+                <h1 class="coa" style="{$red}">{$discount}%</h1>\
             </div>\
         </div>\
     </div>';

@@ -81,6 +81,25 @@ function onClosePriceChange() {
     document.getElementById("details_max_value").innerHTML = "$" + max_value.toFixed(2);
 }
 
+async function onAssignPosition() {
+    document.getElementById("close_button").style.backgroundColor = "#888";
+    document.getElementById("close_button").disabled = true;
+    document.getElementById("close_button").innerHTML = "Assigning ...";
+
+    document.getElementById("close_button").style.backgroundColor = "#888";
+    document.getElementById("close_button").disabled = true;
+    document.getElementById("close_button").innerHTML = "Assigned";
+
+    let info = jsonPositionInfo['info']
+    console.log(info)
+    
+    payload = {}
+    payload['id'] = jsonPositionInfo["id"]
+    payload['info'] = info
+    info['assigned'] =  true
+    await putPosition(payload)
+}
+
 async function onClosePosition() {
     document.getElementById("close_button").style.backgroundColor = "#888";
     document.getElementById("close_button").disabled = true;
@@ -125,7 +144,6 @@ async function onClosePosition() {
     let payload = {}
     payload['id'] = 2023
     payload['status'] = jsonStatus
-    console.log(payload)
     await putStatus(payload);
     
     payload = {}

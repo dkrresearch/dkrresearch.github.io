@@ -18,6 +18,8 @@ async function loadPositionsData() {
     for (var key in table) {
         uuid = table[key]['id']
         position_info = table[key]['info']
+        if  (position_info['assigned'] == true)
+            continue
 
         let template = get_template()
         template = template.replace("{$symbol}",position_info['symbol'])
@@ -35,6 +37,10 @@ async function loadPositionsData() {
         template = template.replace("{$coa}",value.toFixed(2))
         value = (100.0 * jsonOptionTableInfo['discount'])
         template = template.replace("{$discount}",value.toFixed(0))
+        if ( value < 0) 
+            template = template.replace("{$red}","color:rgb(145, 35, 35)")
+        else
+            template = template.replace("{$red}",'')
 
         if (jsonOptionTableInfo['0'] == 0){
             template = template.replace("{$e}","near")
@@ -69,7 +75,7 @@ async function loadPositionsData() {
 
         strike_margin += position_info['contracts'] * 100.0 * position_info['strike_price']
 
-        ele = htmlToElement(template);
+        let ele = htmlToElement(template);
         divTable.appendChild(ele);
     }
     
@@ -116,7 +122,7 @@ function get_template() {
             </div>\
             <div class="coa_box">\
                 <div class="coa_header">Discount</div>\
-                <h1 class="coa">{$discount}%</h1>\
+                <h1 class="coa" style="{$red}">{$discount}%</h1>\
             </div>\
         </div>\
     </div>';
