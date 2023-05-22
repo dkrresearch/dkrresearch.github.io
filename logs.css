@@ -5,7 +5,17 @@
     color: #666;
   }
 
+  #history_table {
+    font-size: 12px;
+    color: #666;
+  }
   
+  .history_entry {
+    margin-left:5px; 
+    width:100%; 
+    float:left
+  }
+
   .log_table {
     margin-left:10px;
     width:100%;

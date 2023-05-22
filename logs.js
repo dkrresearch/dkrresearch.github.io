@@ -2,28 +2,45 @@
 async function loadLogData() {
     document.querySelector('#wait_status').innerHTML = "... Downloading Logs Table ...";
 
-    expirations = await fetchLogs()
+    let expirations = await fetchLogs()
     expirations.Items.sort((a,b) => a.expiration - b.expiration);
-
     let len = expirations.Items.length
-    for (let i = 0; i<2; i++) {
+
+
+    let my_url = new URL(window.location.href);
+    let idx_param = my_url.searchParams.get("idx");
+    if (idx_param == null)
+        idx_param = len - 2
+    console.log('idx : ' + idx_param)
+
+    console.log(expirations)
+    let divHistory = document.getElementById("history_table");;
+    for (let i = len-1; i>=0; i--) {
+        let expiration = expirations.Items[i].expiration
+        let yr = expiration.toString().substring(0, 4)
+        let month = expiration.toString().substring(4, 6)
+
+        template = getHistoryTableRow()
+        template = template.replace("{$idx}",i)
+        template = template.replace("{$strike}", yr + '-' + month)
+
+        if (i == idx_param) 
+            template = template.replace("&#x2022;", '&#9654;')
+             
+        ele = htmlToElement(template);
+        divHistory.appendChild(ele);
+    }
+
         let divTable = null;
-        let log_table = await fetchLogTable( expirations.Items[len - 1 - i].expiration )
-        console.log(log_table)
+        let log_table = await fetchLogTable( expirations.Items[idx_param].expiration )
 
         let year = log_table.Item.info.year
         let month = log_table.Item.info.month
         let day = log_table.Item.info.day
         let expiration_date = year + "-" + month + "-" + day
 
-        if (i == 0) {
-            document.querySelector('#prediction_logs_far').innerHTML = "Prediction logs for " + expiration_date
-            divTable = document.getElementById("log_table_far");
-        }
-        if (i == 1) {
-            document.querySelector('#prediction_logs_near').innerHTML = "Prediction logs for "  + expiration_date
-            divTable = document.getElementById("log_table_near");
-        }
+        document.querySelector('#prediction_logs_near').innerHTML = "Prediction logs for " + expiration_date
+        divTable = document.getElementById("log_table_near");
 
         console.log(log_table)
         for (let s=0; s<log_table.Item.info.symbols.length; s++) {
@@ -33,7 +50,7 @@ async function loadLogData() {
             template = getSymbolTable()
             template = template.replace("{$symbol}",symbolInfo['entry']['symbol'])
             template = template.replace("{$table_name}","table_" + symbolInfo['entry']['symbol'])
-
+            
             let last_price = symbolInfo['entry']['last_price']
             template = template.replace("{$price}",last_price.toFixed(2))
 
@@ -64,17 +81,20 @@ async function loadLogData() {
             ele = htmlToElement(template);
             divTable.appendChild(ele);
         }
-    }
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
 }
 
+function getHistoryTableRow() {
+    let template = "<div class='history_entry'><span style='display:inline-block; width:13px;'>&#x2022; </span><a href='/logs.html?idx={$idx}'>{$strike}</a></div>"
+    return template
+}
 
 function getSymbolTable() {
     let template = "<div style='width:100%; float:left; margin-bottom:25px;'>\
             <div style='width:100%; float:left;'>\
-                <h1 style='width:75px; float:left; color:rgb(0,160,147); margin-left:0px;'>{$symbol}</h1><br/><div style='width:15%; float:left;'>Current Price : {$price}</div>\
+                <h1 style='width:75px; float:left; color:rgb(0,160,147); margin-left:0px;'>{$symbol}</h1><br/><div style='width:25%; float:left;'>Current Price : {$price}</div>\
             </div>\
             <div style='width:100%; float:left; margin-top:10px;'>\
                 <div style='width:75px; float:left;'>Strike</div>\
