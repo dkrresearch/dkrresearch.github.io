@@ -97,6 +97,7 @@ async function loadSymbolData() {
 
 // Premimum
             value = parseFloat(table[key]['total_premimums'])
+            value = globalDefaultValue * (value / 100.0)
             line = line + '<span class="put_table_col_3">$' + value.toFixed(0) + '</span>'
 
 // Risk of Assignment

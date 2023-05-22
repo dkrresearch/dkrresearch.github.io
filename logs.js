@@ -1,19 +1,19 @@
 
 async function loadLogData() {
+    let ele
+    let template
+    
     document.querySelector('#wait_status').innerHTML = "... Downloading Logs Table ...";
 
     let expirations = await fetchLogs()
     expirations.Items.sort((a,b) => a.expiration - b.expiration);
     let len = expirations.Items.length
 
-
     let my_url = new URL(window.location.href);
     let idx_param = my_url.searchParams.get("idx");
     if (idx_param == null)
         idx_param = len - 2
-    console.log('idx : ' + idx_param)
 
-    console.log(expirations)
     let divHistory = document.getElementById("history_table");;
     for (let i = len-1; i>=0; i--) {
         let expiration = expirations.Items[i].expiration
@@ -31,56 +31,55 @@ async function loadLogData() {
         divHistory.appendChild(ele);
     }
 
-        let divTable = null;
-        let log_table = await fetchLogTable( expirations.Items[idx_param].expiration )
+    let divTable = null;
+    let log_table = await fetchLogTable( expirations.Items[idx_param].expiration )
 
-        let year = log_table.Item.info.year
-        let month = log_table.Item.info.month
-        let day = log_table.Item.info.day
-        let expiration_date = year + "-" + month + "-" + day
+    let year = log_table.Item.info.year
+    let month = log_table.Item.info.month
+    let day = log_table.Item.info.day
+    let expiration_date = year + "-" + month + "-" + day
 
-        document.querySelector('#prediction_logs_near').innerHTML = "Prediction logs for " + expiration_date
-        divTable = document.getElementById("log_table_near");
+    document.querySelector('#prediction_logs_near').innerHTML = "Prediction logs for " + expiration_date
+    divTable = document.getElementById("log_table_near");
 
-        console.log(log_table)
-        for (let s=0; s<log_table.Item.info.symbols.length; s++) {
-            symbolInfo = log_table.Item.info.symbols[s]
-            console.log(symbolInfo)
+    for (let s=0; s<log_table.Item.info.symbols.length; s++) {
+        symbolInfo = log_table.Item.info.symbols[s]
+        console.log(symbolInfo)
 
-            template = getSymbolTable()
-            template = template.replace("{$symbol}",symbolInfo['entry']['symbol'])
-            template = template.replace("{$table_name}","table_" + symbolInfo['entry']['symbol'])
-            
-            let last_price = symbolInfo['entry']['last_price']
-            template = template.replace("{$price}",last_price.toFixed(2))
+        template = getSymbolTable()
+        template = template.replace("{$symbol}",symbolInfo['entry']['symbol'])
+        template = template.replace("{$table_name}","table_" + symbolInfo['entry']['symbol'])
+        
+        let last_price = symbolInfo['entry']['last_price']
+        template = template.replace("{$price}",last_price.toFixed(2))
 
-            let assignments_rows = '';
-            for (let a=0; a<symbolInfo.assignments.length; a++) {
-                let assignment = symbolInfo.assignments[a]
+        let assignments_rows = '';
+        for (let a=0; a<symbolInfo.assignments.length; a++) {
+            let assignment = symbolInfo.assignments[a]
 
-                row = getAssignmentRow()
-                row = row.replace("{$strike}",assignment['strike'].toFixed(2))
-                row = row.replace("{$dte}",assignment['dte'])
-                row = row.replace("{$depth}",assignment['depth'])
-                row = row.replace("{$roa}",assignment['roa'].toFixed(3))
-                row = row.replace("{$discnt}",assignment['discount'].toFixed(2))
-                row = row.replace("{$pov}",assignment['prem_over_var'].toFixed(2))
-                row = row.replace("{$por}",assignment['price_over_risk'].toFixed(2))
-                row = row.replace("{$g1}",(assignment['g1']).toFixed(2))
+            row = getAssignmentRow()
+            row = row.replace("{$strike}",assignment['strike'].toFixed(2))
+            row = row.replace("{$dte}",assignment['dte'])
+            row = row.replace("{$depth}",assignment['depth'])
+            row = row.replace("{$roa}",assignment['roa'].toFixed(3))
+            row = row.replace("{$discnt}",assignment['discount'].toFixed(2))
+            row = row.replace("{$pov}",assignment['prem_over_var'].toFixed(2))
+            row = row.replace("{$por}",assignment['price_over_risk'].toFixed(2))
+            row = row.replace("{$g1}",(assignment['g1']).toFixed(2))
 
-                let loss = 100.0 * (last_price - assignment['strike']) / assignment['strike']
-                let szLoss = loss.toFixed(2)
-                if (loss < 0)
-                    szLoss = "<span style='color:red;'>" + loss.toFixed(2) + "</span>"
-                row = row.replace("{$loss}",szLoss)
+            let loss = 100.0 * (last_price - assignment['strike']) / assignment['strike']
+            let szLoss = loss.toFixed(2)
+            if (loss < 0)
+                szLoss = "<span style='color:red;'>" + loss.toFixed(2) + "</span>"
+            row = row.replace("{$loss}",szLoss)
 
-                assignments_rows += row
-            }
-            template = template.replace("{$assignments}",assignments_rows)
-
-            ele = htmlToElement(template);
-            divTable.appendChild(ele);
+            assignments_rows += row
         }
+        template = template.replace("{$assignments}",assignments_rows)
+
+        ele = htmlToElement(template);
+        divTable.appendChild(ele);
+    }
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
@@ -134,8 +133,9 @@ function getAssignmentRow() {
 
 
 async function fetchLogs() {
-    let my_url = new URL(window.location.href);
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/log-results'
+
+    console.log(info_url)
     try {
         let res = await fetch(info_url);
         return await res.json();
@@ -145,10 +145,10 @@ async function fetchLogs() {
 }
 
 async function fetchLogTable(expiration) {
-    console.log(expiration)
-
     let my_url = new URL(window.location.href);
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/log-results/' + expiration
+
+    console.log(info_url)
     try {
         let res = await fetch(info_url);
         return await res.json();

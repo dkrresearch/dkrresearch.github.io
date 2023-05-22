@@ -16,7 +16,6 @@ async function loadOptionData() {
     let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
 
-
     link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     
@@ -59,7 +58,7 @@ async function loadOptionData() {
         document.querySelector('#price_over_risk').innerHTML = ''
     }
     
-
+    document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
 
     let last_price = jsonOptionInfo.Item.info.last_price
     let strike_price = jsonOptionTableInfo.strike_price
@@ -122,14 +121,12 @@ async function fetchSymbolInfo() {
 }
 
 function loadOpenPosition() {
-    bid = parseFloat(jsonOptionTableInfo.quote.bid)
+    let bid = parseFloat(jsonOptionTableInfo.quote.bid)
     document.getElementById("details_open_price").value = (bid + 0.01).toFixed(2)
     onSliderChange()
 }
 
 function onContractsChange() {
-    console.log('onContractsChange')
-
     let contracts = parseInt( document.getElementById("details_contracts").value )
     
     let margin_value = parseInt( contracts * 100.0 * jsonOptionTableInfo.strike_price / 1000.0)
@@ -142,11 +139,11 @@ function onContractsChange() {
 }
 
 function onSliderChange() {
-    var slider = document.getElementById("myRange");
+    let slider = document.getElementById("myRange");
+    let value = slider.value * globalDefaultValue
+    document.getElementById("details_margin_label").innerHTML = "$" + parseInt(value / 1000) + "K";
 
-    document.getElementById("details_margin_label").innerHTML = "$" + slider.value + "K";
-
-    let shares = (slider.value * 1000.0) / jsonOptionTableInfo.strike_price
+    let shares = value / jsonOptionTableInfo.strike_price
     let contracts = shares / 100
     document.getElementById("details_contracts").value = contracts.toFixed(0);
 

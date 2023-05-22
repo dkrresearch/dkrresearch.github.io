@@ -1,4 +1,6 @@
 
+var globalDefaultValue = 110;  //  $110,000
+
 async function loadBodyElements() {
     let header = await fetchHeader();
     let container = document.querySelector('#header');
