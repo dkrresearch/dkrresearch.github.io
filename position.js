@@ -33,7 +33,7 @@ async function loadPositionData() {
     document.querySelector('#details_open_price').innerHTML = jsonPositionInfo['info']['open_price'].toFixed(2)
 
     value = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
-    document.querySelector('#details_margin').innerHTML = '$' + value.toFixed(2)  + 'K'  
+    document.querySelector('#details_margin_label').innerHTML = '$' + value.toFixed(2)  + 'K'  
     value = jsonPositionInfo['info']['open_price']
     document.querySelector('#details_open_price').innerHTML = value.toFixed(2)  
 
