@@ -121,8 +121,8 @@ async function fetchSymbolInfo() {
 }
 
 function loadOpenPosition() {
-    let bid = parseFloat(jsonOptionTableInfo.quote.bid)
-    document.getElementById("details_open_price").value = (bid + 0.01).toFixed(2)
+    let mark = parseFloat(jsonOptionTableInfo.quote.mark_price)
+    document.getElementById("details_open_price").value = (mark).toFixed(2)
     onSliderChange()
 }
 
