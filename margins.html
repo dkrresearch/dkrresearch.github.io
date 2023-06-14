@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!-- use 'python3 -m http.server 80' to test -->
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+        <title>DKR Research - Margin Report</title>
+
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="margins.css">
+        <script src="main.js?v=1"></script>
+        <script src="margins.js?v=1"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header">
+        </div>
+
+        <div id="wait">
+            <img id="wait_gif" src="wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
+        </div>
+        
+        <div id="contents" style="visibility: hidden; margin-bottom:25px;">
+            <div style="padding:10px; width:100%;">
+                <div class="widget_box">
+                    <h1 class="widget_label">Value at Risk</h1>
+                    <span class="widget_text">The total value at risk from all the opened positions.</span>
+                    <h1 id='total_var' class='widget_value'>----</h1>
+                </div>
+                <div class="widget_box">
+                    <h1 class="widget_label">RegT Margin</h1>
+                    <span class="widget_text">The current margin requirements of the selected options.</span>
+                    <h1 id='total_regt' class='widget_value'>----</h1>
+                </div>                
+                <div class="widget_box">
+                    <h1 class="widget_label">Assignment Margin</h1>
+                    <span class="widget_text">The margin required if all the selected options were assigned.</span>
+                    <h1 id='total_am' class='widget_value'>----</h1>
+                </div>
+            </div>
+             
+            <div id='open_positions_table' class='positions_table'>
+                <div class="positions_table_row">
+                    <div class="positions_table_col_1">
+                        <h1 style='color: rgb(0, 160, 147);'>Opened Positons</h1>
+                    </div>
+                    <div class="positions_table_col_2">
+                        <h1 style='color: rgb(0, 160, 147);'>Use RegT</h1>
+                    </div>
+                    <div class="positions_table_col_3">
+                        <div class="coa_box">
+                            <h1 class="coa">VaR</h1>
+                        </div>
+                        <div class="coa_box">
+                            <h1 class="coa">Reg T</h1>
+                        </div>
+                        <div class="coa_box">
+                            <h1 class="coa">Assignment</h1>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        <script>
+            loadPositionsData()
+        </script>
+    </body>
+</html>
