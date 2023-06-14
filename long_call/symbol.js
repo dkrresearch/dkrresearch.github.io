@@ -65,31 +65,37 @@ async function loadSymbolData() {
         }   
 
 
-        for(var key in table.reverse()) {
+        for(var key in table) {
             if (table[key]['quote'] == null)
+                continue            
+            if (table[key]['type'] != 'long_call')
                 continue
-            if (table[key]['type'] != 'short_put')
+
+            if (table[key].hasOwnProperty('payout_over_prem') == false)
                 continue
-            if (parseFloat(table[key]['chance_of_loss']) > 0.05)  
+            if (table[key].hasOwnProperty('chance_of_payout') == false)
                 continue
+
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
-            if (parseFloat(table[key]['total_premimums']) <= 0.0)
+            if (parseFloat(table[key]['quote']['bid']) <= 0.01)
+                continue            
+            if (parseFloat(table[key]['premimum']) <= 0.0)
+                continue
+            if (parseFloat(table[key]['chance_of_payout']) > 0.50)
                 continue
 
             console.log(table[key])
-            if (table[key].hasOwnProperty('prem_over_var') == false)
-                continue
-            if (table[key].hasOwnProperty('price_over_risk') == false)
-                continue
-                
+
+            if (parseFloat(table[key]['premimum']) <= 0.0)
+                continue                
 
             line = '<div class="put_table_row">'
 
             option_symbol = table[key]['quote_symbol'];
             strike_price = table[key]['strike_price'].toFixed(2);
             discount = table[key]['discount'] * 100.0
-            link = "<a href='/option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
+            link = "<a href='option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
             line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
 
 // bid x ask
@@ -98,21 +104,17 @@ async function loadSymbolData() {
             line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
 // Premimum
-            value = parseFloat(table[key]['total_premimums'])
-            value = globalDefaultValue * (value / 100.0)
+            value = parseFloat(table[key]['premimum'])
             line = line + '<span class="put_table_col_3">$' + value.toFixed(0) + '</span>'
 
 // Risk of Assignment
-            value = 100.0 * parseFloat(table[key]['chance_of_loss'])
+            value = 100.0 * parseFloat(table[key]['chance_of_payout'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
 // Prem over Value at Risk
-            value = parseFloat(table[key]['prem_over_var']) * 1000.0
+            value = parseFloat(table[key]['payout_over_prem'])
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
 
-// Price over Risk
-            value = table[key]['price_over_risk']
-            line = line + '<span class="put_table_col_6">' + value.toFixed(1) + '</span>'
 
             line = line + '</div>'
 

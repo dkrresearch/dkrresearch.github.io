@@ -45,15 +45,13 @@ async function loadLogData() {
     console.log( log_table )
 
     //  Legacy support everything before 2023-06 uses log_table.Item.info.symbols
-    short_puts = []
-    if (log_table.Item.info.hasOwnProperty('short_puts') == true)
-        short_puts = log_table.Item.info.short_puts
-    else if (log_table.Item.info.hasOwnProperty('symbols') == true)
-        short_puts = log_table.Item.info.symbols
+    long_calls = []
+    if (log_table.Item.info.hasOwnProperty('long_calls') == true)
+        long_calls = log_table.Item.info.long_calls
     
-    for (let s=0; s<short_puts.length; s++) {
-        console.log(short_puts)
-        symbolInfo = short_puts[s]
+    for (let s=0; s<long_calls.length; s++) {
+        console.log(long_calls)
+        symbolInfo = long_calls[s]
 
         template = getSymbolTable()
         template = template.replace("{$symbol}",symbolInfo['entry']['symbol'])
@@ -69,18 +67,16 @@ async function loadLogData() {
             row = getAssignmentRow()
             row = row.replace("{$strike}",assignment['strike'].toFixed(2))
             row = row.replace("{$dte}",assignment['dte'])
-            row = row.replace("{$depth}",'')
-            row = row.replace("{$roa}",assignment['roa'].toFixed(3))
+            row = row.replace("{$cop}",assignment['chance_of_payout'].toFixed(2))
+            row = row.replace("{$pop}",assignment['payout_over_prem'].toFixed(2))
             row = row.replace("{$discnt}",assignment['discount'].toFixed(2))
-            row = row.replace("{$pov}",assignment['prem_over_var'].toFixed(2))
-            row = row.replace("{$por}",assignment['price_over_risk'].toFixed(2))
-            row = row.replace("{$g1}",(assignment['g1']).toFixed(2))
+            row = row.replace("{$prem}",(assignment['premimum']).toFixed(2))
 
-            let loss = 100.0 * (last_price - assignment['strike']) / assignment['strike']
-            let szLoss = loss.toFixed(2)
-            if (loss < 0)
-                szLoss = "<span style='color:red;'>" + loss.toFixed(2) + "</span>"
-            row = row.replace("{$loss}",szLoss)
+            let gain = assignment['payout']
+            let szGain = gain.toFixed(2)
+            if (gain > 0)
+                szGain = "<span style='color:green;'>" + gain.toFixed(2) + "</span>"
+            row = row.replace("{$gain}",szGain)
 
             assignments_rows += row
         }
@@ -95,7 +91,7 @@ async function loadLogData() {
 }
 
 function getHistoryTableRow() {
-    let template = "<div class='history_entry'><span style='display:inline-block; width:13px;'>&#x2022; </span><a href='/logs.html?idx={$idx}'>{$strike}</a></div>"
+    let template = "<div class='history_entry'><span style='display:inline-block; width:13px;'>&#x2022; </span><a href='logs.html?idx={$idx}'>{$strike}</a></div>"
     return template
 }
 
@@ -106,13 +102,13 @@ function getSymbolTable() {
             </div>\
             <div style='width:100%; float:left; margin-top:10px;'>\
                 <div style='width:75px; float:left;'>Strike</div>\
-                <div style='width:75px; float:left; text-align:right;'>DTE</div>\
-                <div style='width:75px; float:left; text-align:right;'>Loss (%)</div>\
-                <div style='width:75px; float:left; text-align:right;'>ROA (%)</div>\
-                <div style='width:75px; float:left; text-align:right;'>Discnt (%)</div>\
-                <div style='width:75px; float:left; text-align:right;'>Prem/VaR</div>\
-                <div style='width:75px; float:left; text-align:right;'>Price/Risk</div>\
-                <div style='width:75px; float:left; text-align:right;'>g1 (%)</div>\
+                <div style='width:25px; float:left; text-align:right;'> </div>\
+                <div style='width:100px; float:left; text-align:right;'>DTE</div>\
+                <div style='width:100px; float:left; text-align:right;'>Gain (%)</div>\
+                <div style='width:100px; float:left; text-align:right;'>Chance (%)</div>\
+                <div style='width:100px; float:left; text-align:right;'>Payout / Prem</div>\
+                <div style='width:100px; float:left; text-align:right;'>Discnt (%)</div>\
+                <div style='width:100px; float:left; text-align:right;'>Prem ($)</div>\
             </div>\
             <hr style='width:675px; float:left;'/>\
             <div id='{$table_name}' class='symbol_table'>\
@@ -123,18 +119,18 @@ function getSymbolTable() {
 }
 
 
+
 function getAssignmentRow() {
     let template = "\
             <div style='width:100%; float:left; margin-top:5px;'>\
                 <div style='width:75px; float:left;'>{$strike}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$dte}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$depth}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$loss}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$roa}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$discnt}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$pov}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$por}</div>\
-                <div style='width:75px; float:left; text-align:right;'>{$g1}</div>\
+                <div style='width:25px; float:left; text-align:right;'> </div>\
+                <div style='width:100px; float:left; text-align:right;'>{$dte}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$gain}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$cop}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$pop}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$discnt}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$prem}</div>\
             </div>"
     return template;
 }
