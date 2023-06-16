@@ -73,10 +73,6 @@ async function loadOptionData() {
     value = parseFloat(jsonOptionTableInfo.quote.buy_price)
     document.querySelector('#buy_price').innerHTML = value.toFixed(2)   
 
-    
-    document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
-
-
 // Remove Me!
     document.getElementById("open_button").disabled = true;
     document.getElementById("open_button").style.backgroundColor = "#888";
@@ -136,12 +132,15 @@ function onContractsChange() {
 
 function onSliderChange() {
     let slider = document.getElementById("myRange");
-    let value = slider.value * globalDefaultValue
-    document.getElementById("details_margin_label").innerHTML = "$" + parseInt(value / 1000) + "K";
+    let value = slider.value
 
-    let shares = value / jsonOptionTableInfo.strike_price
-    let contracts = shares / 100
+    let open_price = parseFloat( document.getElementById("details_open_price").value )
+    let shares = value / open_price
+    let contracts = Math.round( shares / 100 )
     document.getElementById("details_contracts").value = contracts.toFixed(0);
+
+    let prem = contracts * 100 * open_price
+    document.getElementById("details_premimum").innerHTML = "$" + prem.toFixed(0);
 
     let commision = 0.65 * contracts
     document.getElementById("details_commision_price").value = commision.toFixed(2);
@@ -154,9 +153,16 @@ function onMarginChange() {
     let shares = contracts * 100
     let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )
-    let details_total_proceeds = (shares * open_price) -  commision
+    let strike_price = parseFloat( jsonOptionTableInfo['strike_price'] )
 
-    document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
+    let details_total_price = (shares * open_price) +  commision
+    document.getElementById("details_total_price").innerHTML = "$" + details_total_price.toFixed(2);
+
+    let assignment_margin = (strike_price * shares) / 1000.0
+    document.getElementById("details_am").innerHTML = "$" + assignment_margin.toFixed(0) + "K";
+
+    let avg_payout = details_total_price * parseFloat( jsonOptionTableInfo['payout_over_prem'] )
+    document.getElementById("details_payout").innerHTML = "$" + avg_payout.toFixed(0);
 }
 
 function uuidv4() {
