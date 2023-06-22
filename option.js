@@ -12,17 +12,11 @@ async function loadOptionData() {
     jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
-    let symbol = jsonOptionTableInfo.symbol
-    let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
-    document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
+    let symbol = jsonOptionInfo.Item.symbol
 
     link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     
-    document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
-    document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
-    document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
-
     let symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#name').innerHTML = link;
@@ -35,55 +29,69 @@ async function loadOptionData() {
     value = (10000.0 * jsonOptionInfo.Item.info.max_earnings_delta).toFixed();
     value = value / 100.0
     document.querySelector('#max_earnings_effect').innerHTML = value    
-    document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
 
-    value = jsonOptionTableInfo.chance_of_loss * 100.0
-    document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
-    document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
-
-    value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
-    document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
-
-    if (jsonOptionTableInfo.hasOwnProperty('prem_over_var') == true) {
-        value = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
-        document.querySelector('#prem_over_var').innerHTML = value.toFixed(1)
-    } else {
-        document.querySelector('#prem_over_var').innerHTML = ''
-    }
-
-    if (jsonOptionTableInfo.hasOwnProperty('price_over_risk') == true) {
-        value = jsonOptionTableInfo.price_over_risk
-        document.querySelector('#price_over_risk').innerHTML = value.toFixed(1)
-    } else {
-        document.querySelector('#price_over_risk').innerHTML = ''
-    }
+    if (jsonOptionTableInfo != null) {
+        let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
+        document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
     
-    document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
+        document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
+        document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
+        document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
+        document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
 
-    let last_price = jsonOptionInfo.Item.info.last_price
-    let strike_price = jsonOptionTableInfo.strike_price
-    value = (1.0 - (strike_price / last_price)) * 100.0
-    document.querySelector('#discount').innerHTML = value.toFixed(2)   
+        value = jsonOptionTableInfo.chance_of_loss * 100.0
+        document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
+        document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
 
-    value = parseFloat(jsonOptionTableInfo.quote.bid)
-    document.querySelector('#bid').innerHTML = value.toFixed(2)  
-    value = parseFloat(jsonOptionTableInfo.quote.ask)
-    document.querySelector('#ask').innerHTML = value.toFixed(2)  
-    value = parseFloat(jsonOptionTableInfo.quote.vl)
-    document.querySelector('#vl').innerHTML = value.toFixed(0)  
-    value = parseFloat(jsonOptionTableInfo.quote.openinterest)
-    document.querySelector('#openinterest').innerHTML = value.toFixed(0)     
-    
-    value = parseFloat(jsonOptionTableInfo.quote.idelta)
-    document.querySelector('#idelta').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.igamma)
-    document.querySelector('#igamma').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.imp_volatility)
-    document.querySelector('#imp_volatility').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.itheta)
-    document.querySelector('#itheta').innerHTML = value.toFixed(4)   
-    value = parseFloat(jsonOptionTableInfo.quote.ivega)
-    document.querySelector('#ivega').innerHTML = value.toFixed(4)   
+        value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
+        document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
+
+        if (jsonOptionTableInfo.hasOwnProperty('prem_over_var') == true) {
+            value = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
+            document.querySelector('#prem_over_var').innerHTML = value.toFixed(1)
+            document.querySelector('#details_prem_over_var').innerHTML = value.toFixed(1)
+        } else {
+            document.querySelector('#prem_over_var').innerHTML = ''
+            document.querySelector('#details_prem_over_var').innerHTML = ''
+        }
+
+        if (jsonOptionTableInfo.hasOwnProperty('price_over_risk') == true) {
+            value = jsonOptionTableInfo.price_over_risk
+            document.querySelector('#price_over_risk').innerHTML = value.toFixed(1)
+            document.getElementById("details_price_over_risk").innerHTML = value.toFixed(1);
+        } else {
+            document.querySelector('#price_over_risk').innerHTML = ''
+            document.getElementById("details_price_over_risk").innerHTML = ''
+        }
+        
+        document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
+
+
+        let last_price = jsonOptionInfo.Item.info.last_price
+        let strike_price = jsonOptionTableInfo.strike_price
+        value = (1.0 - (strike_price / last_price)) * 100.0
+        document.querySelector('#discount').innerHTML = value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.quote.bid)
+        document.querySelector('#bid').innerHTML = value.toFixed(2)  
+        value = parseFloat(jsonOptionTableInfo.quote.ask)
+        document.querySelector('#ask').innerHTML = value.toFixed(2)  
+        value = parseFloat(jsonOptionTableInfo.quote.vl)
+        document.querySelector('#vl').innerHTML = value.toFixed(0)  
+        value = parseFloat(jsonOptionTableInfo.quote.openinterest)
+        document.querySelector('#openinterest').innerHTML = value.toFixed(0)     
+        
+        value = parseFloat(jsonOptionTableInfo.quote.idelta)
+        document.querySelector('#idelta').innerHTML = value.toFixed(4)  
+        value = parseFloat(jsonOptionTableInfo.quote.igamma)
+        document.querySelector('#igamma').innerHTML = value.toFixed(4)  
+        value = parseFloat(jsonOptionTableInfo.quote.imp_volatility)
+        document.querySelector('#imp_volatility').innerHTML = value.toFixed(4)  
+        value = parseFloat(jsonOptionTableInfo.quote.itheta)
+        document.querySelector('#itheta').innerHTML = value.toFixed(4)   
+        value = parseFloat(jsonOptionTableInfo.quote.ivega)
+        document.querySelector('#ivega').innerHTML = value.toFixed(4)   
+    }
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
@@ -162,8 +170,19 @@ function onMarginChange() {
 
     document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
 
-    value = (jsonOptionTableInfo.var * contracts) / 1000.0
+    let value = (jsonOptionTableInfo.var * contracts) / 1000.0
     document.getElementById("details_value_at_risk").innerHTML = "$" + value.toFixed(0) + "K";
+
+    
+    let base_por = jsonOptionTableInfo.price_over_risk
+    let mark = parseFloat(jsonOptionTableInfo.quote.mark_price)
+    let new_por = (base_por / mark) * open_price
+    document.getElementById("details_price_over_risk").innerHTML = new_por.toFixed(1);
+
+    let base_pov = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
+    let new_pov = (base_pov / mark) * open_price
+    document.getElementById("details_prem_over_var").innerHTML = new_pov.toFixed(1);
+
 }
 
 function uuidv4() {
@@ -180,6 +199,7 @@ async function onOpenPosition() {
     document.getElementById("open_button").innerHTML = "Opening Position ...";
 
     let info = {}
+    info["option_type"] = "short_put"
     info["symbol"] = jsonOptionTableInfo["symbol"]
 
     let today = new Date();

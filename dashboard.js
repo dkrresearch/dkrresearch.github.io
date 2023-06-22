@@ -32,24 +32,11 @@ async function loadDashboardData() {
         let position_info = table[key]['info']
         if  (position_info['assigned'] == true)
             continue
+        if  (('option_type' in position_info) && (position_info['option_type'] != "short_put"))
+            continue
 
         let contracts = position_info['contracts']
         let open_price = position_info['open_price']
-
-        let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
-        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
-
-        let ask = open_price
-        if (jsonOptionTableInfo['quote'] != null)
-            ask = jsonOptionTableInfo['quote']['ask'] - 0.01
-        
-        let cv = contracts * 100.0 * (open_price -  ask)
-        current_value += cv
-
-        total_roa = total_roa * (1.0 - jsonOptionTableInfo['chance_of_loss'])
-
-        value_at_risk = jsonOptionTableInfo['var'] * contracts
-        total_var += value_at_risk
 
         template = get_template()
         template = template.replace("{$symbol}",position_info['symbol'])
@@ -57,23 +44,42 @@ async function loadDashboardData() {
         template = template.replace("{$expiration}",position_info['expiration_date'])
         template = template.replace("{$option_symbol}",position_info['quote_symbol'])
         template = template.replace("{$strike}",position_info['strike_price'])
-        value = (100.0 * jsonOptionTableInfo['chance_of_loss'])
-        template = template.replace("{$coa}",value.toFixed(2))
 
-        value = (100.0 * jsonOptionTableInfo['discount'])
-        template = template.replace("{$discount}",value.toFixed(0))
-        if ( value < 0) 
-            template = template.replace("{$red}","color:rgb(145, 35, 35)")
-        else
-            template = template.replace("{$red}",'')
+        let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        if (jsonOptionTableInfo != null) {
+            let ask = open_price
+            if (jsonOptionTableInfo['quote'] != null)
+                ask = jsonOptionTableInfo['quote']['ask'] - 0.01
+            
+            let cv = contracts * 100.0 * (open_price -  ask)
+            current_value += cv
 
-        if (value_at_risk <= 0){
-            template = template.replace("{$var}",0)
-        } else if (value_at_risk < 1000) {
-            template = template.replace("{$var}","$" + value_at_risk.toFixed(0))
+            total_roa = total_roa * (1.0 - jsonOptionTableInfo['chance_of_loss'])
+
+            value_at_risk = jsonOptionTableInfo['var'] * contracts
+            total_var += value_at_risk
+
+            value = (100.0 * jsonOptionTableInfo['chance_of_loss'])
+            template = template.replace("{$coa}",value.toFixed(2))
+
+            value = (100.0 * jsonOptionTableInfo['discount'])
+            template = template.replace("{$discount}",value.toFixed(0))
+            if ( value < 0) 
+                template = template.replace("{$red}","color:rgb(145, 35, 35)")
+            else
+                template = template.replace("{$red}",'')
+
+            if (value_at_risk <= 0){
+                template = template.replace("{$var}",0)
+            } else {
+                template = template.replace("{$var}",printUSD(value_at_risk))
+            }
         } else {
-            value = value_at_risk / 1000.0
-            template = template.replace("{$var}","$" + value.toFixed(0) + "K")
+            template = template.replace("{$var}","---")
+            template = template.replace("{$coa}","---")
+            template = template.replace("{$discount}","---")
+
         }
 
         ele = htmlToElement(template);
@@ -84,12 +90,9 @@ async function loadDashboardData() {
     document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
 
     console.log(total_var)
-    document.querySelector('#total_var').innerHTML = "$" + (total_var / 1000.0).toFixed(0) + "K"
+    document.querySelector('#total_var').innerHTML = printUSD(total_var)
 
-    if (current_value < 0) {
-        document.querySelector('#current_value').style.color = "rgb(145, 35, 35)"
-    }
-    document.querySelector('#current_value').innerHTML = "$" + current_value.toFixed(0)
+    document.querySelector('#current_value').innerHTML = printUSD(current_value)
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";

@@ -1,4 +1,7 @@
 
+
+// "7d50d586-7387-4f9d-be7d-023679cd0783"
+
 async function loadPageData() {
     await loadOptionData();
     loadOpenPosition();
@@ -73,10 +76,6 @@ async function loadOptionData() {
     value = parseFloat(jsonOptionTableInfo.quote.buy_price)
     document.querySelector('#buy_price').innerHTML = value.toFixed(2)   
 
-// Remove Me!
-    document.getElementById("open_button").disabled = true;
-    document.getElementById("open_button").style.backgroundColor = "#888";
-
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
 }
@@ -120,10 +119,7 @@ function loadOpenPosition() {
 
 function onContractsChange() {
     let contracts = parseInt( document.getElementById("details_contracts").value )
-    
-    let margin_value = parseInt( contracts * 100.0 * jsonOptionTableInfo.strike_price / 1000.0)
-    document.getElementById("details_margin_label").innerHTML = "$" + margin_value + "K";
-    
+        
     let commision = 0.65 * contracts
     document.getElementById("details_commision_price").value = commision.toFixed(2);
 
@@ -139,9 +135,6 @@ function onSliderChange() {
     let contracts = Math.round( shares / 100 )
     document.getElementById("details_contracts").value = contracts.toFixed(0);
 
-    let prem = contracts * 100 * open_price
-    document.getElementById("details_premimum").innerHTML = "$" + prem.toFixed(0);
-
     let commision = 0.65 * contracts
     document.getElementById("details_commision_price").value = commision.toFixed(2);
 
@@ -154,6 +147,9 @@ function onMarginChange() {
     let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )
     let strike_price = parseFloat( jsonOptionTableInfo['strike_price'] )
+
+    let prem = contracts * 100 * open_price
+    document.getElementById("details_premimum").innerHTML = "$" + prem.toFixed(0);
 
     let details_total_price = (shares * open_price) +  commision
     document.getElementById("details_total_price").innerHTML = "$" + details_total_price.toFixed(2);
@@ -176,10 +172,9 @@ async function onOpenPosition() {
     document.getElementById("open_button").style.backgroundColor = "#888";
     document.getElementById("open_button").disabled = true;
     document.getElementById("open_button").innerHTML = "Opening Position ...";
-
-    return
     
     let info = {}
+    info["option_type"] = "long_call"
     info["symbol"] = jsonOptionTableInfo["symbol"]
 
     let today = new Date();
@@ -189,18 +184,20 @@ async function onOpenPosition() {
     let open_date = yyyy+"-"+mm+"-"+dd;
     info['open_date'] = open_date
     info['open_dte'] = parseInt( jsonOptionTableInfo['dte'] )
-    info['open_price'] = parseFloat( document.getElementById("details_open_price").value )
-    info['open_pol'] = parseFloat( jsonOptionTableInfo['price_of_loss'] )
-
+    info['chance_of_payout'] = parseFloat( jsonOptionTableInfo['chance_of_payout'] )
+    info['payout_over_prem'] = parseFloat( jsonOptionTableInfo['payout_over_prem'] )
+    info['discount'] = parseFloat( jsonOptionTableInfo['discount'] )
+    info['fair_price_of_option'] = parseFloat( jsonOptionTableInfo['fair_price_of_option'] )
     info['expiration_date'] = jsonOptionTableInfo["expiration_date"]
-    info['contracts'] = parseInt(document.getElementById("details_contracts").value)
     info['quote_symbol'] = jsonOptionTableInfo['quote_symbol']
-    info['target_price'] = jsonOptionTableInfo['target_price']
+    info['strike_price'] = parseFloat( jsonOptionTableInfo['strike_price'] )
+
+    info['open_price'] = parseFloat( document.getElementById("details_open_price").value )
+    info['contracts'] = parseInt(document.getElementById("details_contracts").value)
+    info['commisions'] = parseFloat( document.getElementById("details_commision_price").value )
     info['close_price'] = -1
     info['stock_price'] = -1
     info['assigned'] = false
-    info['strike_price'] = parseFloat( jsonOptionTableInfo['strike_price'] )
-    info['commisions'] = parseFloat( document.getElementById("details_commision_price").value )
 
     info['close_date'] = ''
     info['close_dte'] = -1
@@ -213,6 +210,8 @@ async function onOpenPosition() {
     payload['id'] = uuidv4();
     payload['info'] = info
     payload['opened'] = true
+    
+    console.log(payload)
     await putPosition(payload)
 
     document.getElementById("open_button").style.backgroundColor = "#888";

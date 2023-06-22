@@ -44,6 +44,31 @@ function unixToReadable(unix_timestamp) {
     return dt
 }
 
+function printUSD(value) {
+    let minus = ''
+    let red = false
+
+    if (value < 0) {
+        value = value * -1.0
+        minus = '-'
+        red = true
+    }
+
+    printable = minus + "$" + value.toFixed(0)
+    if (value >= 10000) {
+        value = value / 1000.0
+        printable = minus + "$" + value.toFixed(0) + "K"
+    }
+    else if (value > 1000) {
+        value = value / 1000.0
+        printable = minus + "$" + value.toFixed(1) + "K"
+    }
+    if (red == true)
+        printable = "<span style='color:rgb(145, 35, 35)'>" + printable + "</span>"
+
+    return printable
+}
+
 function loadError(errMesg) {
     document.querySelector('#err_status').innerHTML = errMesg;
     document.querySelector('#err_status').style.display = "block";
@@ -123,12 +148,12 @@ async function putPosition(data) {
 }
 
 
-async function fetchPosition(symbol) {
+async function _fetchPosition(quote_symbol) {
     let jsonPositions = await fetchPositionsInfo()
     let table = jsonPositions.Items;
 
     for (var key in table) {
-        if (table[key]['info']['symbol'] == symbol) 
+        if (table[key]['info']['quote_symbol'] == quote_symbol) 
             return table[key]
     }
 

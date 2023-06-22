@@ -12,20 +12,13 @@ async function loadPositionData() {
 
     await loadOptionData();
 
-    let last_price = jsonOptionInfo.Item.info.last_price
-    let strike_price = jsonOptionTableInfo.strike_price
-    value = (1.0 - (strike_price / last_price)) * 100.0
-    document.querySelector('#details_discount').innerHTML = value.toFixed(2) + '%'  
+    let my_url = new URL(window.location.href);
+    let quote_symbol = my_url.searchParams.get("option_symbol").toUpperCase();
+    let symbol = my_url.searchParams.get("symbol").toUpperCase();
 
-    value = jsonOptionTableInfo.chance_of_loss * 100.0
-    document.querySelector('#details_roa').innerHTML = value.toFixed(2)  + '%'   
-    document.querySelector('#details_poa').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  
-
-    let symbol =  jsonOptionTableInfo.symbol
-    jsonPositionInfo = await fetchPosition(symbol)
+    jsonPositionInfo = await _fetchPosition(quote_symbol)
     console.log(jsonPositionInfo)
-    console.log(jsonOptionTableInfo)
-    
+
     let option_label = jsonPositionInfo['info']['strike_price'].toFixed(2) + " Put"
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
 
@@ -33,17 +26,53 @@ async function loadPositionData() {
     document.querySelector('#details_open_price').innerHTML = jsonPositionInfo['info']['open_price'].toFixed(2)
 
     value = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
+
+    let last_price = jsonOptionInfo.Item.info.last_price
+
+    let dte = 0
+    if (jsonOptionTableInfo == null) {
+        let bs_remaining = 0
+        document.querySelector('#details_bs_remaining').innerHTML = '$' + bs_remaining.toFixed(2)  
+        
+        let value_at_risk = 0
+        document.querySelector('#details_var').innerHTML = '$' + (value_at_risk / 1000.0).toFixed(1) +'K';
+
+        document.querySelector('#myRange').min = 0.0  
+        document.querySelector('#myRange').max = 0.01  
+        document.querySelector('#myRange').value = 0.0  
+    } else {
+        console.log(jsonOptionTableInfo)
+        dte = jsonOptionTableInfo['dte']
+
+        let strike_price = jsonOptionTableInfo.strike_price
+        value = (1.0 - (strike_price / last_price)) * 100.0
+        document.querySelector('#details_discount').innerHTML = value.toFixed(2) + '%'  
+            
+        value = jsonOptionTableInfo.chance_of_loss * 100.0
+        document.querySelector('#details_roa').innerHTML = value.toFixed(2)  + '%'   
+        document.querySelector('#details_poa').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  
+
+        value_at_risk = jsonOptionTableInfo['var'] * jsonPositionInfo['info']['contracts']
+        document.querySelector('#details_var').innerHTML = '$' + (value_at_risk / 1000.0).toFixed(1) +'K' 
+
+        let bid = parseFloat(jsonOptionTableInfo.quote.bid)
+        let ask = parseFloat(jsonOptionTableInfo.quote.ask)
+        let mark = ((ask - bid) / 2.0) + bid
+        
+        document.querySelector('#myRange').min = bid  
+        document.querySelector('#myRange').max = ask  
+        document.querySelector('#myRange').value = mark      
+    }
+
+    value = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
     document.querySelector('#details_margin_label').innerHTML = '$' + value.toFixed(2)  + 'K'  
     value = jsonPositionInfo['info']['open_price']
     document.querySelector('#details_open_price').innerHTML = value.toFixed(2)  
 
     let margin = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
-    let dte = jsonOptionTableInfo['dte']
     let bs_remaining = dte * margin * prem_per_day_per_1K
     document.querySelector('#details_bs_remaining').innerHTML = '$' + bs_remaining.toFixed(2)  
 
-    value_at_risk = jsonOptionTableInfo['var'] * jsonPositionInfo['info']['contracts']
-    document.querySelector('#details_var').innerHTML = '$' + (value_at_risk / 1000.0).toFixed(1) +'K' 
     
     if ('open_dte' in jsonPositionInfo['info']) {
         let opened_dte = jsonPositionInfo['info']['open_dte']
@@ -53,14 +82,6 @@ async function loadPositionData() {
 
     let pop = bs_remaining / (100.0 * jsonPositionInfo['info']['contracts'])
     document.querySelector('#details_pop').innerHTML = pop.toFixed(2)  
-
-    let bid = parseFloat(jsonOptionTableInfo.quote.bid)
-    let ask = parseFloat(jsonOptionTableInfo.quote.ask)
-    let mark = ((ask - bid) / 2.0) + bid
-    
-    document.querySelector('#myRange').min = bid  
-    document.querySelector('#myRange').max = ask  
-    document.querySelector('#myRange').value = mark  
 
     onClosePriceChange();
 }
@@ -115,8 +136,13 @@ async function onClosePosition() {
 
     info['close_price'] = parseFloat( document.getElementById("details_close_price").value )
     info['close_date'] =  close_date
-    info['close_dte'] =  jsonOptionTableInfo['dte']
-    info['close_pol'] =  jsonOptionTableInfo['price_of_loss']
+    if (jsonOptionTableInfo == null) {
+        info['close_dte'] = 0
+        info['close_pol'] = 0
+    } else {
+        info['close_dte'] =  jsonOptionTableInfo['dte']
+        info['close_pol'] =  jsonOptionTableInfo['price_of_loss']
+    }
 
     info['assigned'] =  false
     if (  document.getElementById("details_close_price").checked == true )
