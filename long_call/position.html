@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="position.css">
 
         <script src="../main.js"></script>
+        <script src="position.js"></script>
         <script src="option.js"></script>
     </head>
 
@@ -32,36 +33,52 @@
         <div class="close_position" style="float:right; width:30%; border:1px solid rgb(0, 141, 129);">
             <div style="width:100%; background-color:rgb(0, 141, 129); text-align:center; color:white;">Details</div>
 
-            <div class="details_table_row" style="border-bottom:None;"><span class="details_table_col1">Premimum</span></div>   
-            <div class="price_slider">
-                <input type="range" min="100" max="1000" value="100" class="slider" id="myRange"
-                        step="25" oninput="onSliderChange()">
-            </div>
+            <div class="details_table_row" style="border:none"><span class="details_table_col1">Contracts :</span>
+                <span  class="details_table_col2" id="details_contracts">----</span></div> 
+            <div class="details_table_row" style="border:none"><span class="details_table_col1">Open Price :</span>
+                <span  class="details_table_col2" id="details_open_price">----</span></div>
 
-             <div class="details_table_row"><span class="details_table_col1">Premimum :</span>
-                <span  class="details_table_col2" id="details_premimum">----</span></div>  
+            <hr style="width:80%; margin-top:10px; margin-left:10px; color:gray"/>
 
+            <div class="details_table_row"><span class="details_table_col1">Discount :</span>
+                <span  class="details_table_col2" id="details_discount">----</span></div>    
+
+            <div class="details_table_row"><span class="details_table_col1">Probability of Payout :</span>
+                <span  class="details_table_col2" id="details_coa">----</span></div>    
+                
+            <div class="details_table_row"><span class="details_table_col1">Average Payout :</span>
+                <span  class="details_table_col2" id="details_avg_payout">----</span></div>    
+              
             <div class="details_table_row"><span class="details_table_col1">Assignment Margin :</span>
-                    <span  class="details_table_col2" id="details_am">----</span></div>   
-
-            <div class="details_table_row"><span class="details_table_col1">Avg Payout :</span>
-                        <span  class="details_table_col2" id="details_payout">----</span></div>                          
+                    <span  class="details_table_col2" id="details_am">----</span></div>    
     
-            <p></p>
+            <hr style="width:80%; margin-top:40px; margin-left:10px; color:gray"/>
 
-            <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Contracts :</span>
-                <input type="text" id="details_contracts" class="input_label" value="0.00"  oninput="onContractsChange()"></input></div> 
-    
-            <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Open Price :</span>
-                <input type="text" id="details_open_price" class="input_label" value="0.00"  oninput="onMarginChange()"></input></div> 
+            <div class="price_slider">
+                <input type="range" min="0.21" max="0.35" value="0.28" class="slider" id="myRange"
+                        step="0.01" list="pricesettings" oninput="onClosePriceChange()">
+            </div>
+            <div class="details_table_row"><span class="details_table_col1">Close Price :</span>
+                <span  class="details_table_col2" id="details_close_price_label">$0.00</span></div>   
 
-            <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;"><span style="height:20px;" class="details_table_col1">Commision :</span>
-                <input type="text" id="details_commision_price" class="input_label" value="5.00" oninput="onMarginChange()"></input></div>
+            <div class="details_table_row"><span class="details_table_col1">Profit :</span>
+                <span  class="details_table_col2" id="details_profit">----</span></div>  
+
+            <div class="details_table_row"><span class="details_table_col1">Max Value :</span>
+                    <span  class="details_table_col2" id="details_max_value">----</span></div>      
+
+            <hr style="width:80%; margin-top:40px; margin-left:10px; color:gray"/>
+           
+            <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Close Price :</span>
+                <input type="text" id="details_close_price" class="input_label"></input></div> 
+
+            <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;"><span style="height:20px;" class="details_table_col1">Commission :</span>
+                <input type="text" id="details_commision_price" class="input_label" value="0.00"></input></div>
                     
-            <div class="details_table_row" style="margin-bottom:25px;"><span class="details_table_col1">Total Price :</span>
-                <span  class="details_table_col2" id="details_total_price">0</span></div> 
+            <button class="input_button" id="close_button" onclick="onClosePosition()">Close Position</button>
 
-            <button class="input_button" id="open_button" onclick="onOpenPosition()">Open Position</button>
+            <hr style="width:80%; margin-top:0px; margin-left:10px; color:gray"/>
+            <button class="input_button" id="assign_button" onclick="onAssignPosition()">Assigned</button>
         </div>
 
 
@@ -79,14 +96,13 @@
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
                         <span id="discount">----</span><span>%</span></div></h2>
                 
-                <h2><span style="width: 60%; float:left;">Chance of Payout : </span>
+                <h2><span style="width: 60%; float:left;">Probability of Payout : </span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
                         <span id="chance_of_payout">----</span><span>%</span></div></h2>
                 
                 <h2><span style="width: 60%; float:left;">Payout / Prem : </span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
                         <span id="payout_over_prem">----</span></div></h2>
-
 
                 <h2><span style="width: 60%; padding-top:10px; float:left;">Avg Payout :</span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right; padding-top:10px; ">
@@ -145,7 +161,7 @@
         </div>
         </div>
         <script>
-            loadPageData()
+            loadPositionData()
         </script>
     </body>
 </html>

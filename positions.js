@@ -89,7 +89,7 @@ async function loadPositionsData() {
     document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
     document.querySelector('#total_var').innerHTML = printUSD(total_var)
     document.querySelector('#total_prem').innerHTML = printUSD(total_prem)
-    document.querySelector('#current_value').innerHTML = printUSD(current_value.toFixed(0))
+    document.querySelector('#current_value').innerHTML = printUSD(current_value)
 
 //    document.querySelector('#strike_margin').innerHTML = "$" + strike_margin.toFixed(0)
     document.querySelector('#wait').remove();

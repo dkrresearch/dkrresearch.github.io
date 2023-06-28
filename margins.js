@@ -26,6 +26,8 @@ async function loadPositionsData() {
         position_info = table[key]['info']
         if  (position_info['assigned'] == true)
             continue
+        if  (('option_type' in position_info) && (position_info['option_type'] != "short_put"))
+            continue
 
         let template = get_template()
         template = template.replace("{$symbol}",position_info['symbol'])

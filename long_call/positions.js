@@ -47,12 +47,16 @@ async function loadPositionsData() {
             template = template.replace("{$cop}",value.toFixed(2))
             total_cop = total_cop * (1.0 - parseFloat(jsonOptionTableInfo.chance_of_payout))
 
+            let discount = ''
             value = (100.0 * jsonOptionTableInfo['discount'])
-            template = template.replace("{$discount}",value.toFixed(0))
-            if ( value > 0) 
+            if ( value > 0) {
+                discount = value.toFixed(1)
                 template = template.replace("{$red}","color:rgb(145, 35, 35)")
-            else
+            } else {
+                discount = "+" + (value * -1.0).toFixed(1)
                 template = template.replace("{$red}",'')
+            }
+            template = template.replace("{$discount}",discount)
 
             if (jsonOptionTableInfo['0'] == 0){
                 template = template.replace("{$e}","near")
@@ -110,7 +114,7 @@ function get_template() {
         </div>\
         <div class="positions_table_col_3">\
             <div class="coa_box">\
-                <div class="coa_header">COP</div>\
+                <div class="coa_header">PoP</div>\
                 <h1 class="coa">{$cop}%</h1>\
             </div>\
             <div class="coa_box">\
