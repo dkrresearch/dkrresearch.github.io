@@ -85,6 +85,10 @@ function onClosePriceChange() {
     let profit = (mark - open) * jsonPositionInfo['info']['contracts'] * 100.0
     document.getElementById("details_profit").innerHTML = printUSD(profit);
 
+    let cur_value = mark  * jsonPositionInfo['info']['contracts'] * 100.0
+    document.getElementById("details_cur_value").innerHTML = printUSD(cur_value);
+
+    
 }
 
 async function onAssignPosition() {

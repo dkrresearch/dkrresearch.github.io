@@ -16,7 +16,7 @@ async function loadOptionData() {
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
     let symbol = jsonOptionTableInfo.symbol
-    let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
+    let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Call"
  
     console.log(jsonOptionTableInfo)
 
