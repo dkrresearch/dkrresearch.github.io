@@ -38,6 +38,7 @@ async function loadOptionData() {
     document.querySelector('#DividendPerShare').innerHTML = jsonInfo.Item.info.overview.DividendPerShare;
     document.querySelector('#description').innerHTML = jsonInfo.Item.info.overview.Description;
     document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
+    document.querySelector('#last_price_2').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
 
     let last_price = jsonOptionInfo.Item.info.last_price
     let strike_price = jsonOptionTableInfo.strike_price

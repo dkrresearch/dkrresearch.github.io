@@ -38,6 +38,7 @@ async function loadOptionData() {
         document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
         document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
         document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
+        document.querySelector('#last_price_2').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
 
         value = jsonOptionTableInfo.chance_of_loss * 100.0
         document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
