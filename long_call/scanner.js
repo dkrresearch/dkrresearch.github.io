@@ -34,18 +34,13 @@ async function loadScannerData() {
         bid = parseFloat(table[key]['quote']['bid'])
         line = line + '<span class="scanner_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-// Premimum
-        value = parseFloat(table[key]['premimum'])
-        value = globalDefaultValue * (value / 100.0)
-        line = line + '<span class="scanner_table_col_3">$' + value.toFixed(0) + '</span>'
-
 // Chance of Payout
         value = parseFloat(table[key]['chance_of_payout'])
         value = value * 100.0
         line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Prem over Value at Risk
-        value = parseFloat(table[key]['payout_over_prem'])
+// Est ROI
+        value = parseFloat(table[key]['est_roi'])
         line = line + '<span class="scanner_table_col_5">' + value.toFixed(1) + '</span>'
 
 // Next Earnings Date

@@ -71,7 +71,7 @@ async function loadSymbolData() {
             if (table[key]['type'] != 'long_call')
                 continue
 
-            if (table[key].hasOwnProperty('payout_over_prem') == false)
+            if (table[key].hasOwnProperty('est_roi') == false)
                 continue
             if (table[key].hasOwnProperty('chance_of_payout') == false)
                 continue
@@ -85,10 +85,7 @@ async function loadSymbolData() {
             if (parseFloat(table[key]['chance_of_payout']) > 0.50)
                 continue
 
-            console.log(table[key])
-
-            if (parseFloat(table[key]['premimum']) <= 0.0)
-                continue                
+            console.log(table[key])              
 
             line = '<div class="put_table_row">'
 
@@ -103,18 +100,18 @@ async function loadSymbolData() {
             bid = parseFloat(table[key]['quote']['bid'])
             line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-// Premimum
-            value = parseFloat(table[key]['premimum'])
-            line = line + '<span class="put_table_col_3">$' + value.toFixed(0) + '</span>'
+            contracts = Math.round( globalDefaultValue / (100.0 * table[key]['quote']['buy_price'] ) )
+            am = contracts * 100.0 * strike_price
+            line = line + '<span class="put_table_col_3">' + printUSD(am) +'</span>'
 
-// Risk of Assignment
+
+// Chance of Payout
             value = 100.0 * parseFloat(table[key]['chance_of_payout'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Prem over Value at Risk
-            value = parseFloat(table[key]['payout_over_prem'])
+// Return on Investment
+            value = parseFloat(table[key]['est_roi'])
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
-
 
             line = line + '</div>'
 

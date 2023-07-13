@@ -67,10 +67,12 @@ async function loadLogData() {
             row = getAssignmentRow()
             row = row.replace("{$strike}",assignment['strike'].toFixed(2))
             row = row.replace("{$dte}",assignment['dte'])
-            row = row.replace("{$cop}",assignment['chance_of_payout'].toFixed(2))
-            row = row.replace("{$pop}",assignment['payout_over_prem'].toFixed(2))
+
+            row = row.replace("{$roi}","-")
+
+            row = row.replace("{$est_cop}",assignment['chance_of_payout'].toFixed(2))
+            row = row.replace("{$est_roi}",assignment['est_roi'].toFixed(2))
             row = row.replace("{$discnt}",assignment['discount'].toFixed(2))
-            row = row.replace("{$prem}",(assignment['premimum']).toFixed(2))
 
             let gain = assignment['payout']
             let szGain = gain.toFixed(2)
@@ -105,10 +107,10 @@ function getSymbolTable() {
                 <div style='width:25px; float:left; text-align:right;'> </div>\
                 <div style='width:100px; float:left; text-align:right;'>DTE</div>\
                 <div style='width:100px; float:left; text-align:right;'>Gain (%)</div>\
-                <div style='width:100px; float:left; text-align:right;'>Chance (%)</div>\
-                <div style='width:100px; float:left; text-align:right;'>Payout / Prem</div>\
+                <div style='width:100px; float:left; text-align:right;'>ROI</div>\
+                <div style='width:100px; float:left; text-align:right;'>Est Payout(%)</div>\
+                <div style='width:100px; float:left; text-align:right;'>Est ROI</div>\
                 <div style='width:100px; float:left; text-align:right;'>Discnt (%)</div>\
-                <div style='width:100px; float:left; text-align:right;'>Prem ($)</div>\
             </div>\
             <hr style='width:675px; float:left;'/>\
             <div id='{$table_name}' class='symbol_table'>\
@@ -127,10 +129,10 @@ function getAssignmentRow() {
                 <div style='width:25px; float:left; text-align:right;'> </div>\
                 <div style='width:100px; float:left; text-align:right;'>{$dte}</div>\
                 <div style='width:100px; float:left; text-align:right;'>{$gain}</div>\
-                <div style='width:100px; float:left; text-align:right;'>{$cop}</div>\
-                <div style='width:100px; float:left; text-align:right;'>{$pop}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$roi}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$est_cop}</div>\
+                <div style='width:100px; float:left; text-align:right;'>{$est_roi}</div>\
                 <div style='width:100px; float:left; text-align:right;'>{$discnt}</div>\
-                <div style='width:100px; float:left; text-align:right;'>{$prem}</div>\
             </div>"
     return template;
 }

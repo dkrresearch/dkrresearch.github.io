@@ -69,8 +69,8 @@ async function loadOptionData() {
     value = parseFloat(jsonOptionTableInfo.chance_of_payout) * 100.0
     document.querySelector('#chance_of_payout').innerHTML = value.toFixed(2)   
 
-    value = parseFloat(jsonOptionTableInfo.payout_over_prem)
-    document.querySelector('#payout_over_prem').innerHTML = value.toFixed(2)   
+    value = parseFloat(jsonOptionTableInfo.est_roi)
+    document.querySelector('#est_roi').innerHTML = value.toFixed(2)   
 
     
     value = parseFloat(jsonOptionTableInfo.mean_payout)
@@ -133,7 +133,7 @@ function onContractsChange() {
 
 function onSliderChange() {
     let slider = document.getElementById("myRange");
-    let value = slider.value
+    let value = (slider.value * globalDefaultValue) / 100.0
 
     let open_price = parseFloat( document.getElementById("details_open_price").value )
     let shares = value / open_price
@@ -190,7 +190,7 @@ async function onOpenPosition() {
     info['open_date'] = open_date
     info['open_dte'] = parseInt( jsonOptionTableInfo['dte'] )
     info['chance_of_payout'] = parseFloat( jsonOptionTableInfo['chance_of_payout'] )
-    info['payout_over_prem'] = parseFloat( jsonOptionTableInfo['payout_over_prem'] )
+    info['est_roi'] = parseFloat( jsonOptionTableInfo['est_roi'] )
     info['discount'] = parseFloat( jsonOptionTableInfo['discount'] )
     info['fair_price_of_option'] = parseFloat( jsonOptionTableInfo['fair_price_of_option'] )
     info['expiration_date'] = jsonOptionTableInfo["expiration_date"]
