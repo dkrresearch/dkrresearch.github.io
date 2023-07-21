@@ -49,9 +49,9 @@ async function loadSymbolData() {
             divTable = document.getElementById("far_put_table");
             table = jsonOptionTable.Item.info.option_table_far
         }
-        if (length(table) <= 0) 
+        if (table.length <= 0) 
             continue
-            
+
         if (table[0]['sub_earnings_data'] == true) {
             if (e == 0)
                 document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
