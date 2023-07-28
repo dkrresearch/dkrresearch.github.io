@@ -105,11 +105,10 @@ function onClosePriceChange() {
 async function onAssignPosition() {
     document.getElementById("close_button").style.backgroundColor = "#888";
     document.getElementById("close_button").disabled = true;
-    document.getElementById("close_button").innerHTML = "Assigning ...";
 
-    document.getElementById("close_button").style.backgroundColor = "#888";
-    document.getElementById("close_button").disabled = true;
-    document.getElementById("close_button").innerHTML = "Assigned";
+    document.getElementById("assign_button").style.backgroundColor = "#888";
+    document.getElementById("assign_button").disabled = true;
+    document.getElementById("assign_button").innerHTML = "Assigning ...";
 
     let info = jsonPositionInfo['info']
     console.log(info)
@@ -119,12 +118,17 @@ async function onAssignPosition() {
     payload['info'] = info
     info['assigned'] =  true
     await putPosition(payload)
+
+    document.getElementById("close_button").innerHTML = "Assigned";
 }
 
 async function onClosePosition() {
     document.getElementById("close_button").style.backgroundColor = "#888";
     document.getElementById("close_button").disabled = true;
     document.getElementById("close_button").innerHTML = "Closing Position ...";
+
+    document.getElementById("assign_button").style.backgroundColor = "#888";
+    document.getElementById("assign_button").disabled = true;
 
     let info = jsonPositionInfo['info']
 
@@ -159,13 +163,13 @@ async function onClosePosition() {
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     let jsonStatus = await fetchStatus(2023);
-    jsonStatus['cnt_positions'] += 1
-    jsonStatus['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
+    jsonStatus['short_put']['cnt_positions'] += 1
+    jsonStatus['short_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
     if (info['profit'] < 0) 
-        jsonStatus['carried_losses'] += info['profit']
+        jsonStatus['short_put']['carried_losses'] += info['profit']
     
-    jsonStatus['bs_premium'] += info['bs_premium']
-    jsonStatus['profit'] += info['profit']
+    jsonStatus['short_put']['bs_premium'] += info['bs_premium']
+    jsonStatus['short_put']['profit'] += info['profit']
 
     let payload = {}
     payload['id'] = 2023
@@ -178,7 +182,5 @@ async function onClosePosition() {
     payload['opened'] = false
     await putPosition(payload)
 
-    document.getElementById("close_button").style.backgroundColor = "#888";
-    document.getElementById("close_button").disabled = true;
     document.getElementById("close_button").innerHTML = "Closed";
 }

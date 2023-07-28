@@ -1,5 +1,5 @@
 
-var globalDefaultValue = 110;  //  $110,000
+var globalDefaultValue = 121;  //  $110,000
 
 async function loadBodyElements() {
     let header = await fetchHeader();

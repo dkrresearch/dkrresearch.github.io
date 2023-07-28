@@ -12,7 +12,7 @@ async function loadOptionData() {
     jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
-    let symbol = jsonOptionInfo.Item.symbol
+    let symbol = jsonInfo.Item.symbol
 
     link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;

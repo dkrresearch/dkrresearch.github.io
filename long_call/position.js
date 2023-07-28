@@ -28,6 +28,9 @@ async function loadPositionData() {
     value = jsonPositionInfo['info']['strike_price'] * jsonPositionInfo['info']['contracts'] / 10.0
 
     let last_price = jsonOptionInfo.Item.info.last_price
+    let strike_price = jsonPositionInfo['info']['strike_price']
+    value = (1.0 - (strike_price / last_price)) * 100.0
+    document.querySelector('#details_discount').innerHTML = value.toFixed(2) + '%'  
 
     let mark = jsonPositionInfo['info']['strike_price']
     let dte = 0
@@ -39,10 +42,9 @@ async function loadPositionData() {
         console.log(jsonOptionTableInfo)
         dte = jsonOptionTableInfo['dte']
 
-        let strike_price = jsonOptionTableInfo.strike_price
-        value = (1.0 - (strike_price / last_price)) * 100.0
-        document.querySelector('#details_discount').innerHTML = value.toFixed(2) + '%'  
-            
+        value = jsonOptionTableInfo.fair_price_of_option / jsonPositionInfo['info']['open_price']
+        document.querySelector('#est_roi').innerHTML = value.toFixed(2)   
+    
         let pop = jsonOptionTableInfo.chance_of_payout
         document.querySelector('#details_coa').innerHTML = (pop * 100.0).toFixed(2) + '%'  
 
@@ -58,19 +60,14 @@ async function loadPositionData() {
         document.querySelector('#myRange').value = mark      
     }
 
-    value = jsonOptionTableInfo['last_price']  * jsonPositionInfo['info']['contracts'] * 100.0
+    value = last_price  * jsonPositionInfo['info']['contracts'] * 100.0
     document.querySelector('#details_am').innerHTML = printUSD(value) 
     
     value = jsonPositionInfo['info']['open_price']
     document.querySelector('#details_open_price').innerHTML = value.toFixed(2)  
 
+
     onClosePriceChange();
-
-    document.getElementById("close_button").style.backgroundColor = "#888";
-    document.getElementById("close_button").disabled = true;
-
-    document.getElementById("assign_button").style.backgroundColor = "#888";
-    document.getElementById("assign_button").disabled = true;
 }
 
 
@@ -87,8 +84,6 @@ function onClosePriceChange() {
 
     let cur_value = mark  * jsonPositionInfo['info']['contracts'] * 100.0
     document.getElementById("details_cur_value").innerHTML = printUSD(cur_value);
-
-    
 }
 
 async function onAssignPosition() {
@@ -96,30 +91,31 @@ async function onAssignPosition() {
     document.getElementById("assign_button").disabled = true;
     document.getElementById("assign_button").innerHTML = "Assigning ...";
 
+    document.getElementById("close_button").style.backgroundColor = "#888";
+    document.getElementById("close_button").disabled = true;
+
     let info = jsonPositionInfo['info']
+    info['assigned'] =  true
     console.log(info)
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
-    info['assigned'] =  true
+    payload['opened'] = false    
     console.log(info)
 
-    return
-//    await putPosition(payload)
+    await putPosition(payload)
 
-    document.getElementById("assign_button").style.backgroundColor = "#888";
-    document.getElementById("assign_button").disabled = true;
     document.getElementById("assign_button").innerHTML = "Assigned";
-
-    document.getElementById("close_button").style.backgroundColor = "#888";
-    document.getElementById("close_button").disabled = true;
 }
 
 async function onClosePosition() {
     document.getElementById("close_button").style.backgroundColor = "#888";
     document.getElementById("close_button").disabled = true;
     document.getElementById("close_button").innerHTML = "Closing Position ...";
+
+    document.getElementById("assign_button").style.backgroundColor = "#888";
+    document.getElementById("assign_button").disabled = true;
 
     let info = jsonPositionInfo['info']
 
@@ -148,15 +144,24 @@ async function onClosePosition() {
     info['profit'] = ((info['close_price'] - info['open_price']) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
+    console.log(info)
+
     let jsonStatus = await fetchStatus(2023);
+
+    delete jsonStatus['cnt_positions']
+    delete jsonStatus['profit']
+    delete jsonStatus['bs_premium']
+    delete jsonStatus['carried_losses']
+    delete jsonStatus['cnt_assignments']
+
     jsonStatus['long_call']['cnt_positions'] += 1
-    jsonStatus['long_call']['carried_gains'] += 100.0 * info['open_pol'] * info['contracts']
+    jsonStatus['long_call']['profit'] += info['profit']
+    jsonStatus['long_call']['carried_gains'] += info['open_price'] * info['payout_over_prem'] * info['contracts'] * 100.0
     if (info['profit'] > 0) 
         jsonStatus['long_call']['carried_gains'] -= info['profit']
-    
-    jsonStatus['long_call']['profit'] += info['profit']
 
-    return
+    console.log(jsonStatus)
+    
     let payload = {}
     payload['id'] = 2023
     payload['status'] = jsonStatus
@@ -168,10 +173,5 @@ async function onClosePosition() {
     payload['opened'] = false
     await putPosition(payload)
 
-    document.getElementById("close_button").style.backgroundColor = "#888";
-    document.getElementById("close_button").disabled = true;
     document.getElementById("close_button").innerHTML = "Closed";
-
-    document.getElementById("assign_button").style.backgroundColor = "#888";
-    document.getElementById("assign_button").disabled = true;
 }

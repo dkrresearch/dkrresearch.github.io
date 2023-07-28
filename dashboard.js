@@ -2,12 +2,12 @@
 async function loadDashboardData() {
     let jsonStatus = await fetchStatus(2023);
 
-    let total_profit = jsonStatus['profit']
-    let bs_reserves = jsonStatus['bs_premium']
-    let carried_losses = jsonStatus['carried_losses']
+    let total_profit = jsonStatus['short_put']['profit']
+    let bs_reserves = jsonStatus['short_put']['bs_premium']
+    let carried_losses = jsonStatus['short_put']['carried_losses']
 
-    let total_cnt = jsonStatus['cnt_positions']
-    let num_assignments = jsonStatus['cnt_assignments']
+    let total_cnt = jsonStatus['short_put']['cnt_positions']
+    let num_assignments = jsonStatus['short_put']['cnt_assignments']
     let assignment_rate = (100.0 * num_assignments) / total_cnt
 
     document.querySelector('#total_profit').innerHTML = "$" + total_profit.toFixed(0)

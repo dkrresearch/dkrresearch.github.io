@@ -15,20 +15,11 @@ async function loadOptionData() {
     jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
 
-    let symbol = jsonOptionTableInfo.symbol
-    let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Call"
+    let symbol = jsonInfo.Item.symbol
  
-    console.log(jsonOptionTableInfo)
-
-    document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
-
     link = "<a href='symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     
-    document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
-    document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
-    document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
-
     let symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#name').innerHTML = link;
@@ -41,45 +32,55 @@ async function loadOptionData() {
     document.querySelector('#last_price_2').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
 
     let last_price = jsonOptionInfo.Item.info.last_price
-    let strike_price = jsonOptionTableInfo.strike_price
-    value = parseFloat(jsonOptionTableInfo.discount) * 100.0
-    document.querySelector('#discount').innerHTML = value.toFixed(2)   
 
-    value = parseFloat(jsonOptionTableInfo.quote.bid)
-    document.querySelector('#bid').innerHTML = value.toFixed(2)  
-    value = parseFloat(jsonOptionTableInfo.quote.ask)
-    document.querySelector('#ask').innerHTML = value.toFixed(2)  
-    value = parseFloat(jsonOptionTableInfo.quote.vl)
-    document.querySelector('#vl').innerHTML = value.toFixed(0)  
-    value = parseFloat(jsonOptionTableInfo.quote.openinterest)
-    document.querySelector('#openinterest').innerHTML = value.toFixed(0) 
+    if (jsonOptionTableInfo != null) {
+        console.log(jsonOptionTableInfo)
 
-    value = parseFloat(jsonOptionTableInfo.quote.idelta)
-    document.querySelector('#idelta').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.igamma)
-    document.querySelector('#igamma').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.imp_volatility)
-    document.querySelector('#imp_volatility').innerHTML = value.toFixed(4)  
-    value = parseFloat(jsonOptionTableInfo.quote.itheta)
-    document.querySelector('#itheta').innerHTML = value.toFixed(4)   
-    value = parseFloat(jsonOptionTableInfo.quote.ivega)
-    document.querySelector('#ivega').innerHTML = value.toFixed(4)   
+        let strike_price = jsonOptionTableInfo.strike_price
+        let option_label = strike_price.toFixed(2) + " Call"
+        document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
 
+        document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
+        document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
+        document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
 
-    value = parseFloat(jsonOptionTableInfo.chance_of_payout) * 100.0
-    document.querySelector('#chance_of_payout').innerHTML = value.toFixed(2)   
+        value = (jsonOptionTableInfo.discount * 100.0).toFixed(2);
+        document.querySelector('#discount').innerHTML = value;
 
-    value = parseFloat(jsonOptionTableInfo.est_roi)
-    document.querySelector('#est_roi').innerHTML = value.toFixed(2)   
+        value = parseFloat(jsonOptionTableInfo.quote.bid)
+        document.querySelector('#bid').innerHTML = value.toFixed(2)  
+        value = parseFloat(jsonOptionTableInfo.quote.ask)
+        document.querySelector('#ask').innerHTML = value.toFixed(2)  
+        value = parseFloat(jsonOptionTableInfo.quote.vl)
+        document.querySelector('#vl').innerHTML = value.toFixed(0)  
+        value = parseFloat(jsonOptionTableInfo.quote.openinterest)
+        document.querySelector('#openinterest').innerHTML = value.toFixed(0) 
 
-    
-    value = parseFloat(jsonOptionTableInfo.mean_payout)
-    document.querySelector('#avg_payout').innerHTML = "$" + value.toFixed(2)   
+        value = parseFloat(jsonOptionTableInfo.quote.idelta)
+        document.querySelector('#idelta').innerHTML = value.toFixed(4)  
+        value = parseFloat(jsonOptionTableInfo.quote.igamma)
+        document.querySelector('#igamma').innerHTML = value.toFixed(4)  
+        value = parseFloat(jsonOptionTableInfo.quote.imp_volatility)
+        document.querySelector('#imp_volatility').innerHTML = value.toFixed(4)  
+        value = parseFloat(jsonOptionTableInfo.quote.itheta)
+        document.querySelector('#itheta').innerHTML = value.toFixed(4)   
+        value = parseFloat(jsonOptionTableInfo.quote.ivega)
+        document.querySelector('#ivega').innerHTML = value.toFixed(4)   
 
-    value = parseFloat(jsonOptionTableInfo.fair_price_of_option)
-    document.querySelector('#fair_price').innerHTML = "$" + value.toFixed(2)   
-    value = parseFloat(jsonOptionTableInfo.quote.buy_price)
-    document.querySelector('#buy_price').innerHTML = "$" + value.toFixed(2)   
+        value = parseFloat(jsonOptionTableInfo.chance_of_payout) * 100.0
+        document.querySelector('#chance_of_payout').innerHTML = value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.est_roi)
+        document.querySelector('#est_roi').innerHTML = value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.mean_payout)
+        document.querySelector('#avg_payout').innerHTML = "$" + value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.fair_price_of_option)
+        document.querySelector('#fair_price').innerHTML = "$" + value.toFixed(2)   
+        value = parseFloat(jsonOptionTableInfo.quote.buy_price)
+        document.querySelector('#buy_price').innerHTML = "$" + value.toFixed(2)   
+    }
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
