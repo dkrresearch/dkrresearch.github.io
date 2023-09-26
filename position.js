@@ -116,6 +116,7 @@ async function onAssignPosition() {
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
+    payload['opened'] = false    
     info['assigned'] =  true
     await putPosition(payload)
 

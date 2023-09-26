@@ -1,29 +1,67 @@
 
 async function loadPositionsData() {
-    let divTable = document.getElementById("open_positions_table");
-
-
-    let template = get_template()
-
-    template = template.replaceAll("{$symbol}","SYM")
-    template = template.replaceAll("{$strike}","888")
-    template = template.replaceAll("{$expiration}","2023-3-17")
-    template = template.replaceAll("{$shares}","600")
-    template = template.replaceAll("{$price}","$1888.88")
-    template = template.replaceAll("{$close_price}","1888.88")
-    template = template.replaceAll("{$discount}","-88.8%")
-    template = template.replaceAll("{$profit}","$-28,888")
-    
-    let profit = -28888.00
-    if (profit < 0) {
-        template = template.replaceAll("{$red}","color:rgb(145, 35, 35);")
-    } else {
-        template = template.replaceAll("{$red}","")
+    document.querySelector('#wait_status').innerHTML = "... Downloading Assigned Positions ...";
+    let jsonInfo = await fetchPositionsInfo();
+    if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Items") == false)) {      
+        return loadError("Unable to load Positions Table")
     }
 
+    let table = jsonInfo.Items;
 
-    let ele = htmlToElement(template);
-    divTable.appendChild(ele);
+    let divTable = document.getElementById("open_positions_table");
+    for (var key in table) {
+        uuid = table[key]['id']
+        position_info = table[key]['info']
+        if (position_info['assigned'] == false)
+            continue
+
+        if ((('option_type' in position_info) == false) || (position_info['option_type'] == "short_put")) {
+
+            console.log(position_info)
+
+            let template = get_template()
+
+            let symbol = position_info["symbol"]
+            let strike_price = position_info["strike_price"]
+            let shares = position_info["contracts"] * 100
+            
+            template = template.replaceAll("{$symbol}",symbol)
+            template = template.replaceAll("{$strike}",strike_price.toFixed(2))
+            template = template.replaceAll("{$expiration}",position_info["expiration_date"])
+            template = template.replaceAll("{$shares}",shares)
+            template = template.replaceAll("{$idx}","'" + uuid + "'")
+            template = template.replaceAll("{$quote_symbol}",position_info["quote_symbol"])
+            
+            let jsonOptionInfo = await fetchOptionTable(symbol);
+
+            let profit = 0.0
+            if (jsonOptionInfo != null) {
+                console.log( jsonOptionInfo )
+                let last_price = jsonOptionInfo.Item.info['last_price']
+
+                template = template.replaceAll("{$price}",last_price.toFixed(2))
+                template = template.replaceAll("{$close_price}",last_price.toFixed(2))
+        
+                profit = (last_price - strike_price) * shares
+                template = template.replaceAll("{$profit}",printUSD(profit))
+
+                let discount = 100.0 * (last_price - strike_price) / strike_price
+                template = template.replaceAll("{$discount}",discount.toFixed(2) + "%")
+
+                let gain = (100.0 * (last_price - strike_price)) / strike_price
+                template = template.replaceAll("{$gain}",gain.toFixed(2))
+            }
+
+            if (profit < 0) {
+                template = template.replaceAll("{$red}","color:rgb(145, 35, 35);")
+            } else {
+                template = template.replaceAll("{$red}","")
+            }
+
+            let ele = htmlToElement(template);
+            divTable.appendChild(ele);
+        }
+    }
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
@@ -51,18 +89,76 @@ function get_template() {
         <div style="width:100%; background-color:rgb(0, 141, 129); text-align:center; color:white;">Close</div>\
         <div class="details_table_row" style="height:30px; border-bottom:none">\
             <span style="height:20px;" class="details_table_col1">Close Price :</span>\
-            <input type="text" id="close_price" class="input_label" value="{$close_price}"></input></div>\
+            <input type="text" id="close_price_{$quote_symbol}" class="input_label" value="{$close_price}"></input></div>\
         <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;">\
             <span style="height:20px;" class="details_table_col1">Commission :</span>\
-            <input type="text" id="close_commision_price" class="input_label" value="0.00"></input></div>\
+            <input type="text" id="close_commision_price_{$quote_symbol}" class="input_label" value="0.00"></input></div>\
         <hr style="width:80%; margin-top:10px; margin-left:10%; color:gray"/>\
         <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;">\
             <span style="height:20px;" class="details_table_col1">Profit :</span>\
             <span class="details_table_col2" id="close_profit"  style="{$red}">{$profit}</span>\
         </div>\
-        <button class="input_button" id="close_button" onclick="onClosePosition()">Close Position</button>\
+        <button class="input_button" id="btn_{$quote_symbol}" onclick="onClosePosition(\'{$quote_symbol}\')"">Close Position</button>\
     </div>\
     </div>\
     ';
     return block
+}
+
+async function onClosePosition(quote_symbol) {
+    console.log(quote_symbol)
+
+    let btn = 'btn_' + quote_symbol
+    document.getElementById(btn).style.backgroundColor = "#888";
+    document.getElementById(btn).disabled = true;
+    document.getElementById(btn).innerHTML = "Closing Position ...";
+
+    jsonPositionInfo = await _fetchPosition(quote_symbol)
+    console.log(jsonPositionInfo)    
+    
+    let info = jsonPositionInfo['info']
+
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    let close_date = yyyy+"-"+mm+"-"+dd;
+
+    info['close_price'] = 0.0
+    info['close_date'] =  close_date
+    info['close_dte'] = 0
+    info['close_pol'] = 0
+
+    let sold_price = parseFloat( document.getElementById("close_price_"+quote_symbol).value )
+    let commision = parseFloat( document.getElementById("close_commision_price_"+quote_symbol).value )
+    info['assigned'] =  true
+    info['sold_price'] = sold_price
+
+    info['commisions'] += commision
+    info['profit'] = ((sold_price - info['strike_price']) * info['contracts'] * 100.0) - info['commisions']
+    info['bs_premium'] = 0.0
+
+    let jsonStatus = await fetchStatus(2023);
+    console.log(jsonStatus)    
+    
+    jsonStatus['short_put']['cnt_positions'] += 1
+    jsonStatus['short_put']['cnt_assignments'] += 1
+    jsonStatus['short_put']['profit'] += info['profit']
+    if (info['profit'] < 0) 
+        jsonStatus['short_put']['carried_losses'] += info['profit']
+
+    let payload = {}
+    payload['id'] = 2023
+    payload['status'] = jsonStatus
+    await putStatus(payload);
+    
+    payload = {}
+    payload['id'] = jsonPositionInfo["id"]
+    payload['info'] = info
+    payload['opened'] = false
+
+    await putPosition(payload)
+
+    document.getElementById(btn).innerHTML = "Closed";
+    return
 }
