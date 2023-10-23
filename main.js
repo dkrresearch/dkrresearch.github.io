@@ -1,5 +1,6 @@
 
 var globalDefaultValue = 121;  //  $110,000
+var prem_per_day_per_1K = 0.050
 
 async function loadBodyElements() {
     let header = await fetchHeader();
@@ -77,6 +78,38 @@ function loadError(errMesg) {
     document.querySelector('#wait_gif').remove();
     return
 }
+
+function overFairValue(jsonOptionTableInfo) {
+    console.log(jsonOptionTableInfo)
+
+    if (jsonOptionTableInfo.hasOwnProperty('quote') != true) 
+        return 0.0
+
+//  assuming an Assignment margin of 100000, and jsonOptionTableInfo.price_of_loss is per share
+//   and jsonOptionTableInfo.est_commisions is for an assignment margin of 100000
+
+    let dte = jsonOptionTableInfo.fdte
+    let shares = (100000.0 / jsonOptionTableInfo.strike_price)
+    let contracts = shares / 100.0
+    let current_price = jsonOptionTableInfo.quote.buy_price
+
+    let bs_remaining = dte * prem_per_day_per_1K * 100.0
+    let price_of_risk = jsonOptionTableInfo.price_of_loss * shares
+    
+    let fair_value = price_of_risk + bs_remaining + jsonOptionTableInfo.est_commisions
+    let market_value = current_price * shares
+
+    console.log('fair value : ' + fair_value)
+    console.log('market_value : ' + market_value)
+    console.log('contracts : ' + contracts)
+
+    let over_fair_value = (market_value - fair_value)
+
+    console.log(over_fair_value)
+
+    return over_fair_value 
+}
+
 
 async function putStatus(payload) {
     let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/status'

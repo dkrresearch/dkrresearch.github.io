@@ -35,7 +35,7 @@ async function loadScannerData() {
 
 // Premimum
         value = parseFloat(table[key]['total_premimums'])
-        value = globalDefaultValue * (value / 100.0)
+//        value = globalDefaultValue * (value / 100.0)
         line = line + '<span class="scanner_table_col_3">$' + value.toFixed(0) + '</span>'
 
 // Risk of Assignment

@@ -67,6 +67,8 @@ async function loadOptionData() {
         
         document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
 
+        value = overFairValue(jsonOptionTableInfo)
+        document.querySelector('#over_fair_value').innerHTML = value.toFixed(1);
 
         let last_price = jsonOptionInfo.Item.info.last_price
         let strike_price = jsonOptionTableInfo.strike_price
