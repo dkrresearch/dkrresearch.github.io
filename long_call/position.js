@@ -101,7 +101,7 @@ async function onAssignPosition() {
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
-    payload['opened'] = false    
+    payload['opened'] = true    
     console.log(info)
 
     await putPosition(payload)
@@ -136,8 +136,6 @@ async function onClosePosition() {
     }
 
     info['assigned'] =  false
-    if (  document.getElementById("details_close_price").checked == true )
-        info['assigned'] =  true
     info['sold_price'] = -1
 
     info['commisions'] += parseFloat( document.getElementById("details_commision_price").value )
@@ -148,15 +146,9 @@ async function onClosePosition() {
 
     let jsonStatus = await fetchStatus(2023);
 
-    delete jsonStatus['cnt_positions']
-    delete jsonStatus['profit']
-    delete jsonStatus['bs_premium']
-    delete jsonStatus['carried_losses']
-    delete jsonStatus['cnt_assignments']
-
     jsonStatus['long_call']['cnt_positions'] += 1
     jsonStatus['long_call']['profit'] += info['profit']
-    jsonStatus['long_call']['carried_gains'] += info['open_price'] * info['payout_over_prem'] * info['contracts'] * 100.0
+    jsonStatus['long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
     if (info['profit'] > 0) 
         jsonStatus['long_call']['carried_gains'] -= info['profit']
 

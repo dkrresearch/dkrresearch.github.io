@@ -135,7 +135,7 @@ async function onClosePosition(quote_symbol) {
     info['sold_price'] = sold_price
 
     info['commisions'] += commision
-    info['profit'] = ((sold_price - info['strike_price']) * info['contracts'] * 100.0) - info['commisions']
+    info['profit'] = ((sold_price + info['open_price']- info['strike_price']) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
     let jsonStatus = await fetchStatus(2023);

@@ -117,7 +117,7 @@ async function onAssignPosition() {
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = true    
-    info['assigned'] =  true
+    payload['assigned'] =  true
     await putPosition(payload)
 
     document.getElementById("close_button").innerHTML = "Assigned";

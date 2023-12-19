@@ -8,6 +8,7 @@ async function loadPositionsData() {
     }
 
     let table = jsonInfo.Items;
+    let current_value = 0.0
 
     let divTable = document.getElementById("open_positions_table");
     for (var key in table) {
@@ -51,6 +52,7 @@ async function loadPositionsData() {
             let gain = (100.0 * (last_price - strike_price)) / strike_price
             template = template.replaceAll("{$gain}",gain.toFixed(2))
         }
+        current_value += profit
 
         if (profit < 0) {
             template = template.replaceAll("{$red}","color:rgb(145, 35, 35);")
@@ -61,6 +63,11 @@ async function loadPositionsData() {
         let ele = htmlToElement(template);
         divTable.appendChild(ele);
     }
+
+    let jsonStatus = await fetchStatus(2023);
+    console.log(jsonStatus)
+    
+    document.getElementById("current_value").innerHTML = printUSD(current_value);
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
@@ -135,7 +142,7 @@ async function onClosePosition(quote_symbol) {
     info['sold_price'] = sold_price
 
     info['commisions'] += commision
-    info['profit'] = ((sold_price - info['strike_price']) * info['contracts'] * 100.0) - info['commisions']
+    info['profit'] = ((sold_price - info['strike_price'] - info['open_price']) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
 
@@ -144,18 +151,21 @@ async function onClosePosition(quote_symbol) {
     jsonStatus['long_call']['cnt_positions'] += 1
     jsonStatus['long_call']['cnt_assignments'] += 1
     jsonStatus['long_call']['profit'] += info['profit']
+    jsonStatus['long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
     if (info['profit'] > 0) 
         jsonStatus['long_call']['carried_gains'] -= info['profit']
 
     let payload = {}
     payload['id'] = 2023
     payload['status'] = jsonStatus
+    console.log(payload)
     await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
+    console.log(payload)
     await putPosition(payload)
 
     document.getElementById(btn).innerHTML = "Closed";
