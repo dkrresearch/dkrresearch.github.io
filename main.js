@@ -1,6 +1,7 @@
 
 var globalDefaultValue = 121;  //  $110,000
 var prem_per_day_per_1K = 0.050
+var globalCurrentYear = 2023
 
 async function loadBodyElements() {
     let header = await fetchHeader();

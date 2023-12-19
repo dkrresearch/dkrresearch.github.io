@@ -144,7 +144,7 @@ async function onClosePosition() {
 
     console.log(info)
 
-    let jsonStatus = await fetchStatus(2023);
+    let jsonStatus = await fetchStatus(globalCurrentYear);
 
     jsonStatus['long_call']['cnt_positions'] += 1
     jsonStatus['long_call']['profit'] += info['profit']
@@ -155,7 +155,7 @@ async function onClosePosition() {
     console.log(jsonStatus)
     
     let payload = {}
-    payload['id'] = 2023
+    payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     await putStatus(payload);
     

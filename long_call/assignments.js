@@ -64,7 +64,7 @@ async function loadPositionsData() {
         divTable.appendChild(ele);
     }
 
-    let jsonStatus = await fetchStatus(2023);
+    let jsonStatus = await fetchStatus(globalCurrentYear);
     console.log(jsonStatus)
     
     document.getElementById("current_value").innerHTML = printUSD(current_value);
@@ -146,7 +146,7 @@ async function onClosePosition(quote_symbol) {
     info['bs_premium'] = 0.0
 
 
-    let jsonStatus = await fetchStatus(2023);
+    let jsonStatus = await fetchStatus(globalCurrentYear);
 
     jsonStatus['long_call']['cnt_positions'] += 1
     jsonStatus['long_call']['cnt_assignments'] += 1
@@ -156,7 +156,7 @@ async function onClosePosition(quote_symbol) {
         jsonStatus['long_call']['carried_gains'] -= info['profit']
 
     let payload = {}
-    payload['id'] = 2023
+    payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     console.log(payload)
     await putStatus(payload);

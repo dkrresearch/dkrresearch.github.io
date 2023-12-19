@@ -163,7 +163,7 @@ async function onClosePosition() {
     //info['bs_premium'] = (info['open_dte']  - info['close_dte']) * (info['strike_price'] * info['contracts']) * 0.0075
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
-    let jsonStatus = await fetchStatus(2023);
+    let jsonStatus = await fetchStatus(globalCurrentYear);
     jsonStatus['short_put']['cnt_positions'] += 1
     jsonStatus['short_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
     if (info['profit'] < 0) 
@@ -173,7 +173,7 @@ async function onClosePosition() {
     jsonStatus['short_put']['profit'] += info['profit']
 
     let payload = {}
-    payload['id'] = 2023
+    payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     await putStatus(payload);
     

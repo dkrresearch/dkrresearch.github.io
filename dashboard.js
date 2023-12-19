@@ -1,6 +1,6 @@
 
 async function loadDashboardData() {
-    let jsonStatus = await fetchStatus(2023);
+    let jsonStatus = await fetchStatus(globalCurrentYear);
     console.log(jsonStatus)
     
     let total_profit = jsonStatus['short_put']['profit']

@@ -138,7 +138,7 @@ async function onClosePosition(quote_symbol) {
     info['profit'] = ((sold_price + info['open_price']- info['strike_price']) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
-    let jsonStatus = await fetchStatus(2023);
+    let jsonStatus = await fetchStatus(globalCurrentYear);
     console.log(jsonStatus)    
     
     jsonStatus['short_put']['cnt_positions'] += 1
@@ -148,7 +148,7 @@ async function onClosePosition(quote_symbol) {
         jsonStatus['short_put']['carried_losses'] += info['profit']
 
     let payload = {}
-    payload['id'] = 2023
+    payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     await putStatus(payload);
     
