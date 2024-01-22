@@ -11,9 +11,9 @@
         
         <title>DKR Research - Positions</title>
 
-        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="../main.css">
         <link rel="stylesheet" href="positions.css">
-        <script src="main.js?v=1"></script>
+        <script src="../main.js?v=1"></script>
         <script src="positions.js?v=1"></script>
     </head>
 
@@ -22,7 +22,7 @@
         </div>
 
         <div id="wait">
-            <img id="wait_gif" src="wait.gif" alt="Loading..."></img>
+            <img id="wait_gif" src="../wait.gif" alt="Loading..."></img>
             <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
             <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
         </div>
@@ -30,33 +30,22 @@
         <div id="contents" style="visibility: hidden; margin-bottom:25px;">
             <div style="padding:10px; width:100%;">
                 <div class="widget_box">
-                    <h1 class="widget_label">Total Risk Of Assignment</h1>
-                    <span class="widget_text">The risk of one or more contracts being assigned.</span>
-                    <h1 id='total_roa' class='widget_value'>----</h1>
+                    <h1 class="widget_label">Total Probability of Payout</h1>
+                    <span class="widget_text">The probability of one or more contracts being assigned.</span>
+                    <h1 id='total_cop' class='widget_value'>----</h1>
                 </div>
                 <div class="widget_box">
-                    <h1 class="widget_label">Value at Risk</h1>
-                    <span class="widget_text">The total value at risk from all the opened positions.</span>
-                    <h1 id='total_var' class='widget_value'>----</h1>
+                    <h1 class="widget_label">Total premiums</h1>
+                    <span class="widget_text">The total cost of the opened positinos</span>
+                    <h1 id='total_prem' class='widget_value'>----</h1>
                 </div>
                 <div class="widget_box">
-                    <h1 class="widget_label">Current Value</h1>
+                    <h1 class="widget_label">Total Profit/Loss</h1>
                     <span class="widget_text">The current profit/loss of the opened positions.</span>
                     <h1 id='current_value' class='widget_value'>----</h1>
                 </div>
             </div>
 
-            <div style="padding:10px; width:100%;">
-                <div class="widget_box" style="width:83.5%; border-top: 1px solid rgb(231, 229, 229);"">
-                    <div style="width:40%; float:left"> 
-                        <h1 class="widget_label">Opened Premiums</h1>
-                        <span class="widget_text">The total value of Premiums recieved from opened contracts.</span>
-                    </div>
-                    <div style="width:40%; float:right">
-                        <h1 id='total_prem' class='widget_value' style="margin-top:5px;">----</h1>
-                    </div>
-                </div>                
-            </div>
             
             <div id='open_positions_table' class='positions_table'>
                 <h1 style='color: rgb(0, 160, 147);'>Opened Positons</h1>

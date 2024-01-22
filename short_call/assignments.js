@@ -18,7 +18,7 @@ async function loadPositionsData() {
             continue
         if (('option_type' in position_info) == false)  //  legacy short_put
             continue
-        if (position_info['option_type'] != "long_call")
+        if (position_info['option_type'] != "short_call")
             continue
 
         console.log(position_info)
@@ -46,10 +46,10 @@ async function loadPositionsData() {
             template = template.replaceAll("{$price}",last_price.toFixed(2))
             template = template.replaceAll("{$close_price}",last_price.toFixed(2))
     
-            profit = (last_price - strike_price) * shares
+            profit = (strike_price - last_price) * shares
             template = template.replaceAll("{$profit}",printUSD(profit))
 
-            let gain = (100.0 * (last_price - strike_price)) / strike_price
+            let gain = (100.0 * (strike_price - last_price)) / strike_price
             template = template.replaceAll("{$gain}",gain.toFixed(2))
         }
         current_value += profit
@@ -142,24 +142,31 @@ async function onClosePosition(quote_symbol) {
     info['sold_price'] = sold_price
 
     info['commisions'] += commision
-    info['profit'] = ((sold_price - (info['strike_price'] - info['open_price'])) * info['contracts'] * 100.0) - info['commisions']
+    info['profit'] = (((info['strike_price'] + info['open_price']) - sold_price) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
+    if (('short_call' in jsonStatus) == false) {
+        jsonStatus['short_call'] = {}
+        jsonStatus['short_call']['cnt_positions'] = 0
+        jsonStatus['short_call']['carried_losses'] = 0.0
+        jsonStatus['short_call']['bs_premium'] = 0.0
+        jsonStatus['short_call']['profit'] = 0.0  
+    }
 
-    jsonStatus['long_call']['cnt_positions'] += 1
-    jsonStatus['long_call']['cnt_assignments'] += 1
-    jsonStatus['long_call']['profit'] += info['profit']
-    jsonStatus['long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
+    jsonStatus['short_call']['cnt_positions'] += 1
+    jsonStatus['short_call']['cnt_assignments'] += 1
+    jsonStatus['short_call']['profit'] += info['profit']
+    jsonStatus['short_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
     if (info['profit'] > 0) 
-        jsonStatus['long_call']['carried_gains'] -= info['profit']
+        jsonStatus['short_call']['carried_gains'] -= info['profit']
 
     let payload = {}
     payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     console.log(payload)
-    await putStatus(payload);
+//  TEST ME :    await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
@@ -168,6 +175,6 @@ async function onClosePosition(quote_symbol) {
     console.log(payload)
     await putPosition(payload)
 
-    document.getElementById(btn).innerHTML = "Closed";
+//  TEST ME :        document.getElementById(btn).innerHTML = "Closed";
     return
 }

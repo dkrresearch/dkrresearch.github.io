@@ -1,7 +1,7 @@
 
-var globalDefaultValue = 121;  //  $110,000
+var globalDefaultValue = 121;  //  $121,000
 var prem_per_day_per_1K = 0.050
-var globalCurrentYear = 2023
+var globalCurrentYear = 2024
 
 async function loadBodyElements() {
     let header = await fetchHeader();
@@ -219,6 +219,12 @@ function findOptionInfo(jsonOptionTable,option_symbol) {
     }
 
     option_table = jsonOptionTable.Item.info.option_table_far
+    for(var key in option_table) {
+        if ((option_table[key]['quote_symbol'] == option_symbol))
+            return option_table[key]
+    }
+
+    option_table = jsonOptionTable.Item.info.option_table_today
     for(var key in option_table) {
         if ((option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]

@@ -34,68 +34,208 @@
                     <div class="widget_box">
                         <h1 class="widget_label">Carried Risk</h1>
                         <span class="widget_box_text">The cumulative amount of estimated risk assumed minus realized losses.</span>
-                        <h1 id='carried_losses' class='widget_value'>---</h1>
+                        <h1 id='carried_losses' class='widget_value' style='padding-right: 10px;'>---</h1>
                     </div>
                     <div class="widget_box">
                         <h1 class="widget_label">Reserves</h1>
                         <span class="widget_box_text">Reserves to cover Black-Swan events.</span>
-                        <h1 id='bs_reserves' class='widget_value'>----</h1>
+                        <h1 id='bs_reserves' class='widget_value' style='padding-right: 10px;'>----</h1>
                     </div>
                     <div class="widget_box">
                         <h1 class="widget_label">Profit</h1>
                         <span class="widget_box_text">The year-to-date profits.</span>
-                        <h1 id='total_profit' class='widget_value'>----</h1>
+                        <h1 id='total_profit' class='widget_value' style='padding-right: 10px;'>----</h1>
                     </div>
                 </div>
 
                 <div class="div_parent">
                     <div class="widget_box" style="width:89%">
-                        <div style="width:40%; float:left"> 
-                            <h1 class="widget_label">Current Value</h1>
-                            <span class="widget_text">The current profit/loss from all the opened positions.</span>
-                        </div>
-                        <div style="width:40%; float:right">
-                            <h1 id='current_value' class='widget_value' style="margin-top:5px;">----</h1>
-                        </div>
-                    </div>                
-                </div>
-
-
-                <div class="div_parent">
-                    <div class="widget_box" style="width:89%">
-                        <div style="width:40%; float:left"> 
-                            <h1 class="widget_label">Total Risk Of Assignment</h1>
-                            <span class="widget_text">The risk of one or more contracts being assigned.</span>
-                        </div>
-                        <div style="width:40%; float:right">
-                            <h1 id='total_roa' class='widget_value' style="margin-top:5px;">----</h1>
-                        </div>
-                    </div>                
-                </div>
-                
-                <div class="div_parent">
-                    <div class="widget_box" style="width:89%">
-                        <div style="width:40%; float:left"> 
-                            <h1 class="widget_label">Total Value at Risk</h1>
-                            <span class="widget_text">The total value at risk from all the opened positions.</span>
-                        </div>
-                        <div style="width:40%; float:right">
-                            <h1 id='total_var' class='widget_value' style="margin-top:5px;">----</h1>
-                        </div>
-                    </div>                
-                </div>
-
-
-                <div class="div_parent">
-                    <div class="widget_box" style="width:89%">
-                        <h1 class="widget_label">Opened Positions</h1>
-                        <span class="widget_text">All opened positions.</span>
+                        <h1 class="widget_label"><a href='#'>All Algorithms</a></h1>
                         <hr/>
 
-                        <div id='open_positions_table' class='positions_table'>
-                        </div>
+                        <div id="contents" style="margin-bottom:25px;">
+                            <div style="width:100%;">
+    
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px;">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Current Value</h1>
+                                        <span class="widget_text">The current profit/loss from all the opened positions.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='current_value' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>                
 
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px;">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Total Risk Of Assignment</h1>
+                                        <span class="widget_text">The risk of one or more short open positions being assigned.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='total_roa' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>                
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px;">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Total Value at Risk</h1>
+                                        <span class="widget_text">The total value at risk from all the opened positions.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='total_var' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>   
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+
+
+                <div class="div_parent">
+                    <div class="widget_box" style="width:89%">
+                        <h1 class="widget_label"><a href='/short_put/positions.html'>Short Put</a></h1>
+                        <hr/>
+
+                        <div id="contents" style="margin-bottom:25px;">
+                            <div style="width:100%;">
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px;">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Year-To-Date Profits</h1>
+                                        <span class="widget_text">The year-to-date profits for 'Short Put'.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_put_ytd_profit' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>      
+                                
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Assignment Rate</h1>
+                                        <span class="widget_text">The year-to-date Assignment rate for 'Short Put'.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_put_assignment_rate' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>   
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Current Value</h1>
+                                        <span class="widget_text">The total profit of open 'Short Put' positions.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_put_current_profit' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>  
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Carried Risk</h1>
+                                        <span class="widget_text">The cumulative amount of estimated risk assumed minus realized losses.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_put_carried_risk' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>
+                    </div> 
+                    
+                    
+                    <div class="widget_box" style="width:89%">
+                        <h1 class="widget_label"><a href='/short_call/positions.html'>Short Call</a></h1>
+                        <hr/>
+
+                        <div id="contents" style="margin-bottom:25px;">
+                            <div style="width:100%;">
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px;">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Year-To-Date Profits</h1>
+                                        <span class="widget_text">The year-to-date profits for 'Short Call'.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_call_ytd_profit' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>      
+                                
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Assignment Rate</h1>
+                                        <span class="widget_text">The year-to-date Assignment rate for 'Short Call'.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_call_assignment_rate' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>   
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Current Value</h1>
+                                        <span class="widget_text">The total profit of open 'Short Call' positions.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_call_current_profit' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>  
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Carried Risk</h1>
+                                        <span class="widget_text">The cumulative amount of estimated risk assumed minus realized losses.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='short_call_carried_risk' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>  
+
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="widget_box" style="width:89%">
+                        <h1 class="widget_label"><a href='/long_call/positions.html'>Long Call</a></h1>
+                        <hr/>
+
+                        <div id="contents" style="margin-bottom:25px;">
+                            <div style="width:100%;">
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px;">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Year-To-Date Profits</h1>
+                                        <span class="widget_text">The year-to-date profits for 'Long Call'.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='long_call_ytd_profit' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>      
+                                
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Assignment Rate</h1>
+                                        <span class="widget_text">The year-to-date Assignment rate for 'Long Call'.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='long_call_assignment_rate' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>   
+
+                                <div class="widget_box" style="width:95%; padding-top:0px; padding-bottom:5px; ">
+                                    <div style="width:60%; float:left"> 
+                                        <h1 class="widget_label">Current Value</h1>
+                                        <span class="widget_text">The total profit of open 'Long Call' positions.</span>
+                                    </div>
+                                    <div style="width:30%; float:right">
+                                        <h1 id='long_call_current_profit' class='widget_value' style="margin-top:5px;">----</h1>
+                                    </div>
+                                </div>  
+
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>

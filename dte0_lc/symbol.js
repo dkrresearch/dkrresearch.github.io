@@ -40,58 +40,44 @@ async function loadSymbolData() {
     last_update = jsonOptionTable.Item.info.last_update
     document.querySelector('#last_update').innerHTML = unixToReadable(last_update)
 
-
 //  Build option tables
     let divTable = document.getElementById("near_put_table");
-    let table = jsonOptionTable.Item.info.option_table_near
-    for (var e=0; e<2; e++) {
-        if (e == 1) {
-            divTable = document.getElementById("far_put_table");
-            table = jsonOptionTable.Item.info.option_table_far
-        }
-        if (table.length <= 0) 
-            continue
-
+    let table = jsonOptionTable.Item.info.option_table_today
+    if (table.length > 0) {
         if (table[0]['sub_earnings_data'] == true) {
-            if (e == 0)
-                document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
-            else
-                document.querySelector('#far_sub_earnings_data').style.visibility = "visible";
+            document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
         }
-        if (e == 0) {
-            document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
-            document.querySelector('#near_dte').innerHTML = table[0]['dte']
-        }else{
-            document.querySelector('#far_exp_date').innerHTML = table[0]['expiration_date']
-            document.querySelector('#far_dte').innerHTML = table[0]['dte']
-        }   
+        document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
+        document.querySelector('#near_dte').innerHTML = table[0]['fdte'].toFixed(2)
 
-
-        for(var key in table.reverse()) {
+        for(var key in table) {
             if (table[key]['quote'] == null)
+                continue            
+            if (table[key]['type'] != 'long_call')
                 continue
-            if (table[key]['type'] != 'short_put')
+
+            if (table[key].hasOwnProperty('est_roi') == false)
                 continue
-            if (parseFloat(table[key]['chance_of_loss']) > 0.05)  
+            if (table[key].hasOwnProperty('chance_of_payout') == false)
                 continue
+
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
-            if (parseFloat(table[key]['total_premimums']) <= 0.0)
+            if (parseFloat(table[key]['quote']['bid']) <= 0.01)
+                continue            
+            if (parseFloat(table[key]['premimum']) <= 0.0)
+                continue
+            if (parseFloat(table[key]['chance_of_payout']) > 0.50)
                 continue
 
-            console.log(table[key])
-            if (table[key].hasOwnProperty('prem_over_var') == false)
-                continue
-            if (table[key].hasOwnProperty('price_over_risk') == false)
-                continue
-                
+            console.log(table[key])              
 
             line = '<div class="put_table_row">'
 
             option_symbol = table[key]['quote_symbol'];
             strike_price = table[key]['strike_price'].toFixed(2);
             discount = table[key]['discount'] * 100.0
-            link = "<a href='/option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
+            link = "<a href='option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
             line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
 
 // bid x ask
@@ -99,22 +85,18 @@ async function loadSymbolData() {
             bid = parseFloat(table[key]['quote']['bid'])
             line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-// Premimum
-            value = parseFloat(table[key]['total_premimums'])
-//            value = globalDefaultValue * (value / 100.0)
-            line = line + '<span class="put_table_col_3">$' + value.toFixed(0) + '</span>'
+            contracts = Math.round( globalDefaultValue / (100.0 * table[key]['quote']['buy_price'] ) )
+            am = contracts * 100.0 * strike_price
+            line = line + '<span class="put_table_col_3">' + printUSD(am) +'</span>'
 
-// Risk of Assignment
-            value = 100.0 * parseFloat(table[key]['chance_of_loss'])
+
+// Chance of Payout
+            value = 100.0 * parseFloat(table[key]['chance_of_payout'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Prem over Value at Risk
-            value = parseFloat(table[key]['prem_over_var']) * 1000.0
+// Return on Investment
+            value = parseFloat(table[key]['est_roi'])
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
-
-// Price over Risk
-            value = table[key]['price_over_risk']
-            line = line + '<span class="put_table_col_6">' + value.toFixed(1) + '</span>'
 
             line = line + '</div>'
 

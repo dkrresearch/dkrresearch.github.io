@@ -32,22 +32,25 @@
         <div class="close_position" style="float:right; width:30%; border:1px solid rgb(0, 141, 129);">
             <div style="width:100%; background-color:rgb(0, 141, 129); text-align:center; color:white;">Details</div>
 
-            <div class="details_table_row" style="border-bottom:None;"><span class="details_table_col1">Premimum</span></div>   
+            <div class="details_table_row" style="border-bottom:None;"><span class="details_table_col1">Assignment Margin</span></div>   
             <div class="price_slider">
-                <input type="range" min="25" max="1000" value="200" class="slider" id="myRange"
+                <input type="range" min="500" max="2500" value="1000" class="slider" id="myRange"
                         step="25" oninput="onSliderChange()">
             </div>
 
-             <div class="details_table_row"><span class="details_table_col1">Premimum :</span>
-                <span  class="details_table_col2" id="details_premimum">----</span></div>  
-
-            <div class="details_table_row"><span class="details_table_col1">Assignment Margin :</span>
-                    <span  class="details_table_col2" id="details_am">----</span></div>   
-
-            <div class="details_table_row"><span class="details_table_col1">Avg Payout :</span>
-                        <span  class="details_table_col2" id="details_payout">----</span></div>                          
-    
-            <p></p>
+            <div class="details_table_row" style="border-bottom:none">
+                <span class="details_table_col1">Value at Risk :</span>
+                <span  class="details_table_col2" id="details_value_at_risk">----</span></div>   
+            <div class="details_table_row" style="border-bottom:none">
+                <span class="details_table_col1">Assignment Margin :</span>
+                <span  class="details_table_col2" id="details_margin_label">----</span></div> 
+  
+            <div class="details_table_row" style="border-bottom:none">
+                    <span class="details_table_col1">Prem / VaR :</span>
+                    <span  class="details_table_col2" id="details_prem_over_var">----</span></div>   
+            <div class="details_table_row">
+                <span class="details_table_col1">Price / Risk :</span>
+                <span  class="details_table_col2" id="details_price_over_risk">----</span></div>                          
 
             <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Contracts :</span>
                 <input type="text" id="details_contracts" class="input_label" value="0.00"  oninput="onContractsChange()"></input></div> 
@@ -58,8 +61,8 @@
             <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;"><span style="height:20px;" class="details_table_col1">Commision :</span>
                 <input type="text" id="details_commision_price" class="input_label" value="5.00" oninput="onMarginChange()"></input></div>
                     
-            <div class="details_table_row" style="margin-bottom:25px;"><span class="details_table_col1">Total Price :</span>
-                <span  class="details_table_col2" id="details_total_price">0</span></div> 
+            <div class="details_table_row" style="margin-bottom:25px;"><span class="details_table_col1">Total Proceeds :</span>
+                <span  class="details_table_col2" id="details_total_proceeds">0</span></div> 
 
             <button class="input_button" id="open_button" onclick="onOpenPosition()">Open Position</button>
         </div>
@@ -81,24 +84,30 @@
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
                         <span id="discount">----</span><span>%</span></div></h2>
                 
-                <h2><span style="width: 60%; float:left;">Chance of Payout : </span>
+                <h2><span style="width: 60%; float:left;">Risk of Assignment : </span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
-                        <span id="chance_of_payout">----</span><span>%</span></div></h2>
+                        <span id="chance_of_loss">----</span><span>%</span></div></h2>
                 
-                <h2><span style="width: 60%; float:left;">Estimated ROI : </span>
+                <h2><span style="width: 60%; float:left;">Value at Risk : </span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
-                        <span id="est_roi">----</span></div></h2>
+                        <span>$</span><span id="var_per_100K">----</span></div></h2>
+
+                <h2><span style="width: 60%; float:left;">Price of Loss :</span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span>$</span><span id="price_of_loss">----</span></div></h2>
 
 
-                <h2><span style="width: 60%; padding-top:10px; float:left;">Avg Payout :</span>
+                <h2><span style="width: 60%; padding-top:10px; float:left;">Prem / VaR :</span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right; padding-top:10px; ">
-                        <span id="avg_payout">----</span></div></h2>                
-                <h2><span style="width: 60%; float:left;">Fair Price :</span>
-                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right;">
-                        <span id="fair_price">----</span></div></h2>
-                <h2><span style="width: 60%; float:left;">Current Price :</span>
+                        <span id="prem_over_var">----</span></div></h2>
+
+                <h2><span style="width: 60%; float:left;">Price / Risk :</span>
                     <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
-                        <span id="buy_price">----</span></div></h2>
+                        <span id="price_over_risk">----</span></div></h2>
+
+                <h2><span style="width: 60%; float:left;">Over FV :</span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span id="over_fair_value">----</span></div></h2>
 
             </div>
         </div>

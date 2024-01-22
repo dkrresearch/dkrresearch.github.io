@@ -3,29 +3,138 @@ async function loadDashboardData() {
     let jsonStatus = await fetchStatus(globalCurrentYear);
     console.log(jsonStatus)
     
-    let total_profit = jsonStatus['short_put']['profit']
-    let bs_reserves = jsonStatus['short_put']['bs_premium']
-    let carried_losses = jsonStatus['short_put']['carried_losses']
+    let current_value = 0.0
+    let total_profit = 0
+    let total_bs_reserves = 0.0
+    let total_carried_risk = 0.0
+    let total_var = 0.0
+    let total_roa = 1.0
 
-    let total_cnt = jsonStatus['short_put']['cnt_positions']
+//  Short Put Stats
+    let short_put_current_profit = 0.0
+    total_profit += jsonStatus['short_put']['profit']
+    total_bs_reserves += jsonStatus['short_put']['bs_premium']
+    total_carried_risk += jsonStatus['short_put']['carried_losses']
+
+    document.querySelector('#short_put_ytd_profit').innerHTML = printUSD( jsonStatus['short_put']['profit'] )
+    document.querySelector('#short_put_carried_risk').innerHTML = printUSD( jsonStatus['short_put']['carried_losses'] )
+    
+    let total_cnt = jsonStatus['short_put']['cnt_positions'] + 1e-6
     let num_assignments = jsonStatus['short_put']['cnt_assignments']
     let assignment_rate = (100.0 * num_assignments) / total_cnt
+    document.querySelector('#short_put_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
 
+//  Short Call Stats
+    let short_call_current_profit = 0.0
+//    total_profit += jsonStatus['short_call']['profit']
+//    total_bs_reserves += jsonStatus['short_call']['bs_premium']
+//    total_carried_risk += jsonStatus['short_call']['carried_losses']
+
+//    document.querySelector('#short_call_ytd_profit').innerHTML = printUSD( jsonStatus['short_call']['profit'] )
+//    document.querySelector('#short_call_carried_risk').innerHTML = printUSD( jsonStatus['short_call']['carried_losses'] )
+    
+//    total_cnt = jsonStatus['short_call']['cnt_positions'] + 1e-6
+//    num_assignments = jsonStatus['short_call']['cnt_assignments']
+//    assignment_rate = (100.0 * num_assignments) / total_cnt
+//    document.querySelector('#short_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
+
+
+//  Long Call Stats
+    let long_call_current_profit = 0.0
+    total_profit += jsonStatus['long_call']['profit']
+    total_carried_risk -= jsonStatus['long_call']['carried_gains']
+
+    document.querySelector('#long_call_ytd_profit').innerHTML = printUSD( jsonStatus['long_call']['profit'] )
+    
+    total_cnt = jsonStatus['long_call']['cnt_positions'] + 1e-6
+    num_assignments = jsonStatus['long_call']['cnt_assignments']
+    assignment_rate = (100.0 * num_assignments) / total_cnt
+    document.querySelector('#long_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
+
+
+    //  Opened Positions
+    jsonInfo = await fetchPositionsInfo();
+    table = jsonInfo.Items
+    for (var key in table) {
+        let uuid = table[key]['id']
+        let position_info = table[key]['info']
+        if  (position_info['assigned'] == true)
+            continue
+
+        console.log( position_info )
+        let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        if (jsonOptionTableInfo != null) {
+            console.log( jsonOptionTableInfo )
+            let quote = jsonOptionTableInfo['quote']
+            let buy_price = position_info['open_price']
+            if (quote != null) 
+                buy_price = quote['buy_price']
+            let sell_price = position_info['open_price']
+            if (quote != null) 
+                sell_price = quote['sell_price']
+    
+            if  (('option_type' in position_info) && (position_info['option_type'] == "short_put")) {
+                let contracts = position_info['contracts']
+                let open_price = position_info['open_price']
+                let cv = contracts * 100.0 * (open_price - buy_price)
+                current_value += cv
+                short_put_current_profit += cv
+
+                let value_at_risk = jsonOptionTableInfo['var'] * position_info['contracts']
+                total_var += value_at_risk
+
+                total_roa = total_roa * (1.0 - jsonOptionTableInfo['chance_of_loss'])
+            }
+
+            if  (('option_type' in position_info) && (position_info['option_type'] == "short_call")) {
+                let contracts = position_info['contracts']
+                let open_price = position_info['open_price']
+                let cv = contracts * 100.0 * (open_price - buy_price)
+                current_value += cv
+                short_call_current_profit += cv
+
+                total_roa = total_roa * (1.0 - jsonOptionTableInfo['chance_of_loss'])
+            }
+
+            if  (('option_type' in position_info) && (position_info['option_type'] == "long_call")) {
+                let contracts = position_info['contracts']
+                let open_price = position_info['open_price']
+                let cv = contracts * 100.0 * (sell_price - open_price)
+                current_value += cv
+                long_call_current_profit += cv
+            }
+        }
+    }
+
+    document.querySelector('#short_put_current_profit').innerHTML = printUSD( short_put_current_profit )
+    document.querySelector('#long_call_current_profit').innerHTML = printUSD( long_call_current_profit )
+    document.querySelector('#short_call_current_profit').innerHTML = printUSD( short_call_current_profit )
+
+//  Totals
     document.querySelector('#total_profit').innerHTML = "$" + total_profit.toFixed(0)
     if (total_profit < 0) 
         document.querySelector('#total_profit').style.color = "rgb(145, 35, 35)"
 
-    document.querySelector('#carried_losses').innerHTML = "$" + carried_losses.toFixed(0)
+    document.querySelector('#carried_losses').innerHTML = "$" + total_carried_risk.toFixed(0)
     if (carried_losses < 0) 
         document.querySelector('#carried_losses').style.color = "rgb(145, 35, 35)"
 
-    document.querySelector('#bs_reserves').innerHTML = "$" + bs_reserves.toFixed(0)
+    document.querySelector('#bs_reserves').innerHTML = "$" + total_bs_reserves.toFixed(0)
 
+    document.querySelector('#current_value').innerHTML = printUSD(current_value)
+    document.querySelector('#total_var').innerHTML = printUSD(total_var)
+    value = (1.0 - total_roa) * 100.0
+    document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
+
+    document.querySelector('#wait').remove();
+    document.querySelector('#contents').style.visibility = "visible";
+    return
 
     let divTable = document.getElementById("open_positions_table");
-    let current_value = 0.0
-    let total_roa = 1.0
-    let total_var = 0.0
+    let current_value_ex = 0.0
+    let total_roa_ex = 1.0
+    let total_var_ex = 0.0
     jsonInfo = await fetchPositionsInfo();
     table = jsonInfo.Items
     for (var key in table) {

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- use 'python3 -m http.server 80' to test -->
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+        <title>DKR Research - Assignments</title>
+
+        <link rel="stylesheet" href="../main.css">
+        <link rel="stylesheet" href="assignments.css">
+        <script src="../main.js?v=1"></script>
+        <script src="assignments.js?v=1"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header">
+        </div>
+
+        <div id="wait">
+            <img id="wait_gif" src="../wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
+        </div>
+        
+        <div id="contents" style="visibility: hidden; margin-top:25px; margin-bottom:25px;">
+            <div class="widget_box" style="width:88.6%; border-right:0px solid rgb(231, 229, 229);">
+                <h1 class="widget_label">Total Profit/Loss</h1>
+                <span class="widget_text">The current profit/loss of the opened assigned positions.</span>
+                <h1 id='current_value' class='widget_value' style="float:right; margin-top:0px;">----</h1>
+            </div>
+
+            <div id='open_positions_table' class='positions_table'>
+                <h1 style='margin-left:0px; color: rgb(0, 160, 147);'>Opened Assigned Positions</h1>
+                <hr>
+             </div>
+        </div>
+        <script>
+            loadPositionsData()
+        </script>
+    </body>
+</html>

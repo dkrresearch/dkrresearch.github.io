@@ -102,7 +102,7 @@ async function onAssignPosition() {
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = true    
-    payload['assigned'] =  true
+    payload['assigned'] = true    
     console.log(info)
 
     await putPosition(payload)
@@ -146,20 +146,18 @@ async function onClosePosition() {
     console.log(info)
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    console.log(jsonStatus)
-
-    if (('long_call' in jsonStatus) == false) {
-        jsonStatus['long_call'] = {}
-        jsonStatus['long_call']['cnt_positions'] = 0
-        jsonStatus['long_call']['carried_gains'] = 0.0
-        jsonStatus['long_call']['profit'] = 0.0  
+    if (('dte0_long_call' in jsonStatus) == false) {
+        jsonStatus['dte0_long_call'] = {}
+        jsonStatus['dte0_long_call']['cnt_positions'] = 0
+        jsonStatus['dte0_long_call']['carried_gains'] = 0.0
+        jsonStatus['dte0_long_call']['profit'] = 0.0  
     }
 
-    jsonStatus['long_call']['cnt_positions'] += 1
-    jsonStatus['long_call']['profit'] += info['profit']
-    jsonStatus['long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
+    jsonStatus['dte0_long_call']['cnt_positions'] += 1
+    jsonStatus['dte0_long_call']['profit'] += info['profit']
+    jsonStatus['dte0_long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
     if (info['profit'] > 0) 
-        jsonStatus['long_call']['carried_gains'] -= info['profit']
+        jsonStatus['dte0_long_call']['carried_gains'] -= info['profit']
 
     console.log(jsonStatus)
     

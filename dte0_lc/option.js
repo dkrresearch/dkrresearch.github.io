@@ -1,4 +1,7 @@
 
+
+// "7d50d586-7387-4f9d-be7d-023679cd0783"
+
 async function loadPageData() {
     await loadOptionData();
     loadOpenPosition();
@@ -11,10 +14,10 @@ async function loadOptionData() {
     jsonInfo = await fetchSymbolInfo();
     jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
-
+    
     let symbol = jsonInfo.Item.symbol
-
-    link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
+ 
+    link = "<a href='symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     
     let symbol_name = jsonInfo.Item.info.overview.Name
@@ -25,55 +28,24 @@ async function loadOptionData() {
     document.querySelector('#ExDividendDate').innerHTML = jsonInfo.Item.info.overview.ExDividendDate;
     document.querySelector('#DividendPerShare').innerHTML = jsonInfo.Item.info.overview.DividendPerShare;
     document.querySelector('#description').innerHTML = jsonInfo.Item.info.overview.Description;
-    
-    value = (10000.0 * jsonOptionInfo.Item.info.max_earnings_delta).toFixed();
-    value = value / 100.0
-    document.querySelector('#max_earnings_effect').innerHTML = value    
+    document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
+    document.querySelector('#last_price_2').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
+
+    let last_price = jsonOptionInfo.Item.info.last_price
 
     if (jsonOptionTableInfo != null) {
-        let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
+        console.log(jsonOptionTableInfo)
+
+        let strike_price = jsonOptionTableInfo.strike_price
+        let option_label = strike_price.toFixed(2) + " Call"
         document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
-    
+
         document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
         document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
         document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;
-        document.querySelector('#last_price').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
-        document.querySelector('#last_price_2').innerHTML = jsonOptionInfo.Item.info.last_price.toFixed(2)  
 
-        value = jsonOptionTableInfo.chance_of_loss * 100.0
-        document.querySelector('#chance_of_loss').innerHTML = value.toFixed(2)  
-        document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(4)  
-
-        value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
-        document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
-
-        if (jsonOptionTableInfo.hasOwnProperty('prem_over_var') == true) {
-            value = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
-            document.querySelector('#prem_over_var').innerHTML = value.toFixed(1)
-            document.querySelector('#details_prem_over_var').innerHTML = value.toFixed(1)
-        } else {
-            document.querySelector('#prem_over_var').innerHTML = ''
-            document.querySelector('#details_prem_over_var').innerHTML = ''
-        }
-
-        if (jsonOptionTableInfo.hasOwnProperty('price_over_risk') == true) {
-            value = jsonOptionTableInfo.price_over_risk
-            document.querySelector('#price_over_risk').innerHTML = value.toFixed(1)
-            document.getElementById("details_price_over_risk").innerHTML = value.toFixed(1);
-        } else {
-            document.querySelector('#price_over_risk').innerHTML = ''
-            document.getElementById("details_price_over_risk").innerHTML = ''
-        }
-        
-        document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
-
-        value = overFairValue(jsonOptionTableInfo)
-        document.querySelector('#over_fair_value').innerHTML = value.toFixed(1);
-
-        let last_price = jsonOptionInfo.Item.info.last_price
-        let strike_price = jsonOptionTableInfo.strike_price
-        value = (1.0 - (strike_price / last_price)) * 100.0
-        document.querySelector('#discount').innerHTML = value.toFixed(2)   
+        value = (jsonOptionTableInfo.discount * 100.0).toFixed(2);
+        document.querySelector('#discount').innerHTML = value;
 
         value = parseFloat(jsonOptionTableInfo.quote.bid)
         document.querySelector('#bid').innerHTML = value.toFixed(2)  
@@ -82,8 +54,8 @@ async function loadOptionData() {
         value = parseFloat(jsonOptionTableInfo.quote.vl)
         document.querySelector('#vl').innerHTML = value.toFixed(0)  
         value = parseFloat(jsonOptionTableInfo.quote.openinterest)
-        document.querySelector('#openinterest').innerHTML = value.toFixed(0)     
-        
+        document.querySelector('#openinterest').innerHTML = value.toFixed(0) 
+
         value = parseFloat(jsonOptionTableInfo.quote.idelta)
         document.querySelector('#idelta').innerHTML = value.toFixed(4)  
         value = parseFloat(jsonOptionTableInfo.quote.igamma)
@@ -94,6 +66,20 @@ async function loadOptionData() {
         document.querySelector('#itheta').innerHTML = value.toFixed(4)   
         value = parseFloat(jsonOptionTableInfo.quote.ivega)
         document.querySelector('#ivega').innerHTML = value.toFixed(4)   
+
+        value = parseFloat(jsonOptionTableInfo.chance_of_payout) * 100.0
+        document.querySelector('#chance_of_payout').innerHTML = value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.est_roi)
+        document.querySelector('#est_roi').innerHTML = value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.mean_payout)
+        document.querySelector('#avg_payout').innerHTML = "$" + value.toFixed(2)   
+
+        value = parseFloat(jsonOptionTableInfo.fair_price_of_option)
+        document.querySelector('#fair_price').innerHTML = "$" + value.toFixed(2)   
+        value = parseFloat(jsonOptionTableInfo.quote.buy_price)
+        document.querySelector('#buy_price').innerHTML = "$" + value.toFixed(2)   
     }
 
     document.querySelector('#wait').remove();
@@ -105,17 +91,12 @@ function findOptionInfo(jsonOptionTable) {
     let option_symbol = my_url.searchParams.get("option_symbol").toUpperCase();
 
 //  Find this option in the option table
-    let option_table = jsonOptionTable.Item.info.option_table_near
+    let option_table = jsonOptionTable.Item.info.option_table_today
     for(var key in option_table) {
         if ((option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]
     }
 
-    option_table = jsonOptionTable.Item.info.option_table_far
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
     return null
 }
 
@@ -132,17 +113,14 @@ async function fetchSymbolInfo() {
 }
 
 function loadOpenPosition() {
-    let mark = parseFloat(jsonOptionTableInfo.quote.mark_price)
+    let mark = parseFloat(jsonOptionTableInfo.quote.buy_price)
     document.getElementById("details_open_price").value = (mark).toFixed(2)
     onSliderChange()
 }
 
 function onContractsChange() {
     let contracts = parseInt( document.getElementById("details_contracts").value )
-    
-    let margin_value = parseInt( contracts * 100.0 * jsonOptionTableInfo.strike_price / 1000.0)
-    document.getElementById("details_margin_label").innerHTML = "$" + margin_value + "K";
-    
+        
     let commision = 0.65 * contracts
     document.getElementById("details_commision_price").value = commision.toFixed(2);
 
@@ -151,11 +129,11 @@ function onContractsChange() {
 
 function onSliderChange() {
     let slider = document.getElementById("myRange");
-    let value = slider.value * globalDefaultValue
-    document.getElementById("details_margin_label").innerHTML = "$" + parseInt(value / 1000) + "K";
+    let value = (slider.value * globalDefaultValue) / 100.0
 
-    let shares = value / jsonOptionTableInfo.strike_price
-    let contracts = shares / 100
+    let open_price = parseFloat( document.getElementById("details_open_price").value )
+    let shares = value / open_price
+    let contracts = Math.round( shares / 100 )
     document.getElementById("details_contracts").value = contracts.toFixed(0);
 
     let commision = 0.65 * contracts
@@ -169,23 +147,19 @@ function onMarginChange() {
     let shares = contracts * 100
     let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )
-    let details_total_proceeds = (shares * open_price) -  commision
+    let strike_price = parseFloat( jsonOptionTableInfo['strike_price'] )
 
-    document.getElementById("details_total_proceeds").innerHTML = "$" + details_total_proceeds.toFixed(2);
+    let prem = contracts * 100 * open_price
+    document.getElementById("details_premimum").innerHTML = "$" + prem.toFixed(0);
 
-    let value = (jsonOptionTableInfo.var * contracts) / 1000.0
-    document.getElementById("details_value_at_risk").innerHTML = "$" + value.toFixed(0) + "K";
+    let details_total_price = (shares * open_price) +  commision
+    document.getElementById("details_total_price").innerHTML = "$" + details_total_price.toFixed(2);
 
-    
-    let base_por = jsonOptionTableInfo.price_over_risk
-    let mark = parseFloat(jsonOptionTableInfo.quote.mark_price)
-    let new_por = (base_por / mark) * open_price
-    document.getElementById("details_price_over_risk").innerHTML = new_por.toFixed(1);
+    let assignment_margin = (strike_price * shares)
+    document.getElementById("details_am").innerHTML = printUSD(assignment_margin);
 
-    let base_pov = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
-    let new_pov = (base_pov / mark) * open_price
-    document.getElementById("details_prem_over_var").innerHTML = new_pov.toFixed(1);
-
+    let avg_payout = parseFloat( jsonOptionTableInfo['mean_payout'] ) * shares
+    document.getElementById("details_payout").innerHTML = printUSD(avg_payout);
 }
 
 function uuidv4() {
@@ -196,13 +170,12 @@ function uuidv4() {
 
   
 async function onOpenPosition() {
-    
     document.getElementById("open_button").style.backgroundColor = "#888";
     document.getElementById("open_button").disabled = true;
     document.getElementById("open_button").innerHTML = "Opening Position ...";
-
+    
     let info = {}
-    info["option_type"] = "short_put"
+    info["option_type"] = "dte0_long_call"
     info["symbol"] = jsonOptionTableInfo["symbol"]
 
     let today = new Date();
@@ -212,18 +185,20 @@ async function onOpenPosition() {
     let open_date = yyyy+"-"+mm+"-"+dd;
     info['open_date'] = open_date
     info['open_dte'] = parseInt( jsonOptionTableInfo['dte'] )
-    info['open_price'] = parseFloat( document.getElementById("details_open_price").value )
-    info['open_pol'] = parseFloat( jsonOptionTableInfo['price_of_loss'] )
-
+    info['chance_of_payout'] = parseFloat( jsonOptionTableInfo['chance_of_payout'] )
+    info['est_roi'] = parseFloat( jsonOptionTableInfo['est_roi'] )
+    info['discount'] = parseFloat( jsonOptionTableInfo['discount'] )
+    info['fair_price_of_option'] = parseFloat( jsonOptionTableInfo['fair_price_of_option'] )
     info['expiration_date'] = jsonOptionTableInfo["expiration_date"]
-    info['contracts'] = parseInt(document.getElementById("details_contracts").value)
     info['quote_symbol'] = jsonOptionTableInfo['quote_symbol']
-    info['target_price'] = jsonOptionTableInfo['target_price']
+    info['strike_price'] = parseFloat( jsonOptionTableInfo['strike_price'] )
+
+    info['open_price'] = parseFloat( document.getElementById("details_open_price").value )
+    info['contracts'] = parseInt(document.getElementById("details_contracts").value)
+    info['commisions'] = parseFloat( document.getElementById("details_commision_price").value )
     info['close_price'] = -1
     info['stock_price'] = -1
     info['assigned'] = false
-    info['strike_price'] = parseFloat( jsonOptionTableInfo['strike_price'] )
-    info['commisions'] = parseFloat( document.getElementById("details_commision_price").value )
 
     info['close_date'] = ''
     info['close_dte'] = -1
@@ -236,6 +211,8 @@ async function onOpenPosition() {
     payload['id'] = uuidv4();
     payload['info'] = info
     payload['opened'] = true
+    
+    console.log(payload)
     await putPosition(payload)
 
     document.getElementById("open_button").style.backgroundColor = "#888";

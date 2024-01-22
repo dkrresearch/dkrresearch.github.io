@@ -25,7 +25,7 @@ async function loadScannerData() {
         option_symbol = table[key]['quote_symbol'];
         strike_price = table[key]['strike_price'].toFixed(2);
         expiration_date = table[key]['expiration_date']
-        link = '<a href="/symbol.html?symbol='+symbol+'" style="font-weight:750;">'+symbol+'</a> - ' + strike_price;
+        link = '<a href="symbol.html?symbol='+symbol+'" style="font-weight:750;">'+symbol+'</a> - ' + strike_price;
         line = line + '<span class="scanner_table_col_1">' + link + '<br/>Expires :'+expiration_date+'</span>'
 
 // bid x ask

@@ -29,6 +29,7 @@ async function loadPositionData() {
 
     let last_price = jsonOptionInfo.Item.info.last_price
 
+    console.log(jsonOptionTableInfo)
     let dte = 0
     if (jsonOptionTableInfo == null) {
         let bs_remaining = 0
@@ -111,6 +112,7 @@ async function onAssignPosition() {
     document.getElementById("assign_button").innerHTML = "Assigning ...";
 
     let info = jsonPositionInfo['info']
+    info['assigned'] =  true
     console.log(info)
     
     payload = {}
@@ -164,13 +166,24 @@ async function onClosePosition() {
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    jsonStatus['short_put']['cnt_positions'] += 1
-    jsonStatus['short_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
+    if (('dte0_short_put' in jsonStatus) == false) {
+        jsonStatus['dte0_short_put'] = {}
+        jsonStatus['dte0_short_put']['cnt_positions'] = 0
+        jsonStatus['dte0_short_put']['carried_losses'] = 0.0
+        jsonStatus['dte0_short_put']['bs_premium'] = 0.0
+        jsonStatus['dte0_short_put']['profit'] = 0.0  
+    }
+
+    jsonStatus['dte0_short_put']['cnt_positions'] += 1
+    jsonStatus['dte0_short_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
     if (info['profit'] < 0) 
-        jsonStatus['short_put']['carried_losses'] += info['profit']
+        jsonStatus['dte0_short_put']['carried_losses'] += info['profit']
     
-    jsonStatus['short_put']['bs_premium'] += info['bs_premium']
-    jsonStatus['short_put']['profit'] += info['profit']
+    jsonStatus['dte0_short_put']['bs_premium'] += info['bs_premium']
+    jsonStatus['dte0_short_put']['profit'] += info['profit']
+
+    console.log(jsonStatus)
+    console.log(info)
 
     let payload = {}
     payload['id'] = globalCurrentYear

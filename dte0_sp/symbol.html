@@ -9,10 +9,10 @@
         
         <title id="title">DKR Research</title>
 
-        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="../main.css">
         <link rel="stylesheet" href="symbol.css">
         <link rel="stylesheet" href="position.css">
-        <script src="main.js"></script>
+        <script src="../main.js"></script>
         <script src="symbol.js"></script>
     </head>
 
@@ -20,7 +20,7 @@
         <div id="header"></div>
 
         <div id="wait">
-            <img id="wait_gif" src="wait.gif" alt="Loading..."></img>
+            <img id="wait_gif" src="../wait.gif" alt="Loading..."></img>
             <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
             <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
         </div>
@@ -69,25 +69,9 @@
         </div>
 
         <div id='near_put_table' class='put_table'>
-            <h1>Near Put Table</h1>
+            <h1>Put Table</h1>
             <h2>Expiration <span id="near_exp_date"></span> in <span id="near_dte">dte Fix Me</span> Days</h2>
             <h2 style="visibility:hidden; color:crimson;" id="near_sub_earnings_data">Substitute Earnings Data</span></h2>
-
-            <div class="put_table_header">
-                <span class="put_table_col_1">Symbol</span>
-                <span class="put_table_col_2">Quote</span>
-                <span class="put_table_col_3">Prem</span>
-                <span class="put_table_col_4">ROA</span>
-                <span class="put_table_col_5">Prem/VaR</span>
-                <span class="put_table_col_6">Price/PoL</span>
-            </div>
-        </div>
-
-
-        <div id='far_put_table' class='put_table'>
-            <h1>Far Put Table</h1>
-            <h2>Expiration <span id="far_exp_date"></span> in <span id="far_dte">dte Fix Me</span> Days</h2>
-            <h2 style="visibility:hidden; color:crimson;" id="far_sub_earnings_data">Substitute Earnings Data</span></h2>
 
             <div class="put_table_header">
                 <span class="put_table_col_1">Symbol</span>
