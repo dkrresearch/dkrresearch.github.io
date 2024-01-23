@@ -15,7 +15,7 @@ async function loadOptionData() {
     
     let symbol = jsonInfo.Item.symbol
 
-    link = "<a href='/symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
+    link = "<a href='symbol.html?symbol="+symbol+"'>"+symbol+"</a>"
     document.querySelector('#symbol').innerHTML = link;
     
     let symbol_name = jsonInfo.Item.info.overview.Name
