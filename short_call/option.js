@@ -34,7 +34,8 @@ async function loadOptionData() {
     if (jsonOptionTableInfo != null) {
         let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Call"
         document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
-    
+        document.querySelector('#next_earnings_date').innerHTML = jsonOptionTableInfo.next_earnings_date;
+   
         document.querySelector('#expiration').innerHTML = jsonOptionTableInfo.expiration_date;
         document.querySelector('#strike').innerHTML = jsonOptionTableInfo.strike_price.toFixed(2);
         document.querySelector('#dte').innerHTML = jsonOptionTableInfo.dte;

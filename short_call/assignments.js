@@ -173,8 +173,8 @@ async function onClosePosition(quote_symbol) {
     payload['info'] = info
     payload['opened'] = false
     console.log(payload)
-    await putPosition(payload)
+//  TEST ME :    await putPosition(payload)
 
-//  TEST ME :        document.getElementById(btn).innerHTML = "Closed";
+    document.getElementById(btn).innerHTML = "Closed";
     return
 }

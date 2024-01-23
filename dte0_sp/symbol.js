@@ -40,6 +40,7 @@ async function loadSymbolData() {
     last_update = jsonOptionTable.Item.info.last_update
     document.querySelector('#last_update').innerHTML = unixToReadable(last_update)
 
+    document.querySelector('#next_earnings_date').innerHTML = jsonOptionTable.Item.info.next_earnings_date;
 
 //  Build option tables
     let divTable = document.getElementById("near_put_table");
