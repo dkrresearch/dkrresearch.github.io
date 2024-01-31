@@ -150,6 +150,7 @@ async function onClosePosition(quote_symbol) {
     if (('dte0_short_put' in jsonStatus) == false) {
         jsonStatus['dte0_short_put'] = {}
         jsonStatus['dte0_short_put']['cnt_positions'] = 0
+        jsonStatus['dte0_short_put']['cnt_assignments'] = 0
         jsonStatus['dte0_short_put']['carried_losses'] = 0.0
         jsonStatus['dte0_short_put']['bs_premium'] = 0.0
         jsonStatus['dte0_short_put']['profit'] = 0.0  

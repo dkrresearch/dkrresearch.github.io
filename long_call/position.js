@@ -151,6 +151,7 @@ async function onClosePosition() {
     if (('long_call' in jsonStatus) == false) {
         jsonStatus['long_call'] = {}
         jsonStatus['long_call']['cnt_positions'] = 0
+        jsonStatus['long_call']['cnt_assignments'] = 0
         jsonStatus['long_call']['carried_gains'] = 0.0
         jsonStatus['long_call']['profit'] = 0.0  
     }

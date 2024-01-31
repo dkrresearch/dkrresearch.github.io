@@ -151,6 +151,7 @@ async function onClosePosition() {
         jsonStatus['dte0_long_call']['cnt_positions'] = 0
         jsonStatus['dte0_long_call']['carried_gains'] = 0.0
         jsonStatus['dte0_long_call']['profit'] = 0.0  
+        jsonStatus['dte0_long_call']['cnt_assignments'] = 0.0  
     }
 
     jsonStatus['dte0_long_call']['cnt_positions'] += 1

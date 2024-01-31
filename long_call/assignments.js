@@ -1,4 +1,6 @@
 
+var currentPositions;
+
 async function loadPositionsData() {
 
     document.querySelector('#wait_status').innerHTML = "... Downloading Assigned Positions ...";
@@ -6,8 +8,9 @@ async function loadPositionsData() {
     if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Items") == false)) {      
         return loadError("Unable to load Positions Table")
     }
+    currentPositions = jsonInfo.Items
 
-    let table = jsonInfo.Items;
+    let table = currentPositions;
     let current_value = 0.0
 
     let divTable = document.getElementById("open_positions_table");
@@ -35,6 +38,7 @@ async function loadPositionsData() {
         template = template.replaceAll("{$shares}",shares)
         template = template.replaceAll("{$idx}","'" + uuid + "'")
         template = template.replaceAll("{$quote_symbol}",position_info["quote_symbol"])
+        template = template.replaceAll("{$key}",key)
         
         let jsonOptionInfo = await fetchOptionTable(symbol);
 
@@ -42,11 +46,12 @@ async function loadPositionsData() {
         if (jsonOptionInfo != null) {
             console.log( jsonOptionInfo )
             let last_price = jsonOptionInfo.Item.info['last_price']
+            let open_price = position_info['open_price']
 
             template = template.replaceAll("{$price}",last_price.toFixed(2))
             template = template.replaceAll("{$close_price}",last_price.toFixed(2))
     
-            profit = (last_price - strike_price) * shares
+            profit = ((last_price - strike_price - open_price) * shares) - position_info['commisions']
             template = template.replaceAll("{$profit}",printUSD(profit))
 
             let gain = (100.0 * (last_price - strike_price)) / strike_price
@@ -95,14 +100,14 @@ function get_template() {
         <div style="width:100%; background-color:rgb(0, 141, 129); text-align:center; color:white;">Close</div>\
         <div class="details_table_row" style="height:30px; border-bottom:none">\
             <span style="height:20px;" class="details_table_col1">Close Price :</span>\
-            <input type="text" id="close_price_{$quote_symbol}" class="input_label" value="{$close_price}"></input></div>\
+            <input type="text" id="close_price_{$quote_symbol}" class="input_label" value="{$close_price}" oninput=doUpdate("{$quote_symbol}","{$key}")></input></div>\
         <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;">\
             <span style="height:20px;" class="details_table_col1">Commission :</span>\
-            <input type="text" id="close_commision_price_{$quote_symbol}" class="input_label" value="0.00"></input></div>\
+            <input type="text" id="close_commision_price_{$quote_symbol}" class="input_label" value="0.00" oninput=doUpdate("{$quote_symbol}","{$key}")></input></div>\
         <hr style="width:80%; margin-top:10px; margin-left:10%; color:gray"/>\
         <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;">\
             <span style="height:20px;" class="details_table_col1">Profit :</span>\
-            <span class="details_table_col2" id="close_profit"  style="{$red}">{$profit}</span>\
+            <span class="details_table_col2" id="close_profit_{$quote_symbol}"  style="{$red}">{$profit}</span>\
         </div>\
         <button class="input_button" id="btn_{$quote_symbol}" onclick="onClosePosition(\'{$quote_symbol}\')">Close Position</button>\
     </div>\
@@ -111,6 +116,20 @@ function get_template() {
     return block
 }
 
+function doUpdate(qoute_symbol,key) {
+    let position_info = currentPositions[key]['info']
+    let last_price = parseFloat( document.getElementById("close_price_"+qoute_symbol).value );
+    let commision = parseFloat( document.getElementById("close_commision_price_"+qoute_symbol).value );
+    let strike_price = position_info['strike_price']
+    let open_price = position_info['open_price']
+    let shares = position_info["contracts"] * 100
+    let open_commision = position_info["commisions"]
+
+    let profit = ((last_price - strike_price - open_price) * shares) - open_commision - commision
+
+    document.getElementById("close_profit_"+qoute_symbol).innerHTML = printUSD(profit)
+    return
+}
 
 async function onClosePosition(quote_symbol) {
     console.log(quote_symbol)
@@ -147,6 +166,14 @@ async function onClosePosition(quote_symbol) {
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
+    
+    if (('long_call' in jsonStatus) == false) {
+        jsonStatus['long_call'] = {}
+        jsonStatus['long_call']['cnt_positions'] = 0
+        jsonStatus['long_call']['cnt_assignments'] = 0
+        jsonStatus['long_call']['carried_gains'] = 0.0
+        jsonStatus['long_call']['profit'] = 0.0  
+    }
 
     jsonStatus['long_call']['cnt_positions'] += 1
     jsonStatus['long_call']['cnt_assignments'] += 1

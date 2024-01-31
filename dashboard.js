@@ -26,17 +26,17 @@ async function loadDashboardData() {
 
 //  Short Call Stats
     let short_call_current_profit = 0.0
-//    total_profit += jsonStatus['short_call']['profit']
-//    total_bs_reserves += jsonStatus['short_call']['bs_premium']
-//    total_carried_risk += jsonStatus['short_call']['carried_losses']
+    total_profit += jsonStatus['short_call']['profit']
+    total_bs_reserves += jsonStatus['short_call']['bs_premium']
+    total_carried_risk += jsonStatus['short_call']['carried_losses']
 
-//    document.querySelector('#short_call_ytd_profit').innerHTML = printUSD( jsonStatus['short_call']['profit'] )
-//    document.querySelector('#short_call_carried_risk').innerHTML = printUSD( jsonStatus['short_call']['carried_losses'] )
+    document.querySelector('#short_call_ytd_profit').innerHTML = printUSD( jsonStatus['short_call']['profit'] )
+    document.querySelector('#short_call_carried_risk').innerHTML = printUSD( jsonStatus['short_call']['carried_losses'] )
     
-//    total_cnt = jsonStatus['short_call']['cnt_positions'] + 1e-6
-//    num_assignments = jsonStatus['short_call']['cnt_assignments']
-//    assignment_rate = (100.0 * num_assignments) / total_cnt
-//    document.querySelector('#short_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
+    total_cnt = jsonStatus['short_call']['cnt_positions'] + 1e-3
+    num_assignments = jsonStatus['short_call']['cnt_assignments']
+    assignment_rate = (100.0 * num_assignments) / total_cnt
+    document.querySelector('#short_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
 
 
 //  Long Call Stats
