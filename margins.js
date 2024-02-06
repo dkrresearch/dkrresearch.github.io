@@ -26,8 +26,15 @@ async function loadPositionsData() {
         position_info = table[key]['info']
         if  (position_info['assigned'] == true)
             continue
-        if  (('option_type' in position_info) && (position_info['option_type'] != "short_put"))
+
+        if  (('option_type' in position_info) && (position_info['option_type'] == "long_call"))
             continue
+        if  (('option_type' in position_info) && (position_info['option_type'] == "long_put"))
+            continue
+        if  (('option_type' in position_info) && (position_info['option_type'] == "dte0_lc"))
+            continue
+
+        console.log(position_info)
 
         let template = get_template()
         template = template.replace("{$symbol}",position_info['symbol'])
@@ -36,6 +43,11 @@ async function loadPositionsData() {
         template = template.replace("{$expiration}",position_info['expiration_date'])
         template = template.replace("{$strike}",position_info['strike_price'])
         template = template.replace("{$key}",key)
+        
+        if (position_info['option_type'] == "short_call")
+            template = template.replace("{$option_type}","CALL")
+            if (position_info['option_type'] == "short_put")
+            template = template.replace("{$option_type}","PUT")
         
         let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
         let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
@@ -98,14 +110,27 @@ async function loadPositionsData() {
 }
 
 function regT(jsonOptionTableInfo,position_info) {
-    let otm = jsonOptionTableInfo['last_price'] - position_info['strike_price']
+    if (position_info['option_type'] == 'short_put') {
+        let otm = jsonOptionTableInfo['last_price'] - position_info['strike_price']
 
-    let margin_1 = (0.20 * jsonOptionTableInfo['last_price']) - otm
-    let margin_2 = (0.10 * position_info['strike_price'])
-    let ib_margin = jsonOptionTableInfo['quote']['buy_price'] + Math.max(margin_1,margin_2)
+        let margin_1 = (0.20 * jsonOptionTableInfo['last_price']) - otm
+        let margin_2 = (0.10 * position_info['strike_price'])
+        let ib_margin = jsonOptionTableInfo['quote']['buy_price'] + Math.max(margin_1,margin_2)
 
-    let margin = ib_margin * position_info['contracts'] * 100.0
-    return margin
+        let margin = ib_margin * position_info['contracts'] * 100.0
+        return margin
+    }
+
+    if (position_info['option_type'] == 'short_call') {
+        let otm = position_info['strike_price'] - jsonOptionTableInfo['last_price']
+
+        let margin_1 = (0.20 * jsonOptionTableInfo['last_price']) - otm
+        let margin_2 = (0.10 * jsonOptionTableInfo['last_price'])
+        let ib_margin = jsonOptionTableInfo['quote']['buy_price'] + Math.max(margin_1,margin_2)
+
+        let margin = ib_margin * position_info['contracts'] * 100.0
+        return margin
+    }
 }
 
 function recalcMargin(e) {
@@ -136,7 +161,7 @@ function get_template() {
     <div class="positions_table_row">\
         <div class="positions_table_col_1">\
             <h1><a href="/position.html?symbol={$symbol_}&option_symbol={$option_symbol}&e={$e}">\
-                <span id="symbol">{$symbol}</span> <span id="expiration">{$expiration}</span> <span id="strike">{$strike}</span> Put\
+                <span id="symbol">{$symbol}</span> <span id="expiration">{$expiration}</span> <span id="strike">{$strike}</span> {$option_type}\
                 </a></h1>\
             <h2><span id="dte">{$dte}</span> Days to expiration</h2>\
         </div>\
