@@ -43,12 +43,13 @@ async function loadPositionsData() {
         if (jsonOptionTableInfo != null) {
             template = template.replace("{$dte}",jsonOptionTableInfo['dte'])
 
-            value = parseFloat(jsonOptionTableInfo.chance_of_payout) * 100.0
-            if (isNaN(value))
-                value = 0.0
+            let cop = parseFloat(jsonOptionTableInfo.chance_of_payout)
+            if (isNaN(cop))
+                cop = 0.0
 
+            let value = cop * 100.0
             template = template.replace("{$cop}",value.toFixed(2))
-            total_cop = total_cop * (1.0 - value)
+            total_cop = total_cop * (1.0 - cop)
 
             let discount = ''
             value = 100.0 * (position_info['strike_price'] - jsonOptionTableInfo.last_price) / jsonOptionTableInfo.last_price // (100.0 * jsonOptionTableInfo['discount'])
