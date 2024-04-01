@@ -159,22 +159,22 @@ async function onClosePosition(quote_symbol) {
     jsonStatus['short_call']['cnt_positions'] += 1
     jsonStatus['short_call']['cnt_assignments'] += 1
     jsonStatus['short_call']['profit'] += info['profit']
-    jsonStatus['short_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
+    jsonStatus['short_call']['carried_losses'] += info['open_pol'] * info['contracts'] * 100.0
     if (info['profit'] > 0) 
-        jsonStatus['short_call']['carried_gains'] -= info['profit']
+        jsonStatus['short_call']['carried_losses'] -= info['profit']
 
     let payload = {}
     payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     console.log(payload)
-//  TEST ME :    await putStatus(payload);
+    await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
     console.log(payload)
-//  TEST ME :    await putPosition(payload)
+    await putPosition(payload)
 
     document.getElementById(btn).innerHTML = "Closed";
     return
