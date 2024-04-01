@@ -108,12 +108,16 @@ function findOptionInfo(jsonOptionTable) {
 //  Find this option in the option table
     let option_table = jsonOptionTable.Item.info.option_table_near
     for(var key in option_table) {
+        if (option_table[key]['type'] != 'short_put')
+            continue
         if ((option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]
     }
 
     option_table = jsonOptionTable.Item.info.option_table_far
     for(var key in option_table) {
+        if (option_table[key]['type'] != 'short_put')
+            continue
         if ((option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]
     }
