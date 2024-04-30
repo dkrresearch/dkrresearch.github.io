@@ -5,7 +5,6 @@ var jsonOptionInfo;
 var jsonOptionTableInfo;
 var jsonPositionInfo;
 
-var prem_per_day_per_1K = 0.050
 
 async function loadPositionData() {
     let value;

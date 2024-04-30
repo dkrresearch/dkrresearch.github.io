@@ -1,6 +1,6 @@
 
 var globalDefaultValue = 121;  //  $121,000
-var prem_per_day_per_1K = 0.050
+var prem_per_day_per_1K = 0.100
 var globalCurrentYear = 2024
 
 async function loadBodyElements() {
