@@ -13,15 +13,14 @@ async function loadSymbolData() {
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
  
-
     link = "<a href='/short_put/symbol.html?symbol="+symbol+"'>Short Put</a>"
     document.querySelector('#link_short_put').innerHTML = link;
 
     link = "<a href='/short_call/symbol.html?symbol="+symbol+"'>Short Call</a>"
     document.querySelector('#link_short_call').innerHTML = link;
 
-    link = "<a href='/long_put/symbol.html?symbol="+symbol+"'>Long Put</a>"
-    document.querySelector('#link_long_put').innerHTML = link;
+    link = "<a href='/long_call/symbol.html?symbol="+symbol+"'>Long Call</a>"
+    document.querySelector('#link_long_call').innerHTML = link;
 
 
     symbol_name = jsonInfo.Item.info.overview.Name
@@ -82,7 +81,7 @@ async function loadSymbolData() {
         for(var key in table) {
             if (table[key]['quote'] == null)
                 continue            
-            if (table[key]['type'] != 'long_call')
+            if (table[key]['type'] != 'long_put')
                 continue
 
             if (table[key].hasOwnProperty('est_roi') == false)
