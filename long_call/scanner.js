@@ -34,8 +34,12 @@ async function loadScannerData() {
         bid = parseFloat(table[key]['quote']['bid'])
         line = line + '<span class="scanner_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
+// The output of the Machine Learning prediction if this will pay off
+        value = parseFloat(table[key]['mlBoost'])
+        line = line + '<span class="scanner_table_col_3">' + value.toFixed(2) + '</span>'
+
 // Chance of Payout
-        value = parseFloat(table[key]['chance_of_payout'])
+        value = parseFloat(table[key]['ml_chance_of_payout'])
         value = value * 100.0
         line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
 

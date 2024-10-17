@@ -99,8 +99,6 @@ async function loadSymbolData() {
             if (parseFloat(table[key]['chance_of_payout']) > 0.50)
                 continue
 
-            console.log(table[key])              
-
             line = '<div class="put_table_row">'
 
             option_symbol = table[key]['quote_symbol'];
@@ -114,13 +112,11 @@ async function loadSymbolData() {
             bid = parseFloat(table[key]['quote']['bid'])
             line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-            contracts = Math.round( globalDefaultValue / (100.0 * table[key]['quote']['buy_price'] ) )
-            am = contracts * 100.0 * strike_price
-            line = line + '<span class="put_table_col_3">' + printUSD(am) +'</span>'
-
+            value = table[key]['mlBoost']
+            line = line + '<span class="put_table_col_3">' + value.toFixed(2) +'</span>'
 
 // Chance of Payout
-            value = 100.0 * parseFloat(table[key]['chance_of_payout'])
+            value = 100.0 * parseFloat(table[key]['ml_chance_of_payout'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
 // Return on Investment
