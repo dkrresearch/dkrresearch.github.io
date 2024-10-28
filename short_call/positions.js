@@ -38,7 +38,7 @@ async function loadPositionsData() {
         console.log('here')
         console.log(position_info['quote_symbol'])
      
-        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,'short_call',position_info['quote_symbol']);
         console.log(jsonOptionTableInfo)
 
         if (jsonOptionTableInfo != null) {

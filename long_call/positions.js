@@ -39,7 +39,7 @@ async function loadPositionsData() {
         template = template.replace("{$contracts}",position_info['contracts'])
 
         let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
-        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,'long_call',position_info['quote_symbol']);
         if (jsonOptionTableInfo != null) {
             template = template.replace("{$dte}",jsonOptionTableInfo['dte'])
 

@@ -210,25 +210,20 @@ async function fetchOptionTable(symbol) {
     }
 }
 
-function findOptionInfo(jsonOptionTable,option_symbol) {
+function findOptionInfo(jsonOptionTable,option_type,option_symbol) {
 //  Find this option in the option table
     let option_table = jsonOptionTable.Item.info.option_table_near
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
+    for(var key in option_table) {        
+        if ((option_table[key]['type'] == option_type) && (option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]
     }
 
     option_table = jsonOptionTable.Item.info.option_table_far
     for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
+        if ((option_table[key]['type'] == option_type) && (option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]
     }
 
-    option_table = jsonOptionTable.Item.info.option_table_today
-    for(var key in option_table) {
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
     return null
 }
 

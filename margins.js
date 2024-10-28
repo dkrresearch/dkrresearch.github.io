@@ -50,7 +50,7 @@ async function loadPositionsData() {
             template = template.replace("{$option_type}","PUT")
         
         let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
-        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['option_type'],position_info['quote_symbol']);
         
         template = template.replace("{$dte}",jsonOptionTableInfo['dte'])
 

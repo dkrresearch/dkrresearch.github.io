@@ -69,11 +69,8 @@ async function loadOptionData() {
         value = parseFloat(jsonOptionTableInfo.quote.ivega)
         document.querySelector('#ivega').innerHTML = value.toFixed(4)   
 
-        value = parseFloat(jsonOptionTableInfo.ml_chance_of_payout) * 100.0
+        value = parseFloat(jsonOptionTableInfo.chance_of_payout) * 100.0
         document.querySelector('#chance_of_payout').innerHTML = value.toFixed(2)   
-
-        value = parseFloat(jsonOptionTableInfo.mlBoost) * 100.0
-        document.querySelector('#mlBoost').innerHTML = value.toFixed(2)   
 
         value = parseFloat(jsonOptionTableInfo.est_roi)
         document.querySelector('#est_roi').innerHTML = value.toFixed(2)   

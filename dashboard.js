@@ -156,7 +156,7 @@ async function loadDashboardData() {
         template = template.replace("{$strike}",position_info['strike_price'])
 
         let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);
-        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['option_type'],position_info['quote_symbol']);
         if (jsonOptionTableInfo != null) {
             let ask = open_price
             if (jsonOptionTableInfo['quote'] != null)
