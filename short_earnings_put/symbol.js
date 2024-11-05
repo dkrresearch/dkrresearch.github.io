@@ -12,7 +12,10 @@ async function loadSymbolData() {
     symbol = jsonInfo.Item.symbol
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
- 
+
+    link = "<a href='/short_earnings_call/symbol.html?symbol="+symbol+"'>Earnings Call</a>"
+    document.querySelector('#link_short_call').innerHTML = link;
+
     symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#Name').innerHTML = " : " + link;
@@ -39,40 +42,38 @@ async function loadSymbolData() {
     
     last_update = jsonOptionTable.Item.info.last_update
     document.querySelector('#last_update').innerHTML = unixToReadable(last_update)
-    
+
     document.querySelector('#next_earnings_date').innerHTML = jsonOptionTable.Item.info.next_earnings_date;
 
 //  Build option tables
     let divTable = document.getElementById("near_put_table");
-    let table = jsonOptionTable.Item.info.option_table_today
+    let table = jsonOptionTable.Item.info.option_table_weekly
+    console.log(table)
     if (table.length > 0) {
-        if (table[0]['sub_earnings_data'] == true) {
-            document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
-        }
-        document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
-        document.querySelector('#near_dte').innerHTML = table[0]['fdte'].toFixed(2)
-
-        for(var key in table) {
+        for(var key in table.reverse()) {
             if (table[key]['quote'] == null)
-                continue            
-            if (table[key]['type'] != 'long_call')
                 continue
+            if (table[key]['type'] != 'short_earnings_put')
+                continue
+            
+            document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
+            document.querySelector('#near_exp_date').innerHTML = table[key]['expiration_date']
+            document.querySelector('#near_dte').innerHTML = table[key]['dte']
 
-            if (table[key].hasOwnProperty('est_roi') == false)
+            if (parseFloat(table[key]['chance_of_loss']) > 0.25)  
                 continue
-            if (table[key].hasOwnProperty('chance_of_payout') == false)
-                continue
-
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
-            if (parseFloat(table[key]['quote']['bid']) <= 0.01)
-                continue            
-            if (parseFloat(table[key]['premimum']) <= 0.0)
+            if (parseFloat(table[key]['total_premimums']) <= 0.0)
                 continue
-            if (parseFloat(table[key]['chance_of_payout']) > 0.50)
+    
+    
+            console.log(table[key])
+            if (table[key].hasOwnProperty('prem_over_var') == false)
                 continue
-
-            console.log(table[key])              
+            if (table[key].hasOwnProperty('price_over_risk') == false)
+                continue
+                
 
             line = '<div class="put_table_row">'
 
@@ -87,18 +88,22 @@ async function loadSymbolData() {
             bid = parseFloat(table[key]['quote']['bid'])
             line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-            contracts = Math.round( globalDefaultValue / (100.0 * table[key]['quote']['buy_price'] ) )
-            am = contracts * 100.0 * strike_price
-            line = line + '<span class="put_table_col_3">' + printUSD(am) +'</span>'
+// Premimum
+            value = parseFloat(table[key]['total_premimums'])
+//            value = globalDefaultValue * (value / 100.0)
+            line = line + '<span class="put_table_col_3">$' + value.toFixed(0) + '</span>'
 
-
-// Chance of Payout
-            value = 100.0 * parseFloat(table[key]['chance_of_payout'])
+// Risk of Assignment
+            value = 100.0 * parseFloat(table[key]['chance_of_loss'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Return on Investment
-            value = parseFloat(table[key]['est_roi'])
+// Prem over Value at Risk
+            value = parseFloat(table[key]['prem_over_var']) * 1000.0
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
+
+// Price over Risk
+            value = table[key]['price_over_risk']
+            line = line + '<span class="put_table_col_6">' + value.toFixed(1) + '</span>'
 
             line = line + '</div>'
 

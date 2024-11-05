@@ -166,22 +166,22 @@ async function onClosePosition() {
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    if (('dte0_short_put' in jsonStatus) == false) {
-        jsonStatus['dte0_short_put'] = {}
-        jsonStatus['dte0_short_put']['cnt_positions'] = 0
-        jsonStatus['dte0_short_put']['cnt_assignments'] = 0
-        jsonStatus['dte0_short_put']['carried_losses'] = 0.0
-        jsonStatus['dte0_short_put']['bs_premium'] = 0.0
-        jsonStatus['dte0_short_put']['profit'] = 0.0  
+    if (('short_earnings_put' in jsonStatus) == false) {
+        jsonStatus['short_earnings_put'] = {}
+        jsonStatus['short_earnings_put']['cnt_positions'] = 0
+        jsonStatus['short_earnings_put']['cnt_assignments'] = 0
+        jsonStatus['short_earnings_put']['carried_losses'] = 0.0
+        jsonStatus['short_earnings_put']['bs_premium'] = 0.0
+        jsonStatus['short_earnings_put']['profit'] = 0.0  
     }
 
-    jsonStatus['dte0_short_put']['cnt_positions'] += 1
-    jsonStatus['dte0_short_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
+    jsonStatus['short_earnings_put']['cnt_positions'] += 1
+    jsonStatus['short_earnings_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
     if (info['profit'] < 0) 
-        jsonStatus['dte0_short_put']['carried_losses'] += info['profit']
+        jsonStatus['short_earnings_put']['carried_losses'] += info['profit']
     
-    jsonStatus['dte0_short_put']['bs_premium'] += info['bs_premium']
-    jsonStatus['dte0_short_put']['profit'] += info['profit']
+    jsonStatus['short_earnings_put']['bs_premium'] += info['bs_premium']
+    jsonStatus['short_earnings_put']['profit'] += info['profit']
 
     console.log(jsonStatus)
     console.log(info)

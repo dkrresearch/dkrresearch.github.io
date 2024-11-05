@@ -18,7 +18,7 @@ async function loadPositionsData() {
             continue
         if (('option_type' in position_info) == false)  //  legacy short_put
             continue
-        if (position_info['option_type'] != "dte0_short_put")
+        if (position_info['option_type'] != "short_earnings_call")
             continue
 
         console.log(position_info)
@@ -147,21 +147,21 @@ async function onClosePosition(quote_symbol) {
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    if (('dte0_short_put' in jsonStatus) == false) {
-        jsonStatus['dte0_short_put'] = {}
-        jsonStatus['dte0_short_put']['cnt_positions'] = 0
-        jsonStatus['dte0_short_put']['cnt_assignments'] = 0
-        jsonStatus['dte0_short_put']['carried_losses'] = 0.0
-        jsonStatus['dte0_short_put']['bs_premium'] = 0.0
-        jsonStatus['dte0_short_put']['profit'] = 0.0  
+    if (('short_earnings_call' in jsonStatus) == false) {
+        jsonStatus['short_earnings_call'] = {}
+        jsonStatus['short_earnings_call']['cnt_positions'] = 0
+        jsonStatus['short_earnings_call']['cnt_assignments'] = 0
+        jsonStatus['short_earnings_call']['carried_losses'] = 0.0
+        jsonStatus['short_earnings_call']['bs_premium'] = 0.0
+        jsonStatus['short_earnings_call']['profit'] = 0.0  
     }
 
-    jsonStatus['dte0_short_put']['cnt_positions'] += 1
-    jsonStatus['dte0_short_put']['cnt_assignments'] += 1
-    jsonStatus['dte0_short_put']['profit'] += info['profit']
-    jsonStatus['dte0_short_put']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
+    jsonStatus['short_earnings_call']['cnt_positions'] += 1
+    jsonStatus['short_earnings_call']['cnt_assignments'] += 1
+    jsonStatus['short_earnings_call']['profit'] += info['profit']
+    jsonStatus['short_earnings_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
     if (info['profit'] > 0) 
-        jsonStatus['dte0_short_put']['carried_gains'] -= info['profit']
+        jsonStatus['short_earnings_call']['carried_gains'] -= info['profit']
 
     let payload = {}
     payload['id'] = globalCurrentYear

@@ -19,7 +19,6 @@ async function loadScannerData() {
 
     for (var key in table) {
         symbol = table[key]['symbol']
-        console.log(table[key])
 
         line = '<div class="scanner_table_row">'
 
@@ -34,17 +33,25 @@ async function loadScannerData() {
         bid = parseFloat(table[key]['quote']['bid'])
         line = line + '<span class="scanner_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
 
-// Chance of Payout
-        value = parseFloat(table[key]['chance_of_payout'])
-        value = value * 100.0
+// Premimum
+        value = parseFloat(table[key]['total_premimums'])
+//        value = globalDefaultValue * (value / 100.0)
+        line = line + '<span class="scanner_table_col_3">$' + value.toFixed(0) + '</span>'
+
+// Risk of Assignment
+        value = 100.0 * parseFloat(table[key]['chance_of_loss'])
         line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Est ROI
-        value = parseFloat(table[key]['est_roi'])
+// Prem over Value at Risk
+        value = parseFloat(table[key]['prem_over_var']) * 1000.0
         line = line + '<span class="scanner_table_col_5">' + value.toFixed(1) + '</span>'
 
+// Price over Risk
+        value = parseFloat(table[key]['price_over_risk']) 
+        line = line + '<span class="scanner_table_col_6">' + value.toFixed(1) + '</span>'
+
 // Next Earnings Date
-        line = line + '<span class="scanner_table_col_6">' + table[key]['next_earnings_date'] + '</span>'
+        line = line + '<span class="scanner_table_col_7">' + table[key]['next_earnings_date'] + '</span>'
         line = line + '</div>'
 
         ele = htmlToElement(line)
@@ -57,7 +64,7 @@ async function loadScannerData() {
 
 async function fetchScannerInfo() {
     let my_url = new URL(window.location.href);
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/scanner/3'
+    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/scanner/2'
     try {
         let res = await fetch(info_url);
         return await res.json();

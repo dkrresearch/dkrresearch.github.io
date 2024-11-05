@@ -1,31 +1,14 @@
   
-  .symbol_table_row {
-    color: #666;
-    font-size: 13px;
-    width:100%;
-    margin-left:20px;
-    margin-top:5px;
-    border-bottom:1px solid lightgray;
-    padding-top: 5px;
-  }
-
-  .symbol_table_col1 {
-    width:50%;
-  }
-  .symbol_table_col2 {
-    width:50%;
-    float:right;
-    text-align:right;
-  }
-  .put_table {
+  
+  .scanner_table {
     float:left;
-    width:66%;
+    width:80%;
     margin-top:25px;
     font-size: 12px;
     color: #666;
   }
 
-  .put_table_header {
+  .scanner_table_header {
     float:left;
     text-align: right;
     color: #666;
@@ -37,7 +20,7 @@
     border-bottom:1px solid darkgray;
   }
   
-  .put_table_row {
+  .scanner_table_row {
     float:left;
     text-align: right;
     width:100%;
@@ -46,46 +29,44 @@
     border-bottom:1px solid lightgray;
 }
 
-
-.put_table_col_1 {
+  .scanner_table_col_1 {
     float:left;
     text-align: left;
     width:20%;
     margin:0px;
   }
-  .put_table_col_2 {
+  .scanner_table_col_2 {
     float:left;
-    width:10%;
+    width:12%;
     margin:0px;
     color: rgb(0, 141, 129);
   }
-  .put_table_col_3 {
+  .scanner_table_col_3 {
     float:left;
-    width:15%;
+    width:12%;
     margin:0px;
     color: rgb(0, 141, 129);
   }
-  .put_table_col_4 {
+  .scanner_table_col_4 {
     float:left;
-    width:25%;
+    width:12%;
     margin:0px;
     color: rgb(0, 141, 129);
   }
-  .put_table_col_5 {
+  .scanner_table_col_5 {
     float:left;
-    width:25%;
+    width:12%;
     margin:0px;
     color: rgb(0, 141, 129);
   }
-  .put_table_col_6 {
+  .scanner_table_col_6 {
     float:left;
-    width:25%;
+    width:12%;
     margin:0px;
     color: rgb(0, 141, 129);
   }
-
-
- 
-  
-
-
+  .scanner_table_col_7 {
+    float:left;
+    width:20%;
+    margin:0px;
+  }

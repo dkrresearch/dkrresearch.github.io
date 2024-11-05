@@ -18,7 +18,7 @@ async function loadPositionsData() {
             continue
         if (('option_type' in position_info) == false)  //  legacy short_put
             continue
-        if (position_info['option_type'] != "dte0_long_call")
+        if (position_info['option_type'] != "short_earnings_put")
             continue
 
         console.log(position_info)
@@ -73,15 +73,6 @@ async function loadPositionsData() {
     document.querySelector('#contents').style.visibility = "visible";
 }
 
-function onPriceChange( target_symbol ) {
-    let close_price = parseFloat( document.getElementById("close_price_"+target_symbol).value )
-    let commision = parseFloat( document.getElementById("close_commision_price_"+target_symbol).value )
-    let shares =  parseInt( document.getElementById("shares_"+target_symbol).value )
-    let profit = ((close_price - strike_price) * shares) - (commision * 2)
-
-    document.getElementById("close_profit_"+target_symbol).innerHTML = printUSD(profit);
-}
-
 function get_template() {
     let block = '\
     <div class="positions_table_row">\
@@ -90,7 +81,7 @@ function get_template() {
     </div>\
     <div class="positions_table_col_2">\
         <h1></h1>\
-        <h2><span id="shares_{$symbol}">{$shares}</span> Shares</h2>\
+        <h2><span id="shares">{$shares}</span> Shares</h2>\
     </div>\
     <div class="positions_table_col_3">\
         <div class="details_table_row" style="margin-bottom:12px;"><span class="details_table_col1">Current Price :</span>\
@@ -104,14 +95,14 @@ function get_template() {
         <div style="width:100%; background-color:rgb(0, 141, 129); text-align:center; color:white;">Close</div>\
         <div class="details_table_row" style="height:30px; border-bottom:none">\
             <span style="height:20px;" class="details_table_col1">Close Price :</span>\
-            <input type="text" id="close_price_{$quote_symbol}" class="input_label" value="{$close_price}" oninput="onPriceChange({$quote_symbol})"></input></div>\
+            <input type="text" id="close_price_{$quote_symbol}" class="input_label" value="{$close_price}"></input></div>\
         <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;">\
             <span style="height:20px;" class="details_table_col1">Commission :</span>\
-            <input type="text" id="close_commision_price_{$quote_symbol}" class="input_label" value="0.00"  oninput="onPriceChange({$quote_symbol})"></input></div>\
+            <input type="text" id="close_commision_price_{$quote_symbol}" class="input_label" value="0.00"></input></div>\
         <hr style="width:80%; margin-top:10px; margin-left:10%; color:gray"/>\
         <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;">\
             <span style="height:20px;" class="details_table_col1">Profit :</span>\
-            <span class="details_table_col2" id="close_profit_{$symbol}"  style="{$red}">{$profit}</span>\
+            <span class="details_table_col2" id="close_profit"  style="{$red}">{$profit}</span>\
         </div>\
         <button class="input_button" id="btn_{$quote_symbol}" onclick="onClosePosition(\'{$quote_symbol}\')">Close Position</button>\
     </div>\
@@ -156,34 +147,35 @@ async function onClosePosition(quote_symbol) {
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    if (('dte0_long_call' in jsonStatus) == false) {
-        jsonStatus['dte0_long_call'] = {}
-        jsonStatus['dte0_long_call']['cnt_positions'] = 0
-        jsonStatus['dte0_long_call']['carried_gains'] = 0.0
-        jsonStatus['dte0_long_call']['profit'] = 0.0  
-        jsonStatus['dte0_long_call']['cnt_assignments'] = 0.0  
+    if (('short_earnings_put' in jsonStatus) == false) {
+        jsonStatus['short_earnings_put'] = {}
+        jsonStatus['short_earnings_put']['cnt_positions'] = 0
+        jsonStatus['short_earnings_put']['cnt_assignments'] = 0
+        jsonStatus['short_earnings_put']['carried_losses'] = 0.0
+        jsonStatus['short_earnings_put']['bs_premium'] = 0.0
+        jsonStatus['short_earnings_put']['profit'] = 0.0  
     }
 
-    jsonStatus['dte0_long_call']['cnt_positions'] += 1
-    jsonStatus['dte0_long_call']['cnt_assignments'] += 1
-    jsonStatus['dte0_long_call']['profit'] += info['profit']
-    jsonStatus['dte0_long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
+    jsonStatus['short_earnings_put']['cnt_positions'] += 1
+    jsonStatus['short_earnings_put']['cnt_assignments'] += 1
+    jsonStatus['short_earnings_put']['profit'] += info['profit']
+    jsonStatus['short_earnings_put']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
     if (info['profit'] > 0) 
-        jsonStatus['dte0_long_call']['carried_gains'] -= info['profit']
+        jsonStatus['short_earnings_put']['carried_gains'] -= info['profit']
 
     let payload = {}
     payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
     console.log(payload)
-//  TEST ME:     await putStatus(payload);
+//  TEST ME :    await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
     console.log(payload)
-//  TEST ME:         await putPosition(payload)
+    await putPosition(payload)
 
-    document.getElementById(btn).innerHTML = "Closed";
+//  TEST ME :        document.getElementById(btn).innerHTML = "Closed";
     return
 }

@@ -9,7 +9,6 @@ async function loadOptionData() {
     let link
 
     jsonInfo = await fetchSymbolInfo();
-    console.log(jsonInfo)
     jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
     jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
     
@@ -32,7 +31,7 @@ async function loadOptionData() {
     document.querySelector('#max_earnings_effect').innerHTML = value    
 
     if (jsonOptionTableInfo != null) {
-        let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Put"
+        let option_label = jsonOptionTableInfo.strike_price.toFixed(2) + " Call"
         document.querySelector('#title').innerHTML = "DKR Research : " + symbol + " " + option_label
         document.querySelector('#next_earnings_date').innerHTML = jsonOptionTableInfo.next_earnings_date;
    
@@ -107,7 +106,7 @@ function findOptionInfo(jsonOptionTable) {
     let option_symbol = my_url.searchParams.get("option_symbol").toUpperCase();
 
 //  Find this option in the option table
-    let option_table = jsonOptionTable.Item.info.option_table_today
+    let option_table = jsonOptionTable.Item.info.option_table_weekly
     for(var key in option_table) {
         if ((option_table[key]['quote_symbol'] == option_symbol))
             return option_table[key]
@@ -199,7 +198,7 @@ async function onOpenPosition() {
     document.getElementById("open_button").innerHTML = "Opening Position ...";
 
     let info = {}
-    info["option_type"] = "dte0_short_put"
+    info["option_type"] = "short_earnings_call"
     info["symbol"] = jsonOptionTableInfo["symbol"]
 
     let today = new Date();

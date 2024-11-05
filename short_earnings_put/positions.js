@@ -21,7 +21,7 @@ async function loadPositionsData() {
         position_info = table[key]['info']
         if  (position_info['assigned'] == true)
             continue
-        if  (('option_type' in position_info) && (position_info['option_type'] != "dte0_short_put"))
+        if  (('option_type' in position_info) && (position_info['option_type'] != "short_earnings_put"))
             continue
 
 
@@ -35,10 +35,10 @@ async function loadPositionsData() {
 
         let jsonOptionInfo = await fetchOptionTable(position_info['symbol']);   
         
-        console.log('here')
+        console.log(jsonOptionInfo)
         console.log(position_info['quote_symbol'])
      
-        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,position_info['quote_symbol']);
+        let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,'short_earnings_put',position_info['quote_symbol']);
         console.log(jsonOptionTableInfo)
 
         if (jsonOptionTableInfo != null) {

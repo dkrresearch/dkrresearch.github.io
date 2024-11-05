@@ -12,7 +12,10 @@ async function loadSymbolData() {
     symbol = jsonInfo.Item.symbol
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
- 
+
+    link = "<a href='/short_earnings_put/symbol.html?symbol="+symbol+"'>Earnings Put</a>"
+    document.querySelector('#link_short_put').innerHTML = link;
+
     symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#Name').innerHTML = " : " + link;
@@ -43,32 +46,28 @@ async function loadSymbolData() {
     document.querySelector('#next_earnings_date').innerHTML = jsonOptionTable.Item.info.next_earnings_date;
 
 //  Build option tables
-    let divTable = document.getElementById("near_put_table");
-    let table = jsonOptionTable.Item.info.option_table_today
+    let divTable = document.getElementById("near_call_table");
+    let table = jsonOptionTable.Item.info.option_table_weekly
+    console.log(table)
     if (table.length > 0) {
-
-        if (table[0]['sub_earnings_data'] == true) {
-            if (e == 0)
-                document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
-            else
-                document.querySelector('#far_sub_earnings_data').style.visibility = "visible";
-        }
-        document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
-        document.querySelector('#near_dte').innerHTML = table[0]['dte']
-
-
         for(var key in table.reverse()) {
             if (table[key]['quote'] == null)
                 continue
-            if (table[key]['type'] != 'short_put')
+            if (table[key]['type'] != 'short_earnings_call')
                 continue
+            
+            document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
+            document.querySelector('#near_exp_date').innerHTML = table[key]['expiration_date']
+            document.querySelector('#near_dte').innerHTML = table[key]['dte']
+
             if (parseFloat(table[key]['chance_of_loss']) > 0.25)  
                 continue
             if (parseFloat(table[key]['quote']['ask']) <= 0.02)
                 continue
             if (parseFloat(table[key]['total_premimums']) <= 0.0)
                 continue
-
+    
+    
             console.log(table[key])
             if (table[key].hasOwnProperty('prem_over_var') == false)
                 continue
