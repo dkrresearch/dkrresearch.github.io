@@ -152,8 +152,6 @@ async function onClosePosition() {
     }
 
     info['assigned'] =  false
-    if (  document.getElementById("details_close_price").checked == true )
-        info['assigned'] =  true
     info['sold_price'] = -1
 
     info['commisions'] += parseFloat( document.getElementById("details_commision_price").value )
