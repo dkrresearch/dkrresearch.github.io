@@ -111,6 +111,16 @@ function overFairValue(jsonOptionTableInfo) {
     return over_fair_value 
 }
 
+async function fetchScannerInfo(algotype) {
+    let my_url = new URL(window.location.href);
+    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/scanner/'+ algotype
+    try {
+        let res = await fetch(info_url);
+        return await res.json();
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 async function putStatus(payload) {
     let aws_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/status'

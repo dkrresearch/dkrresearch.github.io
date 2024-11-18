@@ -2,7 +2,7 @@
 async function loadScannerData() {
     document.querySelector('#wait_status').innerHTML = "... Downloading Scanner Table ...";
 
-    let jsonInfo = await fetchScannerInfo();
+    let jsonInfo = await fetchScannerInfo(4);
     if ((jsonInfo == null) || (jsonInfo.hasOwnProperty("Item") == false)) {      
         return loadError("Unable to load Scanner Table")
     }
@@ -60,15 +60,4 @@ async function loadScannerData() {
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
-}
-
-async function fetchScannerInfo() {
-    let my_url = new URL(window.location.href);
-    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/scanner/4'
-    try {
-        let res = await fetch(info_url);
-        return await res.json();
-    } catch (error) {
-        console.log(error);
-    }
 }
