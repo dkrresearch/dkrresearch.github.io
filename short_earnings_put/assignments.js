@@ -122,6 +122,7 @@ async function onClosePosition(quote_symbol) {
 
     jsonPositionInfo = await _fetchPosition(quote_symbol)
     console.log(jsonPositionInfo)    
+    return
     
     let info = jsonPositionInfo['info']
 

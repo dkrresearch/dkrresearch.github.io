@@ -164,6 +164,10 @@ async function onClosePosition() {
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
+    console.log( jsonStatus )
+    console.log( info )
+    document.getElementById("close_button").innerHTML = "ABORTED";
+    return
     if (('short_earnings_call' in jsonStatus) == false) {
         jsonStatus['short_earnings_call'] = {}
         jsonStatus['short_earnings_call']['cnt_positions'] = 0

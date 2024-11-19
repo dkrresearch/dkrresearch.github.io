@@ -1,6 +1,7 @@
 
 async function loadDashboardData() {
     let jsonStatus = await fetchStatus(globalCurrentYear);
+    jsonAlgos = jsonStatus['algos']
     console.log(jsonStatus)
     
     let current_value = 0.0
@@ -12,47 +13,105 @@ async function loadDashboardData() {
 
 //  Short Put Stats
     let short_put_current_profit = 0.0
-    total_profit += jsonStatus['short_put']['profit']
-    total_bs_reserves += jsonStatus['short_put']['bs_premium']
-    total_carried_risk += jsonStatus['short_put']['carried_losses']
+    total_profit += jsonAlgos['short_put']['profit']
+    total_bs_reserves += jsonAlgos['short_put']['bs_premium']
+    total_carried_risk += jsonAlgos['short_put']['carried_losses']
 
-    document.querySelector('#short_put_ytd_profit').innerHTML = printUSD( jsonStatus['short_put']['profit'] )
-    document.querySelector('#short_put_carried_risk').innerHTML = printUSD( jsonStatus['short_put']['carried_losses'] )
+    document.querySelector('#short_put_ytd_profit').innerHTML = printUSD( jsonAlgos['short_put']['profit'] )
+    document.querySelector('#short_put_carried_risk').innerHTML = printUSD( jsonAlgos['short_put']['carried_losses'] )
     
-    let total_cnt = jsonStatus['short_put']['cnt_positions'] + 1e-6
-    let num_assignments = jsonStatus['short_put']['cnt_assignments']
+    let total_cnt = jsonAlgos['short_put']['cnt_positions'] + 1e-6
+    let num_assignments = jsonAlgos['short_put']['cnt_assignments']
     let assignment_rate = (100.0 * num_assignments) / total_cnt
     document.querySelector('#short_put_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
 
 //  Short Call Stats
     let short_call_current_profit = 0.0
-    total_profit += jsonStatus['short_call']['profit']
-    total_bs_reserves += jsonStatus['short_call']['bs_premium']
-    total_carried_risk += jsonStatus['short_call']['carried_losses']
+    total_profit += jsonAlgos['short_call']['profit']
+    total_bs_reserves += jsonAlgos['short_call']['bs_premium']
+    total_carried_risk += jsonAlgos['short_call']['carried_losses']
 
-    document.querySelector('#short_call_ytd_profit').innerHTML = printUSD( jsonStatus['short_call']['profit'] )
-    document.querySelector('#short_call_carried_risk').innerHTML = printUSD( jsonStatus['short_call']['carried_losses'] )
+    document.querySelector('#short_call_ytd_profit').innerHTML = printUSD( jsonAlgos['short_call']['profit'] )
+    document.querySelector('#short_call_carried_risk').innerHTML = printUSD( jsonAlgos['short_call']['carried_losses'] )
     
-    total_cnt = jsonStatus['short_call']['cnt_positions'] + 1e-3
-    num_assignments = jsonStatus['short_call']['cnt_assignments']
+    total_cnt = jsonAlgos['short_call']['cnt_positions'] + 1e-3
+    num_assignments = jsonAlgos['short_call']['cnt_assignments']
     assignment_rate = (100.0 * num_assignments) / total_cnt
     document.querySelector('#short_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
 
+//  Long Put Stats
+    let long_put_current_profit = 0.0
+    total_profit += jsonAlgos['long_put']['profit']
+    total_carried_risk -= jsonAlgos['long_put']['carried_gains']
+
+    document.querySelector('#long_put_ytd_profit').innerHTML = printUSD( jsonAlgos['long_put']['profit'] )
+
+    total_cnt = jsonAlgos['long_put']['cnt_positions'] + 1e-6
+    num_assignments = jsonAlgos['long_put']['cnt_assignments']
+    assignment_rate = (100.0 * num_assignments) / total_cnt
+    document.querySelector('#long_put_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
 
 //  Long Call Stats
     let long_call_current_profit = 0.0
-    total_profit += jsonStatus['long_call']['profit']
-    total_carried_risk -= jsonStatus['long_call']['carried_gains']
+    total_profit += jsonAlgos['long_call']['profit']
+    total_carried_risk -= jsonAlgos['long_call']['carried_gains']
 
-    document.querySelector('#long_call_ytd_profit').innerHTML = printUSD( jsonStatus['long_call']['profit'] )
+    document.querySelector('#long_call_ytd_profit').innerHTML = printUSD( jsonAlgos['long_call']['profit'] )
     
-    total_cnt = jsonStatus['long_call']['cnt_positions'] + 1e-6
-    num_assignments = jsonStatus['long_call']['cnt_assignments']
+    total_cnt = jsonAlgos['long_call']['cnt_positions'] + 1e-6
+    num_assignments = jsonAlgos['long_call']['cnt_assignments']
     assignment_rate = (100.0 * num_assignments) / total_cnt
     document.querySelector('#long_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
 
 
-    //  Opened Positions
+
+
+//  Earnings Put Stats
+    let short_earnings_put_current_profit = 0.0
+    total_profit += jsonAlgos['short_earnings_put']['profit']
+    total_bs_reserves += jsonAlgos['short_earnings_put']['bs_premium']
+    total_carried_risk += jsonAlgos['short_earnings_put']['carried_losses']
+
+    document.querySelector('#short_earnings_put_ytd_profit').innerHTML = printUSD( jsonAlgos['short_earnings_put']['profit'] )
+    document.querySelector('#short_earnings_put_carried_risk').innerHTML = printUSD( jsonAlgos['short_earnings_put']['carried_losses'] )
+
+    total_cnt = jsonAlgos['short_earnings_put']['cnt_positions'] + 1e-6
+    num_assignments = jsonAlgos['short_earnings_put']['cnt_assignments']
+    assignment_rate = (100.0 * num_assignments) / total_cnt
+    document.querySelector('#short_earnings_put_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
+
+
+//  Short Call Stats
+    let short_earnings_call_current_profit = 0.0
+    total_profit += jsonAlgos['short_earnings_call']['profit']
+    total_bs_reserves += jsonAlgos['short_earnings_call']['bs_premium']
+    total_carried_risk += jsonAlgos['short_earnings_call']['carried_losses']
+
+    document.querySelector('#short_earnings_call_ytd_profit').innerHTML = printUSD( jsonAlgos['short_earnings_call']['profit'] )
+    document.querySelector('#short_earnings_call_carried_risk').innerHTML = printUSD( jsonAlgos['short_earnings_call']['carried_losses'] )
+
+    total_cnt = jsonAlgos['short_earnings_call']['cnt_positions'] + 1e-3
+    num_assignments = jsonAlgos['short_earnings_call']['cnt_assignments']
+    assignment_rate = (100.0 * num_assignments) / total_cnt
+    document.querySelector('#short_earnings_call_assignment_rate').innerHTML = assignment_rate.toFixed(2) + '%'
+
+
+//  Totals
+    document.querySelector('#total_profit').innerHTML = "$" + total_profit.toFixed(0)
+    if (total_profit < 0) 
+        document.querySelector('#total_profit').style.color = "rgb(145, 35, 35)"
+
+    document.querySelector('#carried_losses').innerHTML = "$" + total_carried_risk.toFixed(0)
+    if (carried_losses < 0) 
+        document.querySelector('#carried_losses').style.color = "rgb(145, 35, 35)"
+
+    document.querySelector('#bs_reserves').innerHTML = "$" + total_bs_reserves.toFixed(0)
+
+    document.querySelector('#wait').remove();
+    document.querySelector('#contents').style.visibility = "visible";
+    return
+
+//  Opened Positions
     jsonInfo = await fetchPositionsInfo();
     table = jsonInfo.Items
     for (var key in table) {
@@ -111,25 +170,6 @@ async function loadDashboardData() {
     document.querySelector('#long_call_current_profit').innerHTML = printUSD( long_call_current_profit )
     document.querySelector('#short_call_current_profit').innerHTML = printUSD( short_call_current_profit )
 
-//  Totals
-    document.querySelector('#total_profit').innerHTML = "$" + total_profit.toFixed(0)
-    if (total_profit < 0) 
-        document.querySelector('#total_profit').style.color = "rgb(145, 35, 35)"
-
-    document.querySelector('#carried_losses').innerHTML = "$" + total_carried_risk.toFixed(0)
-    if (carried_losses < 0) 
-        document.querySelector('#carried_losses').style.color = "rgb(145, 35, 35)"
-
-    document.querySelector('#bs_reserves').innerHTML = "$" + total_bs_reserves.toFixed(0)
-
-    document.querySelector('#current_value').innerHTML = printUSD(current_value)
-    document.querySelector('#total_var').innerHTML = printUSD(total_var)
-    value = (1.0 - total_roa) * 100.0
-    document.querySelector('#total_roa').innerHTML = value.toFixed(0) + "%"
-
-    document.querySelector('#wait').remove();
-    document.querySelector('#contents').style.visibility = "visible";
-    return
 
     let divTable = document.getElementById("open_positions_table");
     let current_value_ex = 0.0

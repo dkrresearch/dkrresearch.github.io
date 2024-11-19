@@ -145,8 +145,11 @@ async function onClosePosition() {
     console.log(info)
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    console.log(jsonStatus)
-
+    console.log( jsonStatus )
+    console.log( info )
+    document.getElementById("close_button").innerHTML = "ABORTED";
+    return
+    
     if (('long_put' in jsonStatus) == false) {
         jsonStatus['long_put'] = {}
         jsonStatus['long_put']['cnt_positions'] = 0
