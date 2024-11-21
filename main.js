@@ -142,6 +142,19 @@ async function putStatus(payload) {
     return resData;
 }
 
+async function fetchHistory(year) {
+    let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/status'
+    console.log(info_url)
+    try {
+        let res = await fetch(info_url);
+        let jsonStatus =  await res.json();
+        return jsonStatus['Items']
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+}
+
 async function fetchStatus(year) {
     let info_url = 'https://efd6n53bol.execute-api.us-west-1.amazonaws.com/status'
     console.log(info_url)

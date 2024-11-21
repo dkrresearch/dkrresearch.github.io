@@ -148,35 +148,39 @@ async function onClosePosition(quote_symbol) {
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    if (('short_earnings_put' in jsonStatus) == false) {
-        jsonStatus['short_earnings_put'] = {}
-        jsonStatus['short_earnings_put']['cnt_positions'] = 0
-        jsonStatus['short_earnings_put']['cnt_assignments'] = 0
-        jsonStatus['short_earnings_put']['carried_losses'] = 0.0
-        jsonStatus['short_earnings_put']['bs_premium'] = 0.0
-        jsonStatus['short_earnings_put']['profit'] = 0.0  
+    if (('short_earnings_put' in jsonStatus['algos']) == false) {
+        jsonStatus['algos']['short_earnings_put'] = {}
+        jsonStatus['algos']['short_earnings_put']['cnt_positions'] = 0
+        jsonStatus['algos']['short_earnings_put']['carried_losses'] = 0.0
+        jsonStatus['algos']['short_earnings_put']['bs_premium'] = 0.0
+        jsonStatus['algos']['short_earnings_put']['profit'] = 0.0  
+        jsonStatus['algos']['short_earnings_put']['cnt_assignments'] = 0
+        jsonStatus['algos']['short_earnings_put']['history'] = {}
     }
 
-    jsonStatus['short_earnings_put']['cnt_positions'] += 1
-    jsonStatus['short_earnings_put']['cnt_assignments'] += 1
-    jsonStatus['short_earnings_put']['profit'] += info['profit']
-    jsonStatus['short_earnings_put']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
-    if (info['profit'] > 0) 
-        jsonStatus['short_earnings_put']['carried_gains'] -= info['profit']
+    jsonStatus['algos']['short_earnings_put']['cnt_positions'] += 1
+    jsonStatus['algos']['short_earnings_put']['cnt_assignments'] += 1
+    jsonStatus['algos']['short_earnings_put']['profit'] += info['profit']
+    if (info['profit'] < 0) 
+        jsonStatus['algos']['short_earnings_put']['carried_losses'] += info['profit']
+
+    symbol = info['symbol'].toString()
+    month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
+    
+    jsonStatus['algos']['short_earnings_put']['history'][month]['profit'] += info['profit']
+    jsonStatus['algos']['short_earnings_put']['history'][month]['count'] += 1
+    jsonStatus['algos']['short_earnings_put']['history'][month]['assignments'] += 1
 
     let payload = {}
     payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
-    console.log(payload)
-//  TEST ME :    await putStatus(payload);
+    await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
-    console.log(payload)
     await putPosition(payload)
 
-//  TEST ME :        document.getElementById(btn).innerHTML = "Closed";
-    return
+    document.getElementById(btn).innerHTML = "Closed";
 }

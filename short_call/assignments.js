@@ -122,7 +122,6 @@ async function onClosePosition(quote_symbol) {
 
     jsonPositionInfo = await _fetchPosition(quote_symbol)
     console.log(jsonPositionInfo)    
-    return
     
     let info = jsonPositionInfo['info']
 
@@ -148,35 +147,39 @@ async function onClosePosition(quote_symbol) {
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    if (('short_call' in jsonStatus) == false) {
-        jsonStatus['short_call'] = {}
-        jsonStatus['short_call']['cnt_positions'] = 0
-        jsonStatus['short_call']['carried_losses'] = 0.0
-        jsonStatus['short_call']['bs_premium'] = 0.0
-        jsonStatus['short_call']['profit'] = 0.0  
-        jsonStatus['short_call']['cnt_assignments'] = 0
+    if (('short_call' in jsonStatus['algos']) == false) {
+        jsonStatus['algos']['short_call'] = {}
+        jsonStatus['algos']['short_call']['cnt_positions'] = 0
+        jsonStatus['algos']['short_call']['carried_losses'] = 0.0
+        jsonStatus['algos']['short_call']['bs_premium'] = 0.0
+        jsonStatus['algos']['short_call']['profit'] = 0.0  
+        jsonStatus['algos']['short_call']['cnt_assignments'] = 0
+        jsonStatus['algos']['short_call']['history'] = {}
     }
 
-    jsonStatus['short_call']['cnt_positions'] += 1
-    jsonStatus['short_call']['cnt_assignments'] += 1
-    jsonStatus['short_call']['profit'] += info['profit']
-    jsonStatus['short_call']['carried_losses'] += info['open_pol'] * info['contracts'] * 100.0
-    if (info['profit'] > 0) 
-        jsonStatus['short_call']['carried_losses'] -= info['profit']
+    jsonStatus['algos']['short_call']['cnt_positions'] += 1
+    jsonStatus['algos']['short_call']['cnt_assignments'] += 1
+    jsonStatus['algos']['short_call']['profit'] += info['profit']
+    if (info['profit'] < 0) 
+        jsonStatus['algos']['short_call']['carried_losses'] += info['profit']
 
+    symbol = info['symbol'].toString()
+    month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
+    
+    jsonStatus['algos']['short_call']['history'][month]['profit'] += info['profit']
+    jsonStatus['algos']['short_call']['history'][month]['count'] += 1
+    jsonStatus['algos']['short_call']['history'][month]['assignments'] += 1
+    
     let payload = {}
     payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
-    console.log(payload)
     await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
-    console.log(payload)
     await putPosition(payload)
 
     document.getElementById(btn).innerHTML = "Closed";
-    return
 }

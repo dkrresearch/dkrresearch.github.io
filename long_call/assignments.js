@@ -141,7 +141,6 @@ async function onClosePosition(quote_symbol) {
 
     jsonPositionInfo = await _fetchPosition(quote_symbol)
     console.log(jsonPositionInfo)    
-    return
     
     let info = jsonPositionInfo['info']
 
@@ -167,33 +166,36 @@ async function onClosePosition(quote_symbol) {
 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    
-    if (('long_call' in jsonStatus) == false) {
-        jsonStatus['long_call'] = {}
-        jsonStatus['long_call']['cnt_positions'] = 0
-        jsonStatus['long_call']['cnt_assignments'] = 0
-        jsonStatus['long_call']['carried_gains'] = 0.0
-        jsonStatus['long_call']['profit'] = 0.0  
+
+    if (('long_call' in jsonStatus['algos']) == false) {
+        jsonStatus['algos']['long_call'] = {}
+        jsonStatus['algos']['long_call']['cnt_positions'] = 0
+        jsonStatus['algos']['long_call']['bs_premium'] = 0.0
+        jsonStatus['algos']['long_call']['profit'] = 0.0  
+        jsonStatus['algos']['long_call']['cnt_assignments'] = 0
+        jsonStatus['algos']['long_call']['history'] = {}
     }
 
-    jsonStatus['long_call']['cnt_positions'] += 1
-    jsonStatus['long_call']['cnt_assignments'] += 1
-    jsonStatus['long_call']['profit'] += info['profit']
-    jsonStatus['long_call']['carried_gains'] += info['open_price'] * (info['est_roi'] - 1.0) * info['contracts'] * 100.0
-    if (info['profit'] > 0) 
-        jsonStatus['long_call']['carried_gains'] -= info['profit']
+    jsonStatus['algos']['long_call']['cnt_positions'] += 1
+    jsonStatus['algos']['long_call']['cnt_assignments'] += 1
+    jsonStatus['algos']['long_call']['profit'] += info['profit']
+
+    symbol = info['symbol'].toString()
+    month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
+    
+    jsonStatus['algos']['long_call']['history'][month]['profit'] += info['profit']
+    jsonStatus['algos']['long_call']['history'][month]['count'] += 1
+    jsonStatus['algos']['long_call']['history'][month]['assignments'] += 1
 
     let payload = {}
     payload['id'] = globalCurrentYear
     payload['status'] = jsonStatus
-    console.log(payload)
     await putStatus(payload);
     
     payload = {}
     payload['id'] = jsonPositionInfo["id"]
     payload['info'] = info
     payload['opened'] = false
-    console.log(payload)
     await putPosition(payload)
 
     document.getElementById(btn).innerHTML = "Closed";
