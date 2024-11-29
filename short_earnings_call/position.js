@@ -200,7 +200,6 @@ async function onClosePosition() {
 
     console.log(jsonStatus)
     console.log(info)
-    return
     
     let payload = {}
     payload['id'] = globalCurrentYear
