@@ -28,10 +28,12 @@ async function loadScannerData() {
         link = '<a href="symbol.html?symbol='+symbol+'" style="font-weight:750;">'+symbol+'</a> - ' + strike_price;
         line = line + '<span class="scanner_table_col_1">' + link + '<br/>Expires :'+expiration_date+'</span>'
 
-// bid x ask
-        ask = parseFloat(table[key]['quote']['ask'])
-        bid = parseFloat(table[key]['quote']['bid'])
-        line = line + '<span class="scanner_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
+        icons = '&nbsp;'
+        has_strike = parseFloat(table[key]['has_opened_strikes'])
+        if (has_strike == 1)
+            icons = icons + 'Op&nbsp;'
+
+        line = line + '<span class="scanner_table_col_2">' +icons +'</span>'
 
 // Premimum
         value = parseFloat(table[key]['total_premimums'])
