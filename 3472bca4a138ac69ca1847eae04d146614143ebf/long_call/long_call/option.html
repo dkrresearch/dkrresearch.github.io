@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+
+        <title id="title">DKR Research</title>
+
+        <link rel="stylesheet" href="../main.css">
+        <link rel="stylesheet" href="../slider.css">
+        <link rel="stylesheet" href="option.css">
+        <link rel="stylesheet" href="position.css">
+
+        <script src="../main.js"></script>
+        <script src="option.js"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header"></div>
+        
+        <div id="wait">
+            <img id="wait_gif" src="../wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
+        </div>
+
+        <div id="contents" style="visibility: hidden; margin-top:25px; float:left;">
+
+        <div class="close_position" style="float:right; width:30%; border:1px solid rgb(0, 141, 129);">
+            <div style="width:100%; background-color:rgb(0, 141, 129); text-align:center; color:white;">Details</div>
+
+            <div class="details_table_row" style="border-bottom:None;"><span class="details_table_col1">Premimum</span></div>   
+            <div class="price_slider">
+                <input type="range" min="25" max="1000" value="200" class="slider" id="myRange"
+                        step="25" oninput="onSliderChange()">
+            </div>
+
+             <div class="details_table_row"><span class="details_table_col1">Premimum :</span>
+                <span  class="details_table_col2" id="details_premimum">----</span></div>  
+
+            <div class="details_table_row"><span class="details_table_col1">Assignment Margin :</span>
+                    <span  class="details_table_col2" id="details_am">----</span></div>   
+
+            <div class="details_table_row"><span class="details_table_col1">Avg Payout :</span>
+                        <span  class="details_table_col2" id="details_payout">----</span></div>                          
+    
+            <p></p>
+
+            <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Contracts :</span>
+                <input type="text" id="details_contracts" class="input_label" value="0.00"  oninput="onContractsChange()"></input></div> 
+    
+            <div class="details_table_row" style="height:30px; border-bottom:none"><span style="height:20px;" class="details_table_col1">Open Price :</span>
+                <input type="text" id="details_open_price" class="input_label" value="0.00"  oninput="onMarginChange()"></input></div> 
+
+            <div class="details_table_row" style="height:30px; margin-top:0px; border-bottom:none;"><span style="height:20px;" class="details_table_col1">Commision :</span>
+                <input type="text" id="details_commision_price" class="input_label" value="5.00" oninput="onMarginChange()"></input></div>
+                    
+            <div class="details_table_row" style="margin-bottom:25px;"><span class="details_table_col1">Total Price :</span>
+                <span  class="details_table_col2" id="details_total_price">0</span></div> 
+
+            <button class="input_button" id="open_button" onclick="onOpenPosition()">Open Position</button>
+        </div>
+
+
+        <div class='option'>
+        <div style="width:100%; float:left">
+            <div style="width:50%; float:left;">
+                <h1><span id="symbol"></span> <span id="expiration"></span> <span id="strike"></span> Call</h1>
+                <h2><span id="name"></span></h2>
+                <h2><span id="dte"></span> Days to expiration</h2>
+                <p></p>
+                <h2>Current Price : $<span id="last_price_2">---.--</span></h2>
+                <p></p>
+            </div>
+            <div style="width:50%; float:right;">
+                <h1>&nbsp;</h1>
+                <h2><span style="width: 60%; float:left;">Discount : </span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span id="discount">----</span><span>%</span></div></h2>
+                
+                <h2><span style="width: 60%; float:left;">Chance of Payout : </span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span id="chance_of_payout">----</span><span>%</span></div></h2>
+                
+                <h2><span style="width: 60%; float:left;">Estimated ROI : </span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span id="est_roi">----</span></div></h2>
+
+
+                <h2><span style="width: 60%; padding-top:10px; float:left;">Avg Payout :</span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right; padding-top:10px; ">
+                        <span id="avg_payout">----</span></div></h2>                
+                <h2><span style="width: 60%; float:left;">Fair Price :</span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right;">
+                        <span id="fair_price">----</span></div></h2>
+                <h2><span style="width: 60%; float:left;">Current Price :</span>
+                    <div style="color: rgb(0, 141, 129); font-weight: 750; float:right">
+                        <span id="buy_price">----</span></div></h2>
+
+            </div>
+        </div>
+
+        <div style="width:100%; float:left; margin-top:10px;  margin-bottom:10px;">
+            <h3 style="width:50%; float:left"><span id="bid">----</span> x <span id="ask">----</span></h3>
+            <h2 style="margin-left:0px; float:left;">Volume : <span id="vl">----</span> of <span id="openinterest">----</span> contracts</h2>
+        </div>
+        <hr style="width:100%; margin-top:40px; margin-left:20px; color:gray"/>
+
+        <div style="width:100%; float:left; margin-bottom:10px;">
+            <div style="width:100%; float:left;">
+                <h1 style="margin-bottom:20px">Option Details</h1>
+                <div class="option_table_row"><span class="option_table_col1">Imp Vol :</span>
+                    <span  class="option_table_col2" id="imp_volatility">---</span></div>                
+                <div class="option_table_row"><span class="option_table_col1">theta :</span>
+                    <span  class="option_table_col2" id="itheta">---</span></div>
+                <div class="option_table_row"><span class="option_table_col1">idelta :</span>
+                    <span  class="option_table_col2" id="idelta">---</span></div>
+                <div class="option_table_row"><span class="option_table_col1">igamma :</span>
+                    <span  class="option_table_col2" id="igamma">---</span></div>            
+                <div class="option_table_row"><span class="option_table_col1">ivega :</span>
+                    <span  class="option_table_col2" id="ivega">---</span></div>            
+            </div>
+        </div>
+
+        <div style="width:100%; float:left; margin-bottom:10px;">
+            <div style="width:100%; float:left;">
+                <h1>Stock Details</h1>
+                <h2 style="margin-bottom:20px"><span id="description"></span></h2>
+
+                <div class="option_table_row"><span class="option_table_col1">Last Price ($) :</span>
+                    <span  class="option_table_col2" id="last_price"></span></div>
+                <div class="option_table_row"><span class="option_table_col1">Next Earnings Date :</span>
+                    <span  class="option_table_col2" id="next_earnings_date"></span></div>
+                <div class="option_table_row"><span class="option_table_col1">Max Earnings Effect (%):</span>
+                    <span  class="option_table_col2" id="max_earnings_effect">---</span></div>  
+                    
+                <div class="option_table_row"><span class="table_col1">ExDividendDate :</span>
+                    <span  class="option_table_col2" id="ExDividendDate"></span></div>
+                <div class="option_table_row"><span class="table_col1">DividendPerShare ($):</span>
+                    <span  class="option_table_col2" id="DividendPerShare"></span></div>
+            </div>
+        </div>
+
+        </div>
+        </div>
+        <script>
+            loadPageData()
+        </script>
+    </body>
+</html>
