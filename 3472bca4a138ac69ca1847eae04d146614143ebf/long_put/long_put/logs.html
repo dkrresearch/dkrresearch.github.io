@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- use 'python3 -m http.server 80' to test -->
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+        <title>DKR Research - Logs</title>
+
+        <link rel="stylesheet" href="../main.css">
+        <link rel="stylesheet" href="logs.css">
+        <script src="../main.js?v=1"></script>
+        <script src="logs.js?v=1"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header">
+        </div>
+
+        <div id="wait">
+            <img id="wait_gif" src="../wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
+        </div>
+
+        <div id="contents" style="visibility: hidden; margin-top:25px;">
+            <div style="width:150px; float:right;">
+                <h1 style="color:rgb(0,160,147); margin-left:0px;">History</h1>
+                <hr style="width:135px; float:left;">
+                <div id="history_table">
+                </div>
+            </div>
+
+            <div style="width:700px; float:left;">
+                <h1 id="prediction_logs_near" style="color:rgb(0,160,147); margin-left:0px;"></h1>
+                <hr style="width:685px; float:left;">
+                <div id='log_table_near' class='log_table'>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            loadLogData()
+        </script>
+    </body>
+</html>
