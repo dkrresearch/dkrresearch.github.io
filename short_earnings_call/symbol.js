@@ -79,7 +79,7 @@ async function loadSymbolData() {
 
             option_symbol = table[key]['quote_symbol'];
             strike_price = table[key]['strike_price'].toFixed(2);
-            discount = table[key]['discount'] * 100.0
+            discount = -1.0 * (table[key]['discount'] * 100.0)
             link = "<a href='option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
             line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
 
@@ -97,8 +97,8 @@ async function loadSymbolData() {
             value = 100.0 * parseFloat(table[key]['chance_of_loss'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Prem over Value at Risk
-            value = parseFloat(table[key]['prem_over_var']) * 1000.0
+// Profit over Value at Risk
+            value = parseFloat(table[key]['net_over_var']) * 1000.0
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
 
 // Price over Risk

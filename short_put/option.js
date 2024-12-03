@@ -48,6 +48,13 @@ async function loadOptionData() {
         value = jsonOptionTableInfo.var * (100000.00 / (100.0 * jsonOptionTableInfo.strike_price))
         document.querySelector('#var_per_100K').innerHTML = numberWithCommas( parseInt(value) )
 
+        if (jsonOptionTableInfo.hasOwnProperty('net_over_var') == true) {
+            value = 1000.0 * parseFloat(jsonOptionTableInfo.net_over_var)
+            document.querySelector('#net_over_var').innerHTML = value.toFixed(1)
+        } else {
+            document.querySelector('#net_over_var').innerHTML = '---'
+        }
+
         if (jsonOptionTableInfo.hasOwnProperty('prem_over_var') == true) {
             value = parseFloat(jsonOptionTableInfo.prem_over_var) * 1000.0
             document.querySelector('#prem_over_var').innerHTML = value.toFixed(1)
@@ -68,8 +75,6 @@ async function loadOptionData() {
         
         document.getElementById("details_margin_label").innerHTML = "$" + globalDefaultValue + "K";
 
-        value = overFairValue(jsonOptionTableInfo)
-        document.querySelector('#over_fair_value').innerHTML = value.toFixed(1);
 
         let last_price = jsonOptionInfo.Item.info.last_price
         let strike_price = jsonOptionTableInfo.strike_price

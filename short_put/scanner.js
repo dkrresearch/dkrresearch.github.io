@@ -45,8 +45,8 @@ async function loadScannerData() {
         value = 100.0 * parseFloat(table[key]['chance_of_loss'])
         line = line + '<span class="scanner_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Prem over Value at Risk
-        value = parseFloat(table[key]['prem_over_var']) * 1000.0
+// Net over Value at Risk
+        value = parseFloat(table[key]['net_over_var']) * 1000.0
         line = line + '<span class="scanner_table_col_5">' + value.toFixed(1) + '</span>'
 
 // Price over Risk
