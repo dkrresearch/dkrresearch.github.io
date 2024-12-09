@@ -122,7 +122,7 @@ async function loadSymbolData() {
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
 // Prem over Value at Risk
-            value = parseFloat(table[key]['prem_over_var']) * 1000.0
+            value = parseFloat(table[key]['net_over_var']) * 1000.0
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
 
 // Price over Risk

@@ -182,9 +182,10 @@ async function onClosePosition() {
     }
 
     if ((month in jsonStatus['algos'][algo]['history']) == false) {
-        jsonStatus['algos'][algo]['history'][month]['profit'] = 0.0
+        jsonStatus['algos'][algo]['history'][month] = {}
         jsonStatus['algos'][algo]['history'][month]['count'] = 0
         jsonStatus['algos'][algo]['history'][month]['assignments'] = 0
+        jsonStatus['algos'][algo]['history'][month]['profit'] = 0.0   
     }
 
     jsonStatus['algos'][algo]['history'][month]['profit'] += info['profit']
