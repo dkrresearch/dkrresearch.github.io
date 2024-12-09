@@ -13,13 +13,13 @@ async function loadSymbolData() {
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
  
-    link = "<a href='/short_put/symbol.html?symbol="+symbol+"'>Short Put</a>"
+    link = "<a href='..short_put/symbol.html?symbol="+symbol+"'>Short Put</a>"
     document.querySelector('#link_short_put').innerHTML = link;
 
-    link = "<a href='/short_call/symbol.html?symbol="+symbol+"'>Short Call</a>"
+    link = "<a href='../short_call/symbol.html?symbol="+symbol+"'>Short Call</a>"
     document.querySelector('#link_short_call').innerHTML = link;
 
-    link = "<a href='/long_call/symbol.html?symbol="+symbol+"'>Long Call</a>"
+    link = "<a href='../long_call/symbol.html?symbol="+symbol+"'>Long Call</a>"
     document.querySelector('#link_long_call').innerHTML = link;
 
 

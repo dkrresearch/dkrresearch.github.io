@@ -253,7 +253,7 @@ function get_template() {
     block = '\
     <div class="positions_table_row">\
         <div class="positions_table_col_1">\
-            <h1><a href="/position.html?symbol={$symbol_}&option_symbol={$option_symbol}">\
+            <h1><a href="position.html?symbol={$symbol_}&option_symbol={$option_symbol}">\
                 <span id="symbol">{$symbol}</span> <span id="expiration">{$expiration}</span> <span id="strike">{$strike}</span> Put\
                 </a></h1>\
             <p></p>\

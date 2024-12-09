@@ -13,7 +13,7 @@ async function loadSymbolData() {
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
 
-    link = "<a href='/short_earnings_put/symbol.html?symbol="+symbol+"'>Earnings Put</a>"
+    link = "<a href='../short_earnings_put/symbol.html?symbol="+symbol+"'>Earnings Put</a>"
     document.querySelector('#link_short_put').innerHTML = link;
 
     symbol_name = jsonInfo.Item.info.overview.Name

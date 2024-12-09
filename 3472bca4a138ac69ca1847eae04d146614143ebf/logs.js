@@ -95,7 +95,7 @@ async function loadLogData() {
 }
 
 function getHistoryTableRow() {
-    let template = "<div class='history_entry'><span style='display:inline-block; width:13px;'>&#x2022; </span><a href='/logs.html?idx={$idx}'>{$strike}</a></div>"
+    let template = "<div class='history_entry'><span style='display:inline-block; width:13px;'>&#x2022; </span><a href='logs.html?idx={$idx}'>{$strike}</a></div>"
     return template
 }
 
