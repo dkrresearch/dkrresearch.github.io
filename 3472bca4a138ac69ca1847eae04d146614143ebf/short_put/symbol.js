@@ -76,7 +76,8 @@ async function loadSymbolData() {
             document.querySelector('#far_exp_date').innerHTML = table[0]['expiration_date']
             document.querySelector('#far_dte').innerHTML = table[0]['dte']
         }   
-
+        
+        document.querySelector('#symbol_drift').innerHTML = (table[0]['drift'] * 100.0).toFixed(1) + '%'
 
         for(var key in table.reverse()) {
             if (table[key]['quote'] == null)

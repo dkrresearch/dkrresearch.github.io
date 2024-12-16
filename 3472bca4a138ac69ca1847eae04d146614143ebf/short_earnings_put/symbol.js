@@ -59,6 +59,7 @@ async function loadSymbolData() {
             document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
             document.querySelector('#near_exp_date').innerHTML = table[key]['expiration_date']
             document.querySelector('#near_dte').innerHTML = table[key]['dte']
+            document.querySelector('#symbol_drift').innerHTML = (table[0]['drift'] * 100.0).toFixed(1) + '%'
 
             if (parseFloat(table[key]['chance_of_loss']) > 0.25)  
                 continue
