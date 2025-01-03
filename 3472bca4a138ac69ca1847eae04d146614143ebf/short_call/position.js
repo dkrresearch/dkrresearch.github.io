@@ -163,8 +163,6 @@ async function onClosePosition() {
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    console.log( jsonStatus )
-    console.log( info )
 
     let algo = 'short_call'
     let symbol = info['symbol'].toString()

@@ -163,6 +163,10 @@ async function onClosePosition(quote_symbol) {
     if (info['profit'] < 0) 
         jsonStatus['algos']['short_call']['carried_losses'] += info['profit']
 
+    if (('open_var' in info) && (info['profit'] < (0.0 - info['open_var'])))
+        jsonStatus['algos']['short_call']['bs_premium'] += info['profit'] - (0.0 - info['open_var'])
+
+
     symbol = info['symbol'].toString()
     month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
     

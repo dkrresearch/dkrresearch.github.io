@@ -46,10 +46,10 @@ async function loadPositionsData() {
             template = template.replaceAll("{$price}",last_price.toFixed(2))
             template = template.replaceAll("{$close_price}",last_price.toFixed(2))
     
-            profit = (last_price - strike_price) * shares
+            profit = (strike_price - last_price) * shares
             template = template.replaceAll("{$profit}",printUSD(profit))
 
-            let gain = (100.0 * (last_price - strike_price)) / strike_price
+            let gain = (100.0 * (strike_price - last_price)) / strike_price
             template = template.replaceAll("{$gain}",gain.toFixed(2))
         }
         current_value += profit
@@ -121,8 +121,6 @@ async function onClosePosition(quote_symbol) {
     document.getElementById(btn).innerHTML = "Closing Position ...";
 
     jsonPositionInfo = await _fetchPosition(quote_symbol)
-    console.log(jsonPositionInfo)    
-    return
     
     let info = jsonPositionInfo['info']
 
@@ -143,7 +141,7 @@ async function onClosePosition(quote_symbol) {
     info['sold_price'] = sold_price
 
     info['commisions'] += commision
-    info['profit'] = ((sold_price - info['strike_price'] - info['open_price']) * info['contracts'] * 100.0) - info['commisions']
+    info['profit'] = (((info['strike_price'] + info['open_price']) - sold_price) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
@@ -163,12 +161,18 @@ async function onClosePosition(quote_symbol) {
     if (info['profit'] < 0) 
         jsonStatus['algos']['short_earnings_call']['carried_losses'] += info['profit']
 
+    if (('open_var' in info) && (info['profit'] < (0.0 - info['open_var'])))
+        jsonStatus['algos']['short_earnings_call']['bs_premium'] += info['profit'] - (0.0 - info['open_var'])
+
     symbol = info['symbol'].toString()
     month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
     
     jsonStatus['algos']['short_earnings_call']['history'][month]['profit'] += info['profit']
     jsonStatus['algos']['short_earnings_call']['history'][month]['count'] += 1
     jsonStatus['algos']['short_earnings_call']['history'][month]['assignments'] += 1
+
+    console.log(jsonStatus)
+    console.log(info)
 
     let payload = {}
     payload['id'] = globalCurrentYear

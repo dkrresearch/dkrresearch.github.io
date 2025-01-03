@@ -8,7 +8,10 @@ async function loadReportData() {
     if (jsonStatus == null)  {      
         return loadError("Unable to load current status")
     }
-
+    jsonStatus.sort(function(a,b) {
+        return a.id - b.id
+    });
+    
     for (idx in jsonStatus) {
         if (jsonStatus[idx]['id'] == globalCurrentYear){
             jsonAlgo = jsonStatus[idx]['status']['algos'][this_algo]

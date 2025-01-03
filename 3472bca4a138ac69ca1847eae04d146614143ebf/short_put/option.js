@@ -225,6 +225,8 @@ async function onOpenPosition() {
     info['open_price'] = parseFloat( document.getElementById("details_open_price").value )
     info['open_pol'] = parseFloat( jsonOptionTableInfo['price_of_loss'] )
 
+    info['open_var'] = parseFloat( jsonOptionTableInfo['var'] ) * parseInt(document.getElementById("details_contracts").value)
+
     info['expiration_date'] = jsonOptionTableInfo["expiration_date"]
     info['contracts'] = parseInt(document.getElementById("details_contracts").value)
     info['quote_symbol'] = jsonOptionTableInfo['quote_symbol']

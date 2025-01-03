@@ -1,7 +1,7 @@
 
 var globalDefaultValue = 121;  //  $121,000
 var prem_per_day_per_1K = 0.100
-var globalCurrentYear = 2024
+var globalCurrentYear = 2025
 var printableMonth = ['Jan','Feb','March','April','May','June','July','Aug','Sept','Oct','Nov','Dec']
 
 async function loadBodyElements() {

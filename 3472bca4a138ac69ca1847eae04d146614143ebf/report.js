@@ -7,7 +7,10 @@ async function loadReportData() {
     if (jsonStatus == null)  {      
         return loadError("Unable to load current status")
     }
-
+    jsonStatus.sort(function(a,b) {
+        return a.id - b.id
+    });
+    
     //  Find the headline stats, Y-T-D profit and assignment rate....
     for (idx in jsonStatus) {
         if (jsonStatus[idx]['id'] == globalCurrentYear){

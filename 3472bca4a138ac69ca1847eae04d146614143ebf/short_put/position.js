@@ -162,20 +162,41 @@ async function onClosePosition() {
     info['bs_premium'] = (days_open * strike_value_1K) * prem_per_day_per_1K 
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
-    console.log( jsonStatus )
-    console.log( info )
-    document.getElementById("close_button").innerHTML = "ABORTED";
-    return
 
+    let algo = 'short_put'
+    let symbol = info['symbol'].toString()
+    let month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
 
-    jsonStatus['short_put']['cnt_positions'] += 1
-    jsonStatus['short_put']['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
+    if ((algo in jsonStatus['algos']) == false) {
+        jsonStatus['algos'][algo] = {}
+        jsonStatus['algos'][algo]['cnt_positions'] = 0
+        jsonStatus['algos'][algo]['cnt_assignments'] = 0
+        jsonStatus['algos'][algo]['carried_losses'] = 0.0
+        jsonStatus['algos'][algo]['bs_premium'] = 0.0
+        jsonStatus['algos'][algo]['profit'] = 0.0  
+        jsonStatus['algos'][algo]['history'] = {}
+    }
+
+    if ((month in jsonStatus['algos'][algo]['history']) == false) {
+        jsonStatus['algos'][algo]['history'][month] = {}
+        jsonStatus['algos'][algo]['history'][month]['count'] = 0
+        jsonStatus['algos'][algo]['history'][month]['assignments'] = 0
+        jsonStatus['algos'][algo]['history'][month]['profit'] = 0.0    
+    }
+
+    jsonStatus['algos'][algo]['history'][month]['profit'] += info['profit']
+    jsonStatus['algos'][algo]['history'][month]['count'] += 1
+
+    jsonStatus['algos'][algo]['cnt_positions'] += 1
+    jsonStatus['algos'][algo]['carried_losses'] += 100.0 * info['open_pol'] * info['contracts']
     if (info['profit'] < 0) 
-        jsonStatus['short_put']['carried_losses'] += info['profit']
+        jsonStatus['algos'][algo]['carried_losses'] += info['profit']
     
-    jsonStatus['short_put']['bs_premium'] += info['bs_premium']
-    jsonStatus['short_put']['profit'] += info['profit']
+    jsonStatus['algos'][algo]['bs_premium'] += info['bs_premium']
+    jsonStatus['algos'][algo]['profit'] += info['profit']
 
+    console.log(jsonStatus)
+    console.log(info)
 
     let payload = {}
     payload['id'] = globalCurrentYear
