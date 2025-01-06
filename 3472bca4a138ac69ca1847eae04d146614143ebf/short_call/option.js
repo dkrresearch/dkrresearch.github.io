@@ -101,6 +101,13 @@ async function loadOptionData() {
         value = parseFloat(jsonOptionTableInfo.quote.ivega)
         document.querySelector('#ivega').innerHTML = value.toFixed(4)   
     }
+    
+    //  Fair Value Calcs
+    if (jsonOptionTableInfo != null) {
+        document.querySelector('#price_of_prem').innerHTML = jsonOptionTableInfo.bs_prem_per_share.toFixed(2)  
+        let fair_value = jsonOptionTableInfo.bs_prem_per_share + jsonOptionTableInfo.price_of_loss
+        document.querySelector('#fair_value').innerHTML = fair_value.toFixed(2)              
+    }
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
@@ -149,7 +156,7 @@ function loadOpenPosition() {
 }
 
 function onContractsChange() {
-    let contracts = parseInt( document.getElementById("details_contracts").value )
+    let contracts = Math.floor(parseInt( document.getElementById("details_contracts").value ))
     
     let margin_value = parseInt( contracts * 100.0 * jsonOptionTableInfo.strike_price / 1000.0)
     document.getElementById("details_margin_label").innerHTML = "$" + margin_value + "K";
@@ -162,21 +169,26 @@ function onContractsChange() {
 
 function onSliderChange() {
     let slider = document.getElementById("myRange");
-    let value = slider.value * globalDefaultValue
-    document.getElementById("details_margin_label").innerHTML = "$" + parseInt(value / 1000) + "K";
+    let value = slider.value
 
-    let shares = value / jsonOptionTableInfo.strike_price
-    let contracts = shares / 100
-    document.getElementById("details_contracts").value = contracts.toFixed(0);
+//  Get the selected value at risk contracts
+    let contracts = value * (jsonOptionTableInfo['constant_var_contracts'] / 10000)
+    contracts = Math.floor(contracts)
 
     let commision = 0.65 * contracts
+    document.getElementById("details_contracts").value = contracts.toFixed(0);
     document.getElementById("details_commision_price").value = commision.toFixed(2);
 
+    let shares = contracts * 100
+    let margin = shares * jsonOptionTableInfo['strike_price']
+    document.getElementById("details_margin_label").innerHTML = "$" + parseInt(margin / 1000) + "K";
+
     onMarginChange();
+
 }
 
 function onMarginChange() {
-    let contracts = parseFloat( document.getElementById("details_contracts").value )
+    let contracts = Math.floor( parseFloat( document.getElementById("details_contracts").value )  )
     let shares = contracts * 100
     let commision = parseFloat( document.getElementById("details_commision_price").value )
     let open_price = parseFloat( document.getElementById("details_open_price").value )

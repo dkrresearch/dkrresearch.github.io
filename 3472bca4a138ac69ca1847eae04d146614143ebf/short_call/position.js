@@ -80,8 +80,14 @@ async function loadPositionData() {
         document.querySelector('#details_bs_paid').innerHTML = '$' + bs_paid.toFixed(2)  
     }
 
-    let pop = bs_remaining / (100.0 * jsonPositionInfo['info']['contracts'])
-    document.querySelector('#details_pop').innerHTML = pop.toFixed(2)  
+    //  Fair Value Calcs
+    if (jsonOptionTableInfo != null) {
+        document.querySelector('#details_pop').innerHTML = jsonOptionTableInfo.bs_prem_per_share.toFixed(2) 
+        document.querySelector('#price_of_prem').innerHTML = jsonOptionTableInfo.bs_prem_per_share.toFixed(2)  
+        document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  
+        let fair_value = jsonOptionTableInfo.bs_prem_per_share + jsonOptionTableInfo.price_of_loss
+        document.querySelector('#fair_value').innerHTML = fair_value.toFixed(2)  
+    }
 
     onClosePriceChange();
 }

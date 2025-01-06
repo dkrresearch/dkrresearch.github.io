@@ -71,7 +71,9 @@ async function loadPositionsData() {
             let contracts = position_info['contracts']
             let open_price = position_info['open_price']
             total_prem += contracts * 100.0 * open_price
-            let cv = contracts * 100.0 * (open_price -  mark)
+            
+            let fv = jsonOptionTableInfo.bs_prem_per_share + jsonOptionTableInfo.price_of_loss
+            let cv = contracts * 100.0 * (open_price -  fv)
             current_value += cv
 
             if (value_at_risk <= 0){
@@ -79,6 +81,14 @@ async function loadPositionsData() {
             } else {
                 template = template.replace("{$var}",printUSD(value_at_risk))
             }
+
+            let bs_remaining = jsonOptionTableInfo['bs_prem_per_share']
+            let pol = jsonOptionTableInfo['price_of_loss']
+            let fair_value = bs_remaining + pol + 0.02
+            if (jsonOptionTableInfo['quote']['buy_price'] <= fair_value) 
+                template = template.replace("{$parity}",'inherit')
+            else
+                template = template.replace("{$parity}",'hidden')
         } else {
             template = template.replace("{$dte}",'--')
             template = template.replace("{$coa}",'--')
@@ -131,6 +141,9 @@ function get_template() {
                 <div class="coa_header">Discount</div>\
                 <h1 class="coa" style="{$red}">{$discount}%</h1>\
             </div>\
+        </div>\
+        <div class="positions_table_col_2a" style="visibility:{$parity}">\
+            <div class="coa_header" style="width:100px">PARITY</div>\
         </div>\
     </div>';
     return block

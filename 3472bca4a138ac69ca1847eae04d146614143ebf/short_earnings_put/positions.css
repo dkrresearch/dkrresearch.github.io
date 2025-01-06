@@ -82,7 +82,11 @@
     text-align: left;
     margin:0px;
   }
-
+  .positions_table_col_2a {
+    float:right;
+    padding-right: 25px;
+    margin:0px;
+  }
   .positions_table_col_3 {
     float:right;
     text-align: center;
