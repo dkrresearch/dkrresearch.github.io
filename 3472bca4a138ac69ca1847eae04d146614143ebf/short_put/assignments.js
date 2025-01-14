@@ -139,6 +139,17 @@ async function onClosePosition(quote_symbol) {
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
 
+    algo = 'short_put'
+    if ((algo in jsonStatus['algos']) == false) {
+        jsonStatus['algos'][algo] = {}
+        jsonStatus['algos'][algo]['cnt_positions'] = 0
+        jsonStatus['algos'][algo]['cnt_assignments'] = 0
+        jsonStatus['algos'][algo]['carried_losses'] = 0.0
+        jsonStatus['algos'][algo]['bs_premium'] = 0.0
+        jsonStatus['algos'][algo]['profit'] = 0.0  
+        jsonStatus['algos'][algo]['history'] = {}
+    }
+
     jsonStatus['algos']['short_put']['cnt_positions'] += 1
     jsonStatus['algos']['short_put']['cnt_assignments'] += 1
     jsonStatus['algos']['short_put']['profit'] += info['profit']
@@ -150,7 +161,14 @@ async function onClosePosition(quote_symbol) {
 
     symbol = info['symbol'].toString()
     month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
-    
+ 
+    if ((month in jsonStatus['algos'][algo]['history']) == false) {
+        jsonStatus['algos'][algo]['history'][month] = {}
+        jsonStatus['algos'][algo]['history'][month]['count'] = 0
+        jsonStatus['algos'][algo]['history'][month]['assignments'] = 0
+        jsonStatus['algos'][algo]['history'][month]['profit'] = 0.0    
+    }  
+
     jsonStatus['algos']['short_put']['history'][month]['profit'] += info['profit']
     jsonStatus['algos']['short_put']['history'][month]['count'] += 1
     jsonStatus['algos']['short_put']['history'][month]['assignments'] += 1
