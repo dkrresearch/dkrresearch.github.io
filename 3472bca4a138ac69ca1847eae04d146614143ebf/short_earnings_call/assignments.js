@@ -167,6 +167,7 @@ async function onClosePosition(quote_symbol) {
     symbol = info['symbol'].toString()
     month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
     
+    algo= 'short_earnings_call'
     if ((month in jsonStatus['algos'][algo]['history']) == false) {
         jsonStatus['algos'][algo]['history'][month] = {}
         jsonStatus['algos'][algo]['history'][month]['count'] = 0
