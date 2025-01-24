@@ -102,6 +102,7 @@ async function loadOptionData() {
         
         //  Fair Value Calcs
         if (jsonOptionTableInfo != null) {
+            console.log(jsonOptionTableInfo)
             document.querySelector('#price_of_prem').innerHTML = jsonOptionTableInfo.bs_prem_per_share.toFixed(2)  
             let fair_value = jsonOptionTableInfo.bs_prem_per_share + jsonOptionTableInfo.price_of_loss
             document.querySelector('#fair_value').innerHTML = fair_value.toFixed(2)              

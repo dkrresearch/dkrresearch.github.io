@@ -82,7 +82,7 @@ async function loadPositionData() {
     }
 
     //  Fair Value Calcs
-    if (jsonOptionTableInfo != null) {
+    if (jsonOptionTableInfo != null) {        
         document.querySelector('#details_pop').innerHTML = jsonOptionTableInfo.bs_prem_per_share.toFixed(2) 
         document.querySelector('#price_of_prem').innerHTML = jsonOptionTableInfo.bs_prem_per_share.toFixed(2)  
         document.querySelector('#price_of_loss').innerHTML = jsonOptionTableInfo.price_of_loss.toFixed(2)  

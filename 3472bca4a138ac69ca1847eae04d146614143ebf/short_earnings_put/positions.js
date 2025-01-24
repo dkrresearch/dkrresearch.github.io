@@ -37,6 +37,7 @@ async function loadPositionsData() {
         
         console.log(jsonOptionInfo)
         console.log(position_info['quote_symbol'])
+        console.log(position_info)
      
         let jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,'short_earnings_put',position_info['quote_symbol']);
         console.log(jsonOptionTableInfo)
@@ -70,7 +71,7 @@ async function loadPositionsData() {
             
             let contracts = position_info['contracts']
             let open_price = position_info['open_price']
-            total_prem += contracts * 100.0 * jsonOptionTableInfo['var']
+            total_prem += contracts * 100.0 * open_price
 
             let fv = jsonOptionTableInfo.bs_prem_per_share + jsonOptionTableInfo.price_of_loss
             let cv = contracts * 100.0 * (open_price -  fv)
