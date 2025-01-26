@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        
+        <title id="title">DKR Research</title>
+
+        <link rel="stylesheet" href="../main.css">
+        <link rel="stylesheet" href="ecal.css">
+        <script src="../main.js"></script>
+        <script src="ecal.js"></script>
+    </head>
+
+    <body onload="loadBodyElements()">
+        <div id="header"></div>
+
+        <div id="wait">
+            <img id="wait_gif" src="../wait.gif" alt="Loading..."></img>
+            <h1 id="err_status" style="display:none;  margin-left:0px; margin-top:50px; width:512px; text-align:center; color:rgb(87, 0, 0);"></h1>
+            <h1 id='wait_status' style="margin-left:0px; margin-top:-50px; width:512px; text-align:center; color:rgb(87, 0, 87);">... Gathering Data ...</h1>
+        </div>
+
+        <div id="contents" style="visibility: hidden; margin-top:25px;">
+
+
+            <div class="div_parent">
+                <div class="widget_box" style="width:89%">
+                    <h1 class="widget_label">Earnings Calendar</h1>
+                    <hr/>
+
+                    <div id='cal_table' class='cal_table' style="margin-bottom:20px;">
+                        <div class="cal_table_header">
+                            <span id='dow_prev' class="cal_table_col_prev"></span>
+                            <span id='dow_1' class="cal_table_col"></span>
+                            <span id='dow_2' class="cal_table_col"></span>
+                            <span id='dow_3' class="cal_table_col"></span>
+                            <span id='dow_4' class="cal_table_col"></span>
+                            <span id='dow_5' class="cal_table_col"></span>
+                            <span id='dow_next' class="cal_table_col_next"><a href='ecal.html?date=2025-01-27'>Next Week</a></span>
+                        </div>
+                    </div>  
+
+                    <div id="earnings_table">
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+        <script>
+            loadCalendarData()
+        </script>
+    </body>
+</html>

@@ -32,6 +32,14 @@ async function loadSymbolData() {
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
  
+    symbol_name = jsonInfo.Item.info.overview.Name
+    link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
+    document.querySelector('#Name').innerHTML = " : " + link;
+    document.querySelector('#Industry').innerHTML = jsonInfo.Item.info.overview.Industry;
+    document.querySelector('#Description').innerHTML = jsonInfo.Item.info.overview.Description;
+    document.querySelector('#next_earnings_date').innerHTML = jsonInfo.Item.info.next_earnings_date;
+    document.querySelector('#details_earnings_date').value = jsonInfo.Item.info.next_earnings_date;
+
     //  Retrieve verified earnings data from aws
     jsonEarnings = await fetchEarningsInfo();
     if ((jsonEarnings == null) || (jsonEarnings.hasOwnProperty("Item") == false)) {
@@ -44,48 +52,47 @@ async function loadSymbolData() {
     console.log(jsonEarnings)
 
 
-    symbol_name = jsonInfo.Item.info.overview.Name
-    link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
-    document.querySelector('#Name').innerHTML = " : " + link;
-    document.querySelector('#Industry').innerHTML = jsonInfo.Item.info.overview.Industry;
-    document.querySelector('#Description').innerHTML = jsonInfo.Item.info.overview.Description;
-    document.querySelector('#next_earnings_date').innerHTML = jsonInfo.Item.info.next_earnings_date;
-    document.querySelector('#details_earnings_date').value = jsonInfo.Item.info.next_earnings_date;
 
-    earnings_data = jsonInfo.Item.info.earnings_data
-
-
-
+    let earnings_data = jsonEarnings.Item.info
     let divTable = document.getElementById("earnings_report_table");
 
     line = '<div class="put_table_row">'
-
+    let last_yr = earnings_data[0].year
     for (let i = earnings_data.length-1; i >= 0; i--) {
-        reported = earnings_data[i]
-
-        verified = find_verified_earnings_data(reported)
-        console.log(verified) 
+        let info = earnings_data[i]
 
         template = get_template()
-        template = template.replace("{$reportedDate}",reported['reportedDate'])
-        template = template.replace("{$reportedTime}",reported['reportTime'])
-        template = template.replaceAll("{$idx}",i)
-        template = template.replace("{$actualDate}",verified.actualDate)
 
-        
-        if (verified.actualTime == "pre-market") {
-            template = template.replace("{$actualPreMarket}","selected")
-            template = template.replace("{$actualPostMarket}","")
-        } else {
-            console.log('post-market')
-            template = template.replace("{$actualPreMarket}","")
-            template = template.replace("{$actualPostMarket}","selected")
-        }
-    
-        if (verified.verifed == true)
-            template = template.replace("{$actualVerified}","checked")
+        template = template.replace("{$idx}",i)
+
+        if (info.year != last_yr) 
+            template = template.replace("{$lineBreak}",'<div class="put_table_row"><br/></div>')
         else
-            template = template.replace("{$actualVerified}","")
+            template = template.replace("{$lineBreak}",'')
+        last_yr = info.year
+
+        let qtr = info.year + ' - Q' + (info.qtr+1)
+        template = template.replace("{$qtr}",qtr)
+
+        template = template.replace("{$marketDate}",info.marketDates[1])
+ 
+        if (info.yahoo.hasOwnProperty('reportedDate')) {
+            let yahoo = info.yahoo.reportedDate + " " + info.yahoo.reportTime
+            template = template.replace("{$yahoo}",yahoo)
+        } else 
+            template = template.replace("{$yahoo}",'&nbsp;')
+
+        if (info.alphavantage.hasOwnProperty('reportedDate')) {
+            let alpha = info.alphavantage.reportedDate  + " " + info.alphavantage.reportTime
+            template = template.replace("{$alpha}",alpha)
+        } else 
+            template = template.replace("{$alpha}",'&nbsp;')
+
+        if (info.zacks.hasOwnProperty('reportedDate')) {
+            let zacks = info.zacks.reportedDate  + " " + info.zacks.reportTime
+            template = template.replace("{$zacks}",zacks)
+        } else 
+            template = template.replace("{$zacks}",'&nbsp;')
 
         line += template
     }
@@ -102,17 +109,35 @@ async function loadSymbolData() {
 
 function get_template() {
     block = '\
+        {$lineBreak}\
         <div class="put_table_row">\
-        <span class="put_table_col_1">{$reportedDate}</span>\
-        <span class="put_table_col_2">{$reportedTime}</span>\
-        <span class="put_table_col_3"><input type="text" id="actual_date_{$idx}" value="{$actualDate}" required minlength="10" maxlength="10" size="10" /></span>\
-        <span class="put_table_col_4"><select id="actual_time_{$idx}">\
-            <option {$actualPreMarket} value="pre-market">pre-market</option><option {$actualPostMarket} value="post-market">post-market</option>\
-        </select></span>\
-        <span class="put_table_col_5"><input {$actualVerified} id="verified_{$idx}" type="checkbox" /></span>\
+        <span class="put_table_col_1"><a href="#" onclick="return selectRow(this)">{$qtr}</a></span>\
+        <span class="put_table_col_2"><a href="#" onclick="return updateDate(this,{$idx})">{$marketDate}</a></span>\
+        <span class="put_table_col_3">{$zacks}</span>\
+        <span class="put_table_col_4">{$yahoo}</span>\
+        <span class="put_table_col_5">{$alpha}</span>\
         </div>'
     return block
 }
+   
+var selectedRow = null;
+function selectRow(clickedElement){
+    if (selectedRow != null) {
+        selectedRow.classList.remove('selectedRow');
+    }
+
+    let parentElement = clickedElement.parentElement.parentElement;
+    parentElement.classList.add('selectedRow');
+    selectedRow = parentElement
+
+    return false;
+}
+
+var selectedRow = null;
+function updateDate(clickedElement,idx){
+    console.log( jsonEarnings.Item.info[idx] )
+    return false;
+} 
 
 async function fetchSymbolInfo() {
     let my_url = new URL(window.location.href);
