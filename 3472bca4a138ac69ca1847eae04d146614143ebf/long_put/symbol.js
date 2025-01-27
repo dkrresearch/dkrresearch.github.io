@@ -13,14 +13,16 @@ async function loadSymbolData() {
     document.querySelector('#title').innerHTML = "DKR Research : " + symbol 
     document.querySelector('#symbol').innerHTML = symbol;
  
-    link = "<a href='..short_put/symbol.html?symbol="+symbol+"'>Short Put</a>"
+    link = "<a href='../short_earnings_put/symbol.html?symbol="+symbol+"'>Short Earnings Put</a>"
     document.querySelector('#link_short_put').innerHTML = link;
 
-    link = "<a href='../short_call/symbol.html?symbol="+symbol+"'>Short Call</a>"
+    link = "<a href='../short_earnings_call/symbol.html?symbol="+symbol+"'>Short Earnings Call</a>"
     document.querySelector('#link_short_call').innerHTML = link;
 
-    link = "<a href='../long_call/symbol.html?symbol="+symbol+"'>Long Call</a>"
+    link = "<a href='../long_call/symbol.html?symbol="+symbol+"'>Long Earnings Call</a>"
     document.querySelector('#link_long_call').innerHTML = link;
+
+
 
 
     symbol_name = jsonInfo.Item.info.overview.Name
@@ -54,29 +56,14 @@ async function loadSymbolData() {
 
 //  Build option tables
     let divTable = document.getElementById("near_put_table");
-    let table = jsonOptionTable.Item.info.option_table_near
-    for (var e=0; e<2; e++) {
-        if (e == 1) {
-            divTable = document.getElementById("far_put_table");
-            table = jsonOptionTable.Item.info.option_table_far
-        }
-        if (table.length <= 0) 
-            continue
+    let table = jsonOptionTable.Item.info.option_table_weekly
+    if (table.length > 0) {
 
         if (table[0]['sub_earnings_data'] == true) {
-            if (e == 0)
-                document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
-            else
-                document.querySelector('#far_sub_earnings_data').style.visibility = "visible";
+            document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
         }
-        if (e == 0) {
-            document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
-            document.querySelector('#near_dte').innerHTML = table[0]['dte']
-        }else{
-            document.querySelector('#far_exp_date').innerHTML = table[0]['expiration_date']
-            document.querySelector('#far_dte').innerHTML = table[0]['dte']
-        }   
-
+        document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
+        document.querySelector('#near_dte').innerHTML = table[0]['dte']
         document.querySelector('#symbol_drift').innerHTML = (table[0]['drift'] * 100.0).toFixed(1) + '%'
 
         for(var key in table) {
@@ -109,7 +96,7 @@ async function loadSymbolData() {
             link = "<a href='option.html?symbol="+symbol+"&option_symbol="+option_symbol+"'>"+strike_price+"</a>";
             line = line + '<span class="put_table_col_1">' + link + '<br/>'+discount.toFixed(0)+'% Discount</span>'
 
-// bid x ask
+        // bid x ask
             ask = parseFloat(table[key]['quote']['ask'])
             bid = parseFloat(table[key]['quote']['bid'])
             line = line + '<span class="put_table_col_2">' + bid.toFixed(2) + ' x '+ ask.toFixed(2) +'</span>'
@@ -119,11 +106,11 @@ async function loadSymbolData() {
             line = line + '<span class="put_table_col_3">' + printUSD(am) +'</span>'
 
 
-// Chance of Payout
+        // Chance of Payout
             value = 100.0 * parseFloat(table[key]['chance_of_payout'])
             line = line + '<span class="put_table_col_4">' + value.toFixed(2) + '%</span>'
 
-// Return on Investment
+        // Return on Investment
             value = parseFloat(table[key]['est_roi'])
             line = line + '<span class="put_table_col_5">' + value.toFixed(1) + '</span>'
 
@@ -133,7 +120,7 @@ async function loadSymbolData() {
             divTable.appendChild(ele);
         }
     }
-
+    
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
 }

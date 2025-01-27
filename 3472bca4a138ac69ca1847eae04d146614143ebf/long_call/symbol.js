@@ -14,14 +14,15 @@ async function loadSymbolData() {
     document.querySelector('#symbol').innerHTML = symbol;
  
 
-    link = "<a href='../short_put/symbol.html?symbol="+symbol+"'>Short Put</a>"
+    link = "<a href='../short_earnings_put/symbol.html?symbol="+symbol+"'>Short Earnings Put</a>"
     document.querySelector('#link_short_put').innerHTML = link;
 
-    link = "<a href='../short_call/symbol.html?symbol="+symbol+"'>Short Call</a>"
+    link = "<a href='../short_earnings_call/symbol.html?symbol="+symbol+"'>Short Earnings Call</a>"
     document.querySelector('#link_short_call').innerHTML = link;
 
-    link = "<a href='../long_put/symbol.html?symbol="+symbol+"'>Long Put</a>"
+    link = "<a href='../long_put/symbol.html?symbol="+symbol+"'>Long Earnings Put</a>"
     document.querySelector('#link_long_put').innerHTML = link;
+
 
 
     symbol_name = jsonInfo.Item.info.overview.Name
@@ -55,28 +56,13 @@ async function loadSymbolData() {
 
 //  Build option tables
     let divTable = document.getElementById("near_put_table");
-    let table = jsonOptionTable.Item.info.option_table_near
-    for (var e=0; e<2; e++) {
-        if (e == 1) {
-            divTable = document.getElementById("far_put_table");
-            table = jsonOptionTable.Item.info.option_table_far
-        }
-        if (table.length <= 0) 
-            continue
-
+    let table = jsonOptionTable.Item.info.option_table_weekly
+    if (table.length > 0) {
         if (table[0]['sub_earnings_data'] == true) {
-            if (e == 0)
-                document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
-            else
-                document.querySelector('#far_sub_earnings_data').style.visibility = "visible";
+            document.querySelector('#near_sub_earnings_data').style.visibility = "visible";
         }
-        if (e == 0) {
-            document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
-            document.querySelector('#near_dte').innerHTML = table[0]['dte']
-        }else{
-            document.querySelector('#far_exp_date').innerHTML = table[0]['expiration_date']
-            document.querySelector('#far_dte').innerHTML = table[0]['dte']
-        }   
+        document.querySelector('#near_exp_date').innerHTML = table[0]['expiration_date']
+        document.querySelector('#near_dte').innerHTML = table[0]['dte']
         document.querySelector('#symbol_drift').innerHTML = (table[0]['drift'] * 100.0).toFixed(1) + '%'
 
 
