@@ -132,8 +132,9 @@ function doUpdate(qoute_symbol,key) {
 }
 
 async function onClosePosition(quote_symbol) {
-    console.log(quote_symbol)
+    let algo = 'long_call'
 
+    
     let btn = 'btn_' + quote_symbol
     document.getElementById(btn).style.backgroundColor = "#888";
     document.getElementById(btn).disabled = true;
@@ -161,31 +162,43 @@ async function onClosePosition(quote_symbol) {
     info['sold_price'] = sold_price
 
     info['commisions'] += commision
-    info['profit'] = ((sold_price - (info['strike_price'] - info['open_price'])) * info['contracts'] * 100.0) - info['commisions']
+    info['profit'] = ((sold_price - (info['strike_price'] + info['open_price'])) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
 
+    console.log(quote_symbol)
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
 
-    if (('long_call' in jsonStatus['algos']) == false) {
-        jsonStatus['algos']['long_call'] = {}
-        jsonStatus['algos']['long_call']['cnt_positions'] = 0
-        jsonStatus['algos']['long_call']['bs_premium'] = 0.0
-        jsonStatus['algos']['long_call']['profit'] = 0.0  
-        jsonStatus['algos']['long_call']['cnt_assignments'] = 0
-        jsonStatus['algos']['long_call']['history'] = {}
+    if ((algo in jsonStatus['algos']) == false) {
+        jsonStatus['algos'][algo] = {}
+        jsonStatus['algos'][algo]['cnt_positions'] = 0
+        jsonStatus['algos'][algo]['bs_premium'] = 0.0
+        jsonStatus['algos'][algo]['profit'] = 0.0  
+        jsonStatus['algos'][algo]['cnt_assignments'] = 0
+        jsonStatus['algos'][algo]['history'] = {}
     }
 
-    jsonStatus['algos']['long_call']['cnt_positions'] += 1
-    jsonStatus['algos']['long_call']['cnt_assignments'] += 1
-    jsonStatus['algos']['long_call']['profit'] += info['profit']
+    jsonStatus['algos'][algo]['cnt_positions'] += 1
+    jsonStatus['algos'][algo]['cnt_assignments'] += 1
+    jsonStatus['algos'][algo]['profit'] += info['profit']
 
     symbol = info['symbol'].toString()
     month = info['quote_symbol'].substring( symbol.length + 4, symbol.length + 6)
     
-    jsonStatus['algos']['long_call']['history'][month]['profit'] += info['profit']
-    jsonStatus['algos']['long_call']['history'][month]['count'] += 1
-    jsonStatus['algos']['long_call']['history'][month]['assignments'] += 1
+    if ((month in jsonStatus['algos'][algo]['history']) == false) {
+        jsonStatus['algos'][algo]['history'][month] = {}
+        jsonStatus['algos'][algo]['history'][month]['count'] = 0
+        jsonStatus['algos'][algo]['history'][month]['assignments'] = 0
+        jsonStatus['algos'][algo]['history'][month]['profit'] = 0.0    
+    }
+
+    jsonStatus['algos'][algo]['history'][month]['profit'] += info['profit']
+    jsonStatus['algos'][algo]['history'][month]['count'] += 1
+    jsonStatus['algos'][algo]['history'][month]['assignments'] += 1
+
+    console.log(globalCurrentYear)
+    console.log(jsonStatus)
+    console.log(info)
 
     let payload = {}
     payload['id'] = globalCurrentYear

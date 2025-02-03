@@ -24,7 +24,6 @@ async function loadSymbolData() {
     document.querySelector('#link_long_put').innerHTML = link;
 
 
-
     symbol_name = jsonInfo.Item.info.overview.Name
     link = "<a href='https://www.marketwatch.com/investing/stock/"+symbol+"' target='_blank' rel='noopener noreferrer'>"+symbol_name+"</a>"
     document.querySelector('#Name').innerHTML = " : " + link;

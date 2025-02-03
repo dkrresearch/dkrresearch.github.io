@@ -81,12 +81,14 @@ async function loadCalendarData() {
     for (const symbolInfo of jsonSymbols) {
         symbol = symbolInfo['symbol']
         let earnings_date = symbolInfo['earnings_date']
+        let earnings_time = symbolInfo['earnings_time']
         let name = symbolInfo['name']
 
         if (earnings_date == selectedDateString) {
             item = {}
             item['symbol'] = symbol
             item['next_earnings_date'] = earnings_date
+            item['next_earnings_time'] = earnings_time
             item['name'] = name
             
             earnings_today.push(item) 
@@ -96,9 +98,11 @@ async function loadCalendarData() {
     let divTable = document.getElementById("earnings_table");
     for (const item of earnings_today) {
         template = get_template()
+        console.log(item)
 
         template = template.replaceAll("{$symbol}",item['symbol'])
         template = template.replaceAll("{$earnings_date}",item['next_earnings_date'])
+        template = template.replaceAll("{$earnings_time}",item['next_earnings_time'])
         template = template.replaceAll("{$name}",item['name'])
 
         let ele = htmlToElement(template);
@@ -115,6 +119,7 @@ function get_template() {
     <span class="symbol_table_col_1"><a href="symbol.html?symbol={$symbol}" style="font-weight:750;">{$symbol}</a></span>\
     <span class="symbol_table_col_2">{$name}</span>\
     <span class="symbol_table_col_3">{$earnings_date}</span>\
+    <span class="symbol_table_col_4">{$earnings_time}</span>\
     </div>\
     ';
     return block

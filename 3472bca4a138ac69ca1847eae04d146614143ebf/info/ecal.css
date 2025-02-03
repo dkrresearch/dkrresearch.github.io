@@ -112,6 +112,7 @@
     margin-left:0px;
     margin-bottom:4px;
     font-size: 13px;
+    color: darkslategrey;
 }
 .symbol_table_col_1 {
     float:left;
@@ -127,7 +128,13 @@
 }
 .symbol_table_col_3 {
     float:left;
-    width:20%;
+    width:10%;
+    margin-left:0px;
+    margin-bottom:4px;
+}
+.symbol_table_col_3 {
+    float:left;
+    width:10%;
     margin-left:0px;
     margin-bottom:4px;
 }
