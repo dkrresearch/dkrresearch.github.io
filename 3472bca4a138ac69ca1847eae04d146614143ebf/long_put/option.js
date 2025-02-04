@@ -8,12 +8,14 @@ async function loadPageData() {
 }
 
 async function loadOptionData() {
+    let my_url = new URL(window.location.href);
+    let option_symbol = my_url.searchParams.get("option_symbol").toUpperCase();
     let value
     let link
 
     jsonInfo = await fetchSymbolInfo();
     jsonOptionInfo = await fetchOptionTable(jsonInfo.Item.symbol);
-    jsonOptionTableInfo = findOptionInfo(jsonOptionInfo);
+    jsonOptionTableInfo = findOptionInfo(jsonOptionInfo,'long_put',option_symbol)
 
     let symbol = jsonInfo.Item.symbol
  
@@ -86,31 +88,6 @@ async function loadOptionData() {
 
     document.querySelector('#wait').remove();
     document.querySelector('#contents').style.visibility = "visible";
-}
-
-function findOptionInfo(jsonOptionTable) {
-    let my_url = new URL(window.location.href);
-    let option_symbol = my_url.searchParams.get("option_symbol").toUpperCase();
-
-//  Find this option in the option table
-    let option_table = jsonOptionTable.Item.info.option_table_near
-    for(var key in option_table) {
-        if (option_table[key]['type'] != 'long_put')
-            continue
-
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
-
-    option_table = jsonOptionTable.Item.info.option_table_far
-    for(var key in option_table) {
-        if (option_table[key]['type'] != 'long_put')
-            continue
-        
-        if ((option_table[key]['quote_symbol'] == option_symbol))
-            return option_table[key]
-    }
-    return null
 }
 
 async function fetchSymbolInfo() {
