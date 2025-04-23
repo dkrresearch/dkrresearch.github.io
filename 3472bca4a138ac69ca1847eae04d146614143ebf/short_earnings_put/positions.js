@@ -86,11 +86,16 @@ async function loadPositionsData() {
             let bs_remaining = jsonOptionTableInfo['bs_prem_per_share']
             let pol = jsonOptionTableInfo['price_of_loss']
             let fair_value = bs_remaining + pol + 0.02
-            if ((jsonOptionTableInfo['quote']['buy_price'] <= fair_value) ||
-                (jsonOptionTableInfo['quote']['bid'] == 0.0))
+  
+            if ((quote != null) && 
+                quote.hasOwnProperty('buy_price') &&  
+                quote.hasOwnProperty('bid') && 
+                ((quote['buy_price'] <= fair_value) ||
+                 (quote['bid'] == 0.0)))
                 template = template.replace("{$parity}",'inherit')
             else
                 template = template.replace("{$parity}",'hidden')
+
         } else {
             template = template.replace("{$dte}",'--')
             template = template.replace("{$coa}",'--')

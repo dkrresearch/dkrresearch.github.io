@@ -51,7 +51,7 @@ async function loadPositionsData() {
             template = template.replaceAll("{$price}",last_price.toFixed(2))
             template = template.replaceAll("{$close_price}",last_price.toFixed(2))
     
-            profit = ((last_price - strike_price - open_price) * shares) - position_info['commisions']
+            profit = ((strike_price - last_price - open_price) * shares) - position_info['commisions']
             template = template.replaceAll("{$profit}",printUSD(profit))
 
             let gain = (100.0 * (last_price - strike_price)) / strike_price
@@ -125,9 +125,10 @@ function doUpdate(qoute_symbol,key) {
     let shares = position_info["contracts"] * 100
     let open_commision = position_info["commisions"]
 
-    let profit = ((last_price - strike_price - open_price) * shares) - open_commision - commision
+    let profit = ((strike_price - last_price - open_price) * shares) - open_commision - commision
 
-    document.getElementById("close_profit_"+qoute_symbol).innerHTML = printUSD(profit)
+    document.getElementById("close_profit_" + qoute_symbol).style.color = null
+    document.getElementById("close_profit_" + qoute_symbol).innerHTML = printUSD(profit)
     return
 }
 

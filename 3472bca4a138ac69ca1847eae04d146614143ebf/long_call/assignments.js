@@ -24,8 +24,6 @@ async function loadPositionsData() {
         if (position_info['option_type'] != "long_call")
             continue
 
-        console.log(position_info)
-
         let template = get_template()
 
         let symbol = position_info["symbol"]
@@ -125,8 +123,9 @@ function doUpdate(qoute_symbol,key) {
     let shares = position_info["contracts"] * 100
     let open_commision = position_info["commisions"]
 
-    let profit = ((last_price - strike_price - open_price) * shares) - open_commision - commision
+    let profit = ((last_price - (strike_price + open_price)) * shares) - open_commision - commision
 
+    document.getElementById("close_profit_" + qoute_symbol).style.color = null
     document.getElementById("close_profit_"+qoute_symbol).innerHTML = printUSD(profit)
     return
 }
@@ -164,8 +163,6 @@ async function onClosePosition(quote_symbol) {
     info['commisions'] += commision
     info['profit'] = ((sold_price - (info['strike_price'] + info['open_price'])) * info['contracts'] * 100.0) - info['commisions']
     info['bs_premium'] = 0.0
-
-    console.log(quote_symbol)
 
     let jsonStatus = await fetchStatus(globalCurrentYear);
 
